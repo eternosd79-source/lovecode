@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Regalos del Alma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600;1,700&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Canvas ambiental: Polvo de estrellas -->
+    <canvas id="starCanvas"></canvas>
+    <!-- Viñeta oscura -->
+    <div class="vignette"></div>
+
+    <!-- ============================================
+         VISTA 1: MENÚ PRINCIPAL
+         ============================================ -->
+    <div id="viewMenu" class="view active">
+        <div class="menu-content">
+            <div class="menu-ornament">✦ ✦ ✦</div>
+            <h1 class="menu-title">Regalos del Alma</h1>
+            <p class="menu-subtitle">Un momento especial, preparado para ti</p>
+            <div class="golden-hr"></div>
+
+            <div class="cards-container">
+                <!-- Tarjeta 1 -->
+                <div class="gift-card" onclick="openView('viewPromesa')">
+                    <div class="card-glow"></div>
+                    <div class="card-icon">🌹</div>
+                    <h3 class="card-title">Una Promesa<br>de Amor</h3>
+                    <p class="card-hint">Toca para abrir</p>
+                </div>
+                <!-- Tarjeta 2 -->
+                <div class="gift-card" onclick="openView('viewOso')">
+                    <div class="card-glow"></div>
+                    <div class="card-icon">🐻</div>
+                    <h3 class="card-title">Un Abrazo<br>de Oso</h3>
+                    <p class="card-hint">Toca para abrir</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================
+         VISTA 2: UNA PROMESA DE AMOR
+         ============================================ -->
+    <div id="viewPromesa" class="view">
+        <!-- Canvas de pétalos -->
+        <canvas id="petalCanvas"></canvas>
+
+        <div class="promesa-content" id="promesaContent">
+            <h1 class="promesa-question" id="promesaQuestion">
+                ¿Quieres ser mi amor<br>para siempre?
+            </h1>
+            <div class="promesa-buttons" id="promesaButtons">
+                <button class="p-btn yes-btn" id="yesBtnSan">Sí, para siempre 💕</button>
+                <button class="p-btn no-btn" id="noBtnSan">No...</button>
+            </div>
+        </div>
+
+        <button class="back-btn" onclick="openView('viewMenu')">← Volver</button>
+    </div>
+
+
+    <!-- ============================================
+         VISTA 3: UN ABRAZO DE OSO
+         ============================================ -->
+    <div id="viewOso" class="view">
+        <div class="oso-content" id="osoContent">
+
+            <svg class="bear-svg" viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+                <!-- ============================
+                     OREJAS (Curvas hacia afuera)
+                     ============================ -->
+                <!-- Izquierda exterior e interior -->
+                <path class="bear-line" d="M 135 70 A 35 35 0 1 0 100 135" />
+                <path class="bear-line" d="M 125 85 A 20 20 0 1 0 105 125" />
+                <!-- Derecha exterior e interior -->
+                <path class="bear-line" d="M 265 70 A 35 35 0 1 1 300 135" />
+                <path class="bear-line" d="M 275 85 A 20 20 0 1 1 295 125" />
+
+                <!-- ============================
+                     CABEZA Y COSTURAS
+                     ============================ -->
+                <circle class="bear-line" cx="200" cy="140" r="95"/>
+                <!-- Costuras superiores -->
+                <path class="bear-line bear-stitch" d="M 200 45 V 120" />
+                <path class="bear-line bear-stitch" d="M 140 60 C 145 80 150 100 155 106" />
+                <path class="bear-line bear-stitch" d="M 260 60 C 255 80 250 100 245 106" />
+
+                <!-- ============================
+                     CUERPO (Fondo exterior)
+                     ============================ -->
+                <!-- Costado Izquierdo -->
+                <path class="bear-line" d="M 130 215 C 60 260 70 350 120 375" />
+                <!-- Costado Derecho -->
+                <path class="bear-line" d="M 270 215 C 340 260 330 350 280 375" />
+                <!-- Base Trasera -->
+                <path class="bear-line" d="M 120 375 C 160 395 240 395 280 375" />
+
+                <!-- ============================
+                     PIERNAS Y PATITAS
+                     ============================ -->
+                <!-- Pata Izquierda -->
+                <path class="bear-line" d="M 145 340 C 100 320 70 370 100 395 C 130 420 170 380 155 350" />
+                <path class="bear-line" d="M 125 365 C 120 355 110 360 105 370 C 100 380 120 395 125 395 C 130 395 150 380 145 370 C 140 360 130 355 125 365 Z" />
+                
+                <!-- Pata Derecha -->
+                <path class="bear-line" d="M 255 340 C 300 320 330 370 300 395 C 270 420 230 380 245 350" />
+                <path class="bear-line" d="M 275 365 C 280 355 290 360 295 370 C 300 380 280 395 275 395 C 270 395 250 380 255 370 C 260 360 270 355 275 365 Z" />
+
+                <!-- ============================
+                     EL GRAN CORAZÓN (Reducido)
+                     ============================ -->
+                <!-- Borde Corazón -->
+                <path class="bear-line" d="M 200 240 C 160 200 110 250 140 280 C 160 300 180 330 200 350 C 220 330 240 300 260 280 C 290 250 240 200 200 240 Z" />
+                <!-- Costura Corazón -->
+                <path class="bear-line bear-stitch" d="M 200 252 C 170 220 130 260 155 285 C 170 300 185 320 200 335 C 215 320 230 300 245 285 C 270 260 230 220 200 252 Z" />
+                <!-- Mini Corazón -->
+                <path class="bear-line" d="M 200 285 C 190 275 180 285 185 295 C 190 305 200 310 200 310 C 200 310 210 305 215 295 C 220 285 210 275 200 285 Z" />
+
+                <!-- ============================
+                     BRAZOS
+                     ============================ -->
+                <!-- Brazo Izquierdo apoyado -->
+                <path class="bear-line" d="M 130 230 C 90 250 100 300 150 285 C 150 285 155 280 145 270" />
+                <!-- Brazo Derecho apoyado -->
+                <path class="bear-line" d="M 270 230 C 310 250 300 300 250 285 C 250 285 245 280 255 270" />
+
+                <!-- ============================
+                     ROSTRO
+                     ============================ -->
+                <!-- Cejas -->
+                <path class="bear-line" d="M 135 105 Q 150 90 165 105" />
+                <path class="bear-line" d="M 235 105 Q 250 90 265 105" />
+                
+                <!-- Ojos -->
+                <circle class="bear-filled" cx="155" cy="130" r="14" />
+                <circle class="bear-highlight" cx="158" cy="125" r="4" />
+                <circle class="bear-filled" cx="245" cy="130" r="14" />
+                <circle class="bear-highlight" cx="242" cy="125" r="4" />
+                
+                <!-- Hocico, Nariz y Boca -->
+                <ellipse class="bear-line" cx="200" cy="180" rx="38" ry="28" />
+                <ellipse class="bear-filled" cx="200" cy="165" rx="14" ry="9" />
+                <ellipse class="bear-highlight" cx="200" cy="162" rx="5" ry="3" />
+                <path class="bear-line" d="M 200 174 V 192" />
+                <path class="bear-line" d="M 178 182 Q 200 210 200 192" />
+                <path class="bear-line" d="M 222 182 Q 200 210 200 192" />
+            </svg>
+
+            <h2 class="oso-label" id="osoLabel"></h2>
+            <p class="oso-sub" id="osoSub"></p>
+        </div>
+
+        <button class="back-btn" onclick="openView('viewMenu')">← Volver</button>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+body, html {
+    margin: 0; padding: 0; 
+    width: 100%; height: 100%;
+    background-color: #000; 
+    overflow: hidden; /* Oculta barras de desplazamiento */
+    font-family: 'Montserrat', sans-serif;
+}
+
+#spaceCanvas {
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%;
+    z-index: 1; 
+    pointer-events: auto; /* Permitir arrastre de cámara */
+    opacity: 0; 
+    transition: opacity 1.5s ease;
+}
+
+#spaceCanvas.visible {
+    opacity: 1;
+}
+
+#pantalla-inicio {
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; 
+    justify-content: center; align-items: center;
+    background: #000; 
+    z-index: 10; 
+    color: white; 
+    cursor: pointer;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+
+#pantalla-inicio.oculta {
+    opacity: 0; 
+    visibility: hidden; 
+}
+
+h2 { 
+    font-size: clamp(1.8rem, 5vw, 2.5rem); 
+    margin-bottom: 20px; 
+    text-shadow: 0 0 10px rgba(255,10,84, 0.8), 0 0 20px rgba(255,255,255,0.5); 
+    text-align: center; 
+}
+
+.pulsar { 
+    font-size: 3rem; 
+    animation: latido 1.5s infinite ease-in-out; 
+    filter: drop-shadow(0 0 10px #ff0a54);
+}
+
+@keyframes latido { 
+    0%, 100% { transform: scale(1); } 
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 20px #ff0a54); } 
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

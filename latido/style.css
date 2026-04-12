@@ -1,0 +1,57 @@
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent;}
+
+body { 
+    width: 100vw; height: 100vh; overflow: hidden; 
+    /* Fondo nebulosa muy oscuro */
+    background: radial-gradient(circle at center, #180008 0%, #030002 100%); 
+    color: #fff; 
+}
+
+canvas { position: fixed; inset: 0; z-index: 0; }
+
+.overlay {
+    position: fixed; inset: 0; z-index: 10;
+    pointer-events: none; /* Crucial para dejar que el mouse interactúe con el Canvas de abajo */
+}
+
+.phrase {
+    position: absolute;
+    width: 100%;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; 
+    font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+    color: rgba(255, 230, 240, 0); 
+    transition: color 1.5s ease;
+    padding: 0 20px; text-align: center;
+    text-shadow: 0 0 15px rgba(255,100,150,0.5);
+    letter-spacing: 1px;
+}
+.phrase.show { color: rgba(255, 240, 245, 0.95); }
+
+/* Espacio vertical clavado en los extremos para no tocar el corazón */
+#phraseTop { top: 12vh; }
+#phraseBot { bottom: 12vh; }
+
+.love-text {
+    position: absolute; top: 50%; left: 50%; 
+    transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 700;
+    font-size: clamp(3.5rem, 9vw, 5.5rem);
+    color: #ffd670; 
+    /* Glow tridimensional: oro, rosa, y negro profundo de contraste */
+    text-shadow: 
+        0 0 10px rgba(255, 214, 112, 0.4),
+        0 0 40px rgba(255, 50, 100, 0.8),
+        0 4px 15px rgba(0,0,0,0.9);
+    letter-spacing: 2px;
+    will-change: transform;
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

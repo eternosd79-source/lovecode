@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IDE del Destino</title>
+    <!-- Fira Code para programación, Cormorant para el poéma final -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- FONDO 3D HOLOGRÁFICO WIREFRAME -->
+    <div id="threejs-canvas"></div>
+
+    <!-- PANTALLA INTRO: EL IDE FLOTANTE (GLASSMORPHISM MACOS) -->
+    <div class="ide-screen" id="ideScreen">
+        <div class="ide-window">
+            
+            <!-- Barra Superior Tipo Mac -->
+            <div class="mac-header">
+                <div class="mac-dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="header-title">destino.js — HeartCode Editor</div>
+            </div>
+
+            <!-- Cuerpo del Editor -->
+            <div class="ide-body">
+                <!-- Se inyecta la lógica de la máquina de escribir aquí -->
+                <pre><code id="codeTarget"></code></pre>
+            </div>
+
+            <!-- Botonera Inferior (Terminal Output falso) -->
+            <div class="ide-footer">
+                <button class="btn-run hidden" id="btnRun">
+                    <span class="cmd-prompt">></span> npm run love
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PANTALLA VICTORIA: COMPILACIÓN EXITOSA -->
+    <div class="destiny-screen hidden" id="destinyScreen">
+        <div class="glow-bg"></div>
+        <h1 class="destiny-title" id="d_t1">Fatal Error: Heart Memory Overflow</h1>
+        <h2 class="destiny-subtitle" id="d_t2">Se ha compilado un futuro infinito contigo.</h2>
+        <h1 class="destiny-love" id="d_t3">T E &nbsp; A M O</h1>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

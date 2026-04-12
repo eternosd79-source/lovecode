@@ -1,0 +1,191 @@
+/* Estilos reemplazados por carga nativa en index.html */
+
+:root {
+    --negro: #080808;
+    --blanco: #f8f9fa;
+    --rojo-luke: #e01e37;
+    --dorado: #eab308;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--negro);
+    color: var(--blanco);
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#mobile-viewport {
+    width: 100%;
+    max-width: 450px;
+    height: 100vh;
+    max-height: 900px;
+    position: relative;
+    overflow: hidden;
+    background: var(--negro);
+    box-shadow: 0 0 40px rgba(255,255,255,0.05); /* Separa sutilmente en pantallas de PC */
+}
+
+/* Pantallas Bases */
+.pantalla {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    opacity: 0; visibility: hidden; transition: opacity 1s, visibility 1s;
+    z-index: 10;
+}
+.pantalla.activa { opacity: 1; visibility: visible; }
+
+.oculto { opacity: 0; pointer-events: none; transition: opacity 1s; }
+.visible { opacity: 1; pointer-events: auto; }
+
+/* Escenario Viaje */
+#escenario-viaje { background: var(--negro); }
+
+.frase-poetica {
+    font-family: 'Great Vibes', cursive; font-size: clamp(2rem, 5vw, 3rem);
+    text-align: center; max-width: 800px; position: absolute; top: 10%;
+    color: #ffdcb4; text-shadow: 0 0 20px rgba(255, 220, 100, 0.5); opacity: 1; transition: opacity 1s;
+}
+
+#escena-conduccion {
+    position: relative; width: 100%; height: 400px; display: flex; align-items: center;
+    margin-top: 50px;
+}
+
+/* Puerta - ELIMINADA */
+#img-puerta { display: none; }
+
+
+/* Coche */
+#coche-contenedor {
+    position: absolute; 
+    top: 55%; left: 20px; transform: translateY(-50%);
+    cursor: pointer; text-align: center; 
+    transition: all 1.8s cubic-bezier(0.42, 0, 0.58, 1); /* Curva suave de viaje */
+    z-index: 50; /* A prueba de balas para clics */
+}
+#carro-imagen { 
+    width: 160px; height: auto; object-fit: contain; 
+    filter: drop-shadow(0 10px 15px rgba(255, 255, 255, 0.4)); 
+    transition: all 1.8s linear; 
+}
+.texto-clic { color: rgba(255,255,255,0.8); margin-top: 15px; font-weight: 600; letter-spacing: 2px;}
+
+.coche-pulso { animation: pulso 2s infinite ease-in-out; }
+@keyframes pulso {
+    0%, 100% { transform: translateY(-50%) scale(1); }
+    50% { transform: translateY(-50%) scale(1.05); }
+}
+
+/* Animaciones del carro: pasa de largo hacia la derecha y desaparece */
+.carro-manejando {
+    animation: viaje-derecha 2s forwards cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes viaje-derecha {
+    0%   { transform: translateY(-50%) translateX(0) scale(1); opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(-50%) translateX(130vw) scale(1.05); opacity: 0; }
+}
+
+/* ===============================
+   Fase 2: Escenario Boulevard
+   =============================== */
+#escenario-boulevard { background: transparent; z-index: 5; }
+
+#bg-boulevard {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; opacity: 0; transition: opacity 2.5s ease-in-out;
+}
+#bg-boulevard.visible { opacity: 1; }
+
+#img-personajes {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: auto; max-width: 100vw; height: 85vh;
+    object-fit: contain;
+    z-index: 2;
+    /* Soft fade-out en la parte inferior para fusionar la foto con el suelo */
+    mask-image: linear-gradient(to top, transparent 0%, black 15%, black 100%);
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 100%);
+    filter: drop-shadow(0 0 30px rgba(234, 179, 8, 0.2)); /* Cálido resplandor */
+}
+
+/* UI Pregrunta */
+#caja-pregunta {
+    position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+    text-align: center; z-index: 20; 
+    background: rgba(20, 10, 15, 0.45);
+    padding: 30px; border-radius: 20px; 
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(229, 178, 153, 0.3); width: 95%; max-width: 650px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 25px rgba(255, 215, 0, 0.1);
+}
+#caja-pregunta h2 {
+    font-family: 'Great Vibes', cursive; font-size: 2.5rem; margin-bottom: 25px; 
+    color: #ffe4a0; text-shadow: 0 0 15px rgba(255, 220, 100, 0.4); font-weight: normal;
+}
+
+.botones-interactivos { position: relative; display: flex; justify-content: center; gap: 40px; align-items: center; }
+.botones-interactivos button {
+    padding: 12px 40px; font-size: 1.2rem; font-weight: bold; border-radius: 30px;
+    cursor: pointer; transition: transform 0.2s; border: none; width: 120px;
+}
+#btn-si { background: var(--rojo-luke); color: white; z-index: 2; }
+#btn-si:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(224,30,55,0.7); }
+
+#btn-no { background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(4px); }
+/* Clase especial de evasión */
+.btn-no-evasivo {
+    position: fixed !important;
+    transition: all 0.2s ease-out !important;
+    z-index: 99 !important;
+}
+
+/* Modal Final Confirmación */
+#modal-confirmacion {
+    position: absolute; bottom: 3%; left: 50%; transform: translateX(-50%);
+    text-align: center; z-index: 50;
+    background: rgba(20, 10, 15, 0.55);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    padding: 25px 20px; border-radius: 16px; border: 1px solid rgba(229, 178, 153, 0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 25px rgba(255, 215, 0, 0.1); width: 90%; max-width: 420px;
+}
+#modal-confirmacion h2 { 
+    font-family: 'Great Vibes', cursive; 
+    color: #ffe4a0; text-shadow: 0 0 15px rgba(255, 220, 100, 0.4);
+    font-size: 2.3rem; 
+    margin-bottom: 15px; font-weight: normal;
+}
+#modal-confirmacion p { 
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.2rem; 
+    color: rgba(255, 230, 200, 0.9);
+    line-height: 1.6;
+}
+
+@media screen and (max-width: 700px) {
+    .frase-poetica { font-size: 1.4rem; top: 5%; }
+    #carro-imagen { width: 140px; }
+    #img-puerta { width: 120px; right: 5px; }
+    .carro-manejando { left: calc(100% - 120px - 90px) !important; }
+    #img-personajes { height: 70vh; }
+    #caja-pregunta h2 { font-size: 1.3rem; }
+    #modal-confirmacion h2 { font-size: 1.5rem; }
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

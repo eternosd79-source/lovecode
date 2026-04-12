@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cómo Funciona — LoveCode</title>
+    <meta name="description" content="Descubre cómo crear tu regalo digital romántico en 4 simples pasos con LoveCode.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, #0a0a0f 0%, #12041a 50%, #040d1a 100%);
+            padding: 120px 5% 80px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(192,38,211,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .page-hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 15px; }
+        .page-hero p { color: var(--color-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .page-content { max-width: 900px; margin: 0 auto; padding: 70px 5%; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin: 50px 0; }
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .step-card:hover { border-color: var(--accent-purple); transform: translateY(-5px); }
+        .step-num {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: 800; color: white;
+            margin: 0 auto 20px;
+        }
+        .step-card h3 { font-size: 1rem; margin-bottom: 10px; color: white; }
+        .step-card p { font-size: 0.88rem; color: var(--color-dim); }
+        .step-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+        .faq-block { margin: 50px 0; }
+        .faq-block h2 { font-size: 1.8rem; margin-bottom: 30px; }
+        .info-box {
+            background: linear-gradient(135deg, rgba(192,38,211,0.08), rgba(6,182,212,0.06));
+            border: 1px solid rgba(192,38,211,0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        .info-box h3 { color: var(--accent-cyan); margin-bottom: 12px; }
+        .info-box p { color: var(--color-dim); font-size: 0.95rem; line-height: 1.8; }
+        .cta-section { text-align: center; padding: 60px 0; }
+        .cta-section h2 { font-size: 2rem; margin-bottom: 15px; }
+        .cta-section p { color: var(--color-dim); margin-bottom: 30px; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--color-dim); text-decoration: none; font-size: 0.9rem;
+            margin-bottom: 20px; transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent-cyan); }
+    </style>
+</head>
+<body>
+
+    <!-- Nav simplificada -->
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration:none;">
+            <i class="fa-solid fa-code"></i>
+            <span>Love<strong>Code</strong></span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#catalogo"><i class="fa-solid fa-layer-group"></i> Catálogo</a></li>
+            <li><a href="index.html#precios"><i class="fa-solid fa-tags"></i> Precios</a></li>
+            <li><a href="index.html#mis-pedidos"><i class="fa-solid fa-magnifying-glass"></i> Mis Pedidos</a></li>
+        </ul>
+        <a href="index.html#catalogo" class="btn-primary-sm">Crear Regalo</a>
+    </nav>
+
+    <!-- Hero -->
+    <div class="page-hero">
+        <span class="badge-tech" style="margin-bottom:20px; display:inline-block;">
+            <i class="fa-solid fa-circle-question"></i> Cómo Funciona
+        </span>
+        <h1>Crear tu Regalo es <span class="neon-text">Muy Sencillo</span></h1>
+        <p>En menos de 5 minutos tendrás listo el regalo digital más único y romántico que esa persona ha recibido.</p>
+    </div>
+
+    <!-- Contenido -->
+    <div class="page-content">
+
+        <!-- Pasos -->
+        <div class="steps-grid">
+            <div class="step-card">
+                <span class="step-icon">🎨</span>
+                <div class="step-num">1</div>
+                <h3>Elige tu Experiencia</h3>
+                <p>Explora el catálogo de 31 experiencias únicas. Puedes previsualizarlas antes de decidir.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-icon">✍️</span>
+                <div class="step-num">2</div>
+                <h3>Personaliza tu Mensaje</h3>
+                <p>Edita los textos, nombres, fechas especiales y mensajes de amor con tus propias palabras.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-icon">🎵</span>
+                <div class="step-num">3</div>
+                <h3>Añade Música y Fotos</h3>
+                <p>Elige la canción del catálogo o sube tu propia pista. Agrega fotos personales según el plan.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-icon">💳</span>
+                <div class="step-num">4</div>
+                <h3>Paga y Listo</h3>
+                <p>Realiza el pago por transferencia o PayPal. En minutos recibes el link de tu regalo vía WhatsApp.</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fa-solid fa-clock"></i> ¿Cuánto tiempo tarda?</h3>
+            <p>
+                Una vez confirmado el pago, tu regalo estará activado en <strong style="color:white;">5 a 15 minutos</strong>. 
+                Recibirás un link único que puedes compartir directamente con la persona especial, 
+                o guardar para enviarlo en el momento perfecto.
+            </p>
+        </div>
+
+        <div class="info-box" style="border-color: rgba(6,182,212,0.3);">
+            <h3><i class="fa-solid fa-link"></i> ¿Qué recibe la persona?</h3>
+            <p>
+                La persona recibe un <strong style="color:white;">link web único</strong> que abre una experiencia visual inmersiva, 
+                completamente personalizada con tu música, tus fotos y tus palabras. No necesita descargar nada 
+                ni tener ninguna app. Solo abre el link y vive el momento.
+            </p>
+        </div>
+
+        <div class="info-box" style="border-color: rgba(244,63,94,0.3);">
+            <h3><i class="fa-solid fa-shield-halved"></i> ¿Es seguro?</h3>
+            <p>
+                Absolutamente. Tu información y la de tu pareja está protegida. Los links son privados 
+                y solo quien tenga el link puede verlo. No compartimos datos con terceros.
+            </p>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>¿Listo para <span class="neon-text">Sorprender</span>?</h2>
+            <p>Únete a cientos de personas que ya entregaron el regalo perfecto.</p>
+            <a href="index.html#catalogo" class="btn-primary" style="font-size:1.05rem; padding:15px 35px;">
+                <i class="fa-solid fa-rocket"></i> Ver las 31 Experiencias
+            </a>
+        </div>
+    </div>
+
+    <!-- WhatsApp bubble -->
+    <a href="https://wa.me/593990480389?text=Hola%20LoveCode!%20Tengo%20una%20pregunta%20sobre%20los%20regalos." 
+       class="floating-wa" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="wa-bubble-label">¿Tienes dudas?</span>
+    </a>
+
+</body>
+</html>

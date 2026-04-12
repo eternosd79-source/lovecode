@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nuestra Historia 📖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@1,500;1,700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Canvas de luciérnagas doradas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- INTRO -->
+    <div id="intro" class="screen active">
+        <div class="intro-wrap">
+            <div class="book-cover-preview">
+                <div class="cover-texture"></div>
+                <div class="cover-frame">
+                    <div class="cover-corner tl">❧</div>
+                    <div class="cover-corner tr">❧</div>
+                    <div class="cover-ornament-top">✦ ✦ ✦</div>
+                    <h2 class="cover-title">Nuestra<br>Historia</h2>
+                    <div class="cover-ornament-bot">✦ ✦ ✦</div>
+                    <div class="cover-year">— Vol. I —</div>
+                    <div class="cover-corner bl">❦</div>
+                    <div class="cover-corner br">❦</div>
+                </div>
+            </div>
+            <p class="intro-hint">Hay algo que quiero contarte...<br><em>Abre el libro y descúbrelo</em> 📖</p>
+            <button class="btn-open" id="openBtn">✦ Abrir el libro ✦</button>
+        </div>
+    </div>
+
+    <!-- LIBRO -->
+    <div id="bookScreen" class="screen">
+        <div class="book-container">
+            <div class="book" id="book">
+                <!-- Páginas generadas por JS -->
+            </div>
+        </div>
+        <div class="page-controls">
+            <button class="btn-page" id="prevBtn" disabled>← Anterior</button>
+            <span class="page-num" id="pageNum">Portada</span>
+            <button class="btn-page" id="nextBtn">Siguiente →</button>
+        </div>
+    </div>
+
+    <!-- FINAL (Propuesta) -->
+    <div id="finalScreen" class="screen">
+        <div class="petals-final" id="petalsFinal"></div>
+        <div class="proposal-card">
+            <div class="proposal-ring" id="proposalRing">💍</div>
+            <h1 class="proposal-q">¿Quieres ser<br>mi novia?</h1>
+            <p class="proposal-sub">Esta es la pregunta más importante<br>que he querido hacerte...</p>
+            <div class="proposal-btns">
+                <button class="btn-yes" id="yesBtn">Sí, quiero 💖</button>
+                <button class="btn-no"  id="noBtn">¡Por supuesto! 🌹</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CELEBRACIÓN -->
+    <div id="celebScreen" class="screen">
+        <div class="celeb-wrap">
+            <div class="celeb-ring-big">💍</div>
+            <h1 class="celeb-title">¡Comenzamos<br>un nuevo capítulo! 💕</h1>
+            <p class="celeb-msg">Qué bueno que dijiste que sí...<br>aunque tampoco te iba a dar otra opción 😄💝</p>
+            <div class="celeb-flowers">🌹🌸🌺🌷🌸🌹</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

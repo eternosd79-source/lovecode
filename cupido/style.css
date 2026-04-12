@@ -1,0 +1,204 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* Cielo profundo estrellado en lugar de morado plano */
+    background: radial-gradient(ellipse at bottom, #110526 0%, #030008 100%);
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Polvo Estelar de Fondo CSS */
+body::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 50px 160px, #ddd, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    animation: twinkle 5s infinite linear;
+    opacity: 0.3;
+    z-index: 0;
+}
+@keyframes twinkle {
+    0% { transform: translateY(0); opacity: 0.3; }
+    50% { opacity: 0.6; }
+    100% { transform: translateY(-50px); opacity: 0.3; }
+}
+
+#cupidCanvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 10;
+    pointer-events: none; 
+    filter: drop-shadow(0 0 15px rgba(255, 60, 120, 0.5));
+    /* Magia para que el fondo negro del canvas sea transparente */
+    mix-blend-mode: screen; 
+}
+
+/* ==================================
+   PANTALLAS / UI
+   ================================== */
+.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.intro-screen, .climax-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 100;
+    transition: opacity 2s ease-in-out;
+    padding: 20px;
+}
+
+.intro-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: #ffd6e5;
+    font-style: italic;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-shadow: 0 0 25px rgba(255, 90, 130, 0.8), 0 0 10px rgba(255, 255, 255, 0.4);
+    opacity: 0;
+}
+
+.intro-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    color: #e5ccff;
+    font-style: italic;
+    opacity: 0;
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+/* Animaciones de aparición para el intro */
+.fade-in { animation: smoothFadeIn 2.5s forwards ease-out; }
+@keyframes smoothFadeIn {
+    0%   { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+    100% { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+
+/* ==================================
+   BOTÓN MÁGICO
+   ================================== */
+.btn-reveal {
+    position: relative;
+    overflow: hidden;
+    margin-top: 50px;
+    padding: 16px 50px;
+    border-radius: 50px;
+    background: transparent;
+    border: 1px solid rgba(255, 120, 160, 0.4);
+    color: #ffc2df;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    letter-spacing: 2px;
+    cursor: pointer;
+    opacity: 0;
+    animation: smoothFadeIn 2s 0.2s forwards, btnBloom 3s infinite alternate 2.5s;
+    transition: all 0.4s;
+    z-index: 105;
+}
+
+.btn-reveal:hover {
+    background: rgba(255, 120, 160, 0.1);
+    border-color: #ff80a6;
+    box-shadow: 0 0 40px rgba(255, 80, 130, 0.6);
+    transform: scale(1.05);
+}
+
+@keyframes btnBloom {
+    0%   { box-shadow: 0 0 10px rgba(255, 80, 130, 0.2); }
+    100% { box-shadow: 0 0 30px rgba(255, 80, 130, 0.5), inset 0 0 15px rgba(255, 80, 130, 0.2); }
+}
+
+.btn-shimmer {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmerSlide 2.5s infinite;
+}
+@keyframes shimmerSlide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+
+/* ==================================
+   CLÍMAX SCREEN (TEXTOS SECUENCIALES)
+   ================================== */
+.climax-screen {
+    gap: 15px;
+    padding-top: 15vh; /* Bajar el texto para q no tape el corazon */
+    background: radial-gradient(circle at center, rgba(15, 2, 25, 0.6) 0%, transparent 80%);
+}
+
+.climax-text, .climax-grand, .climax-final {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 2.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.climax-text {
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: #ffcce6;
+    font-weight: 600;
+    text-shadow: 0 0 15px rgba(255, 100, 150, 0.8), 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.climax-grand {
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    color: #ffeaaf; /* Oro */
+    font-weight: 700;
+    text-shadow: 0 0 40px rgba(255, 200, 50, 0.9), 0 0 20px rgba(255, 255, 255, 0.6);
+    margin-top: 10px;
+}
+
+.climax-final {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: #fff;
+    font-style: normal;
+    letter-spacing: 12px;
+    margin-top: 35px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+/* Secuencias encadenadas habilitadas via JS (clase active) */
+.climax-text.active, .climax-grand.active, .climax-final.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

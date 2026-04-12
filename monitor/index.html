@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Monitor de Corazón 💓</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600;1,700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+    <div id="heartsBg"></div>
+
+    <!-- ══ INTRO ══ -->
+    <div id="introScreen" class="screen active">
+        <div class="intro-wrap">
+            <!-- EKG decorativo en la intro -->
+            <svg class="intro-ekg" viewBox="0 0 400 70" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <filter id="glow1"><feGaussianBlur stdDeviation="3" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+                </defs>
+                <path d="M0 35 L90 35 L104 28 L116 35 L124 45 L140 5 L155 65 L168 35 L200 35
+                         L280 35 L294 28 L306 35 L314 45 L330 5 L345 65 L358 35 L400 35"
+                      fill="none" stroke="#e8917a" stroke-width="2.5"
+                      stroke-linecap="round" filter="url(#glow1)"
+                      class="intro-heartbeat"/>
+            </svg>
+
+            <h1 class="intro-title">Hay algo que<br>quiero mostrarte</h1>
+            <p class="intro-sub">Lo que le pasa a este corazón<br>cuando tú estás cerca...</p>
+            <button class="btn-start" id="startBtn">Descubrirlo 💓</button>
+        </div>
+    </div>
+
+    <!-- ══ MONITOR ══ -->
+    <div id="monitorScreen" class="screen">
+
+        <!-- EKG vive arriba: cambia de calma a frenético -->
+        <div class="ekg-stage">
+            <!-- EKG normal - calma - sin ella -->
+            <svg id="ekgNormal" class="ekg-svg" viewBox="0 0 700 90" preserveAspectRatio="none">
+                <defs>
+                    <filter id="glowCool"><feGaussianBlur stdDeviation="2.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+                    <linearGradient id="coolGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%"   stop-color="#c8a882" stop-opacity="0.1"/>
+                        <stop offset="50%"  stop-color="#c8a882" stop-opacity="0.95"/>
+                        <stop offset="100%" stop-color="#c8a882" stop-opacity="0.1"/>
+                    </linearGradient>
+                </defs>
+                <path class="hb hb-calm"
+                      d="M0 45 L150 45 L163 38 L173 45 L181 54 L196 10 L210 82 L224 45 L260 45
+                         L400 45 L413 38 L423 45 L431 54 L446 10 L460 82 L474 45 L510 45 L700 45"
+                      fill="none" stroke="url(#coolGrad)" stroke-width="2.5"
+                      stroke-linecap="round" filter="url(#glowCool)"/>
+            </svg>
+
+            <!-- EKG acelerado - emocionado - con ella -->
+            <svg id="ekgExcited" class="ekg-svg hidden" viewBox="0 0 700 90" preserveAspectRatio="none">
+                <defs>
+                    <filter id="glowHot"><feGaussianBlur stdDeviation="3.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+                    <linearGradient id="hotGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%"   stop-color="#ff6b8a" stop-opacity="0.1"/>
+                        <stop offset="50%"  stop-color="#ff6b8a" stop-opacity="1"/>
+                        <stop offset="100%" stop-color="#ff6b8a" stop-opacity="0.1"/>
+                    </linearGradient>
+                </defs>
+                <path class="hb hb-fast"
+                      d="M0 45 L65 45 L74 38 L82 45 L88 57 L100 5 L112 87 L122 45 L148 45
+                         L213 45 L222 38 L230 45 L236 57 L248 5 L260 87 L270 45 L295 45
+                         L360 45 L369 38 L377 45 L383 57 L395 5 L407 87 L417 45 L442 45
+                         L507 45 L516 38 L524 45 L530 57 L542 5 L554 87 L564 45 L590 45
+                         L700 45"
+                      fill="none" stroke="url(#hotGrad)" stroke-width="2.5"
+                      stroke-linecap="round" filter="url(#glowHot)"/>
+            </svg>
+
+            <!-- BPM flotante sobre el EKG -->
+            <div class="bpm-badge" id="bpmBadge">
+                <span id="bpmVal">72</span>
+                <span class="bpm-unit">BPM</span>
+            </div>
+        </div>
+
+        <!-- Texto romántico - el corazón de la experiencia -->
+        <div class="story-center">
+            <p class="story-text" id="storyText"></p>
+        </div>
+
+        <!-- Controles -->
+        <div class="controls-row">
+            <p class="step-indicator" id="stepIndicator">· · · · ·</p>
+            <button class="btn-next" id="nextBtn">Continuar ↓</button>
+        </div>
+    </div>
+
+    <!-- ══ FINAL ══ -->
+    <div id="finalScreen" class="screen">
+        <div class="final-wrap">
+            <p class="final-label">DIAGNÓSTICO FINAL</p>
+            <div class="pulse-heart" id="pulseHeart">❤️</div>
+            <h1 class="final-title">Este corazón<br>late por ti.</h1>
+            <p class="final-sub">Sin importar qué digan los números,<br>el único resultado que importa eres <em>tú</em>. 💓</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

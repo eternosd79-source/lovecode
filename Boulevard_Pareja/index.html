@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Boulevard - Invitación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600;1,700&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=11">
+</head>
+<body>
+    
+<div id="mobile-viewport">
+    <!-- Fase 1: Oscuridad inicial y la puerta a la distancia -->
+    <div id="escenario-viaje" class="pantalla activa">
+        <h1 id="frase-inicio" class="frase-poetica">"Hay recuerdos que conducen a lugares especiales..."</h1>
+        
+        <div id="escena-conduccion">
+            <!-- El auto interactivo -->
+            <div id="coche-contenedor" class="coche-pulso">
+                <img id="carro-imagen" src="carro.png" alt="Coche">
+                <p class="texto-clic" id="texto-conducir">(Haz clic aquí)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fase 2: Boulevard (Aparecerá en el momento exacto) -->
+    <div id="escenario-boulevard" class="pantalla">
+        <img id="bg-boulevard" src="boulevard.png" alt="Boulevard de los Sueños">
+        <img id="img-personajes" src="personaje.png" alt="Luke y Hasley" class="oculto">
+        
+        <!-- UI Invitacion -->
+        <div id="caja-pregunta" class="oculto">
+            <h2>¿Quieres ir a ver el boulevard conmigo???</h2>
+            <div class="botones-interactivos">
+                <!-- Se engloban sin 'position:absolute' inicialmente para que centren. Luego JS manipulará a absoluto -->
+                <button id="btn-si">Sí</button>
+                <div id="contenedor-no" style="position:relative; width:100px; height:45px;">
+                    <button id="btn-no">No</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmación Final -->
+        <div id="modal-confirmacion" class="oculto">
+            <h2>Bienvenida a nuestro boulevard</h2>
+            <p>"Donde las personas como yo venimos a sentarnos para ver cómo nuestras esperanzas se desvanecen, pero donde, por alguna razón, hoy me alegra que estés tú para mirar esta película conmigo."</p>
+        </div>
+    </div>
+</div> <!-- End mobile-viewport -->
+
+    <script src="script.js?v=10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

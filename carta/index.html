@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>El Sello de Cera Real</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600;1,700&family=Great+Vibes&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- CANVAS DE PÉTALOS Y ESTRELLAS -->
+    <canvas id="ambientCanvas"></canvas>
+
+    <!-- VELO OSCURO DE INTRIGA (Antes de abrir el sobre) -->
+    <div class="vignette-overlay"></div>
+
+    <!-- ESCENA PRINCIPAL -->
+    <div class="scene-container" id="sceneContainer">
+
+        <!-- TEXTO POÉTICO SUPERIOR -->
+        <div class="poetic-header" id="poeticHeader">
+            <div class="golden-line"></div>
+            <p class="header-text">Un mensaje atravesó el tiempo para encontrarte</p>
+            <div class="golden-line"></div>
+        </div>
+
+        <!-- COMPONENTE DEL SOBRE -->
+        <div class="envelope-stage" id="envelopeStage">
+            <div class="envelope-wrapper" id="envelopeWrapper">
+                <div class="envelope">
+
+                    <!-- Fondo del sobre -->
+                    <div class="env-back"></div>
+
+                    <!-- EL PERGAMINO (Oculto en el sobre) -->
+                    <div class="paper-letter" id="paperLetter">
+                        <div class="paper-inner">
+                            <!-- Ornamento superior -->
+                            <div class="paper-ornament top">❧</div>
+
+                            <h2 class="salutation">Para Ti,</h2>
+
+                            <div class="divider-ornament">✦ ✦ ✦</div>
+
+                            <p class="poem-body">Quería detener el tiempo un instante para escribirte y decirte lo profundamente agradecido que estoy de que el universo haya conspirado para que nuestros caminos se cruzaran.</p>
+
+                            <p class="poem-body">Eres la persona más maravillosa que he conocido. Cada día a tu lado se siente como un regalo del que jamás quisiera despertar.</p>
+
+                            <p class="poem-body">Tu risa ilumina todo lo que toca. Tu presencia convierte los momentos ordinarios en memorias eternas.</p>
+
+                            <div class="divider-ornament">— ✦ —</div>
+
+                            <p class="poem-closure">Con todo mi amor,</p>
+                            <h3 class="signature">Tu Romántico Eterno</h3>
+
+                            <!-- Ornamento inferior -->
+                            <div class="paper-ornament bottom">❧</div>
+                        </div>
+                    </div>
+
+                    <!-- Triángulos decorativos del frente -->
+                    <div class="env-front-left"></div>
+                    <div class="env-front-right"></div>
+                    <div class="env-front-bottom"></div>
+
+                    <!-- Solapa articulada en 3D -->
+                    <div class="env-flap" id="envFlap">
+                        <!-- SELLO DE CERA GRANDE Y DETALLADO -->
+                        <div class="wax-seal" id="waxSeal">
+                            <div class="seal-ring"></div>
+                            <div class="seal-content">
+                                <div class="seal-heart">❤</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instrucción sutil pulsante -->
+            <p class="click-hint" id="clickHint">Presiona el sello para abrir</p>
+        </div>
+
+    </div>
+
+    <!-- CARTA FINAL (Pantalla completa, Glassmorphism + Oro) -->
+    <div class="letter-fullscreen hidden" id="letterFullscreen">
+        <div class="letter-frame">
+            <div class="frame-corner tl">✦</div>
+            <div class="frame-corner tr">✦</div>
+            <div class="frame-corner bl">✦</div>
+            <div class="frame-corner br">✦</div>
+
+            <div class="frame-inner">
+                <h2 class="fs-salutation">Para Ti,</h2>
+                <div class="fs-divider">❧ ✦ ❧</div>
+
+                <p class="fs-body">Quería detener el tiempo un instante para escribirte y decirte lo profundamente agradecido que estoy de que el universo haya conspirado para que nuestros caminos se cruzaran.</p>
+
+                <p class="fs-body">Eres la persona más maravillosa que he conocido. Cada día a tu lado se siente como un regalo del que jamás quisiera despertar.</p>
+
+                <p class="fs-body">Tu risa ilumina todo lo que toca. Tu presencia convierte los momentos ordinarios en memorias eternas. Que seas mía es el milagro más grande que conozco.</p>
+
+                <div class="fs-divider small">— ✦ —</div>
+
+                <p class="fs-closure">Con todo mi amor,</p>
+                <h3 class="fs-signature">Tu Romántico Eterno</h3>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

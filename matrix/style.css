@@ -1,0 +1,127 @@
+/* ==========================================
+   MATRIX ROMÁNTICA
+   ========================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body, html {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #000;
+    font-family: 'Montserrat', sans-serif;
+}
+
+canvas {
+    position: fixed; inset: 0; display: block;
+}
+#matrixCanvas { z-index: 0; }
+#vigCanvas    { z-index: 1; pointer-events: none; }
+
+/* OVERLAYS */
+.overlay {
+    position: fixed; inset: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+}
+.overlay.active  { opacity: 1; visibility: visible; }
+.overlay.hidden  { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* --- INTRO SCREEN --- */
+.intro-content {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 28px; text-align: center; padding: 0 30px;
+    max-width: 500px;
+    animation: fadeUp 1.4s ease forwards;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(35px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.intro-eyebrow {
+    font-size: 0.8rem; letter-spacing: 4px;
+    color: rgba(255, 100, 170, 0.7);
+    text-transform: uppercase;
+    animation: glowText 2s infinite alternate;
+}
+@keyframes glowText {
+    from { text-shadow: 0 0 5px rgba(255,80,160,0.3); }
+    to   { text-shadow: 0 0 20px rgba(255,80,160,0.9); }
+}
+
+.intro-heading {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: clamp(2.5rem, 9vw, 4.5rem); line-height: 1.2;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(255,80,160,0.5), 0 0 60px rgba(255,40,120,0.2);
+}
+
+.btn-reveal {
+    padding: 15px 50px; font-size: 1.05rem; font-weight: 500;
+    font-family: 'Montserrat', sans-serif; letter-spacing: 1px;
+    color: #fff;
+    background: linear-gradient(135deg, #c2006e, #ff408a);
+    border: none; border-radius: 50px; cursor: pointer;
+    box-shadow: 0 0 25px rgba(255,64,138,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-reveal:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 45px rgba(255,64,138,0.7);
+}
+
+/* --- MESSAGE OVERLAY --- */
+.message-box {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 16px;
+    text-align: center; padding: 0 25px; max-width: 560px;
+}
+
+.msg-line {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    color: rgba(255, 220, 240, 0.9);
+    line-height: 1.4;
+    opacity: 0; transform: translateY(15px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    text-shadow: 0 0 15px rgba(255,100,180,0.4);
+}
+.msg-line.big {
+    font-size: clamp(2.2rem, 8vw, 4rem);
+    color: #fff;
+    text-shadow:
+        0 0 20px rgba(255,80,150,0.7),
+        0 0 50px rgba(255,40,120,0.4);
+    font-weight: 700;
+}
+.msg-line.show {
+    opacity: 1; transform: translateY(0);
+}
+
+.btn-again {
+    margin-top: 20px;
+    padding: 12px 35px; font-size: 0.9rem; font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255,180,220,0.8); background: transparent;
+    border: 1px solid rgba(255,100,180,0.4); border-radius: 50px;
+    cursor: pointer; letter-spacing: 1px;
+    opacity: 0; pointer-events: none;
+    transition: all 0.3s;
+    animation: none;
+}
+.btn-again.show {
+    opacity: 1; pointer-events: all;
+    animation: fadeUp 0.7s ease forwards;
+}
+.btn-again:hover {
+    background: rgba(255,100,180,0.1);
+    box-shadow: 0 0 20px rgba(255,100,180,0.3);
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

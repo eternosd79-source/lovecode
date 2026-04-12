@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para ti, mi amor 🧸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- PANTALLA INTRO -->
+    <div id="introScreen" class="screen active">
+        <div class="intro-card">
+            <!-- Escena CSS intro -->
+            <div class="scene-intro">
+                <span class="bear-l-intro">🐻</span>
+                <span class="heart-mid">💕</span>
+                <span class="bear-r-intro">🐻</span>
+            </div>
+            <h1 class="intro-title">Para ti,<br>mi amor</h1>
+            <p class="intro-sub">Hay cosas que solo un osito sabe decir<br>con el corazón 💕</p>
+            <button class="btn-rose" id="startBtn">Ver los mensajes 🌸</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE SLIDES -->
+    <div id="slideScreen" class="screen">
+        <div class="slide-bg" id="slideBg"></div>
+
+        <div class="slide-layout">
+            <!-- Escena animada CSS (cambia por JS) -->
+            <div class="bear-scene" id="bearScene"></div>
+
+            <!-- Mensaje -->
+            <div class="message-wrapper">
+                <p class="msg-text" id="msgText"></p>
+            </div>
+        </div>
+
+        <div class="dots-row" id="dotsRow"></div>
+        <p class="tap-hint" id="tapHint">Toca para continuar ✨</p>
+    </div>
+
+    <!-- PANTALLA FINAL -->
+    <div id="finalScreen" class="screen">
+        <div id="petalFall"></div>
+        <div class="final-card">
+            <div class="scene-final">
+                <span class="bear-final-l">🐻</span>
+                <span class="heart-final">💖</span>
+                <span class="bear-final-r">🐻</span>
+            </div>
+            <h1 class="final-title">Así te quiero a ti,<br>siempre y para siempre 🌹</h1>
+            <p class="final-sub">Gracias por ser la razón de la sonrisa<br>de este osito enamorado. 🧸💖</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

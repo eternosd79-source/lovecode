@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Te Amo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- =========================================
+         PANTALLA 1: INTRO CINEMATOGRÁFICO
+         ========================================= -->
+    <div class="intro-overlay" id="introOverlay">
+        <!-- Frases en secuencia -->
+        <p class="intro-phrase" id="iPhrase1">Cada latido de mi corazón...</p>
+        <p class="intro-phrase" id="iPhrase2" style="display:none;">...tiene tu nombre escrito. 💗</p>
+        <p class="intro-phrase" id="iPhrase3" style="display:none;">Deja que te lo demuestre.</p>
+        <!-- Botón de entrada -->
+        <button class="btn-reveal" id="btnReveal" style="display:none;">
+            <span>Ver la magia</span>
+            <div class="btn-shimmer"></div>
+        </button>
+    </div>
+
+    <!-- =========================================
+         PANTALLA 2: EL CORAZÓN 3D (OCULTO INICIALMENTE)
+         ========================================= -->
+    <div id="heart-screen" style="display:none; position:fixed; inset:0; z-index:1;">
+        <!-- Canvas donde vive el Mundo 3D (Three.js) -->
+        <div id="threejs-canvas"></div>
+
+        <!-- UI Dinámica Inferior -->
+        <footer class="bottom-ui">
+            <div id="bigNeonText">I LOVE YOU</div>
+            <div class="progress-status" id="statusString">Inicializando partículas...</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="pbFill"></div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

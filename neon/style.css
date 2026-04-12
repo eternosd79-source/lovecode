@@ -1,0 +1,193 @@
+/* ==========================================
+   NEON - ESTILO ROMÁNTICO CON CORAZÓN NEON
+   ========================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body, html {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #020815; /* Azul noche muy oscuro */
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+}
+
+canvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+}
+
+/* SCREENS */
+.screen {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+.screen.active { opacity: 1; visibility: visible; }
+
+/* ===================== INTRO ===================== */
+.intro-content {
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    animation: riseFade 1.4s ease forwards;
+}
+@keyframes riseFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.intro-label {
+    font-size: 0.85rem; letter-spacing: 4px;
+    color: rgba(0, 212, 255, 0.7);
+    animation: glow 2s infinite alternate;
+}
+@keyframes glow {
+    from { text-shadow: 0 0 5px rgba(0,212,255,0.3); }
+    to   { text-shadow: 0 0 20px rgba(0,212,255,0.9), 0 0 40px rgba(0,212,255,0.4); }
+}
+
+.intro-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(3rem, 10vw, 5rem); line-height: 1.1;
+    background: linear-gradient(135deg, #00d4ff, #7722ff, #cc00ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(0,212,255,0.5));
+}
+
+.intro-sub {
+    font-size: 1rem; color: rgba(180,220,255,0.8);
+    line-height: 1.7; font-weight: 300;
+}
+
+.btn-neon {
+    margin-top: 10px;
+    padding: 14px 45px; font-size: 1rem; font-weight: 500;
+    font-family: 'Montserrat', sans-serif; letter-spacing: 1px;
+    color: #00d4ff; background: transparent;
+    border: 1px solid rgba(0,212,255,0.5); border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0,212,255,0.2), inset 0 0 10px rgba(0,212,255,0.05);
+    transition: all 0.3s;
+}
+.btn-neon:hover {
+    background: rgba(0,212,255,0.1);
+    box-shadow: 0 0 30px rgba(0,212,255,0.5), 0 0 60px rgba(0,212,255,0.2);
+    border-color: #00d4ff;
+}
+
+/* ===================== HEART SCREEN ===================== */
+.heart-caption {
+    position: absolute; top: 8%;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: clamp(1.1rem, 4vw, 1.6rem);
+    color: rgba(180, 220, 255, 0.85);
+    text-align: center; padding: 0 20px;
+    text-shadow: 0 0 20px rgba(0,200,255,0.4);
+    opacity: 0; transition: opacity 1s ease;
+    max-width: 500px;
+}
+.heart-caption.show { opacity: 1; }
+
+.heart-center-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -48%);
+    text-align: center; z-index: 15; pointer-events: none;
+}
+
+#mainText {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(3rem, 12vw, 6rem);
+    background: linear-gradient(135deg, #ffffff, #00d4ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(0,212,255,0.8));
+    white-space: nowrap;
+}
+
+.cursor {
+    display: inline-block;
+    -webkit-text-fill-color: #00d4ff;
+    animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+.bottom-row {
+    position: absolute; bottom: 7%;
+    display: flex; flex-direction: column; align-items: center; gap: 15px;
+}
+
+.footer-neon {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.4rem; color: #00d4ff;
+    text-shadow: 0 0 10px rgba(0,212,255,0.8), 0 0 30px rgba(0,212,255,0.4);
+    animation: glow 2s infinite alternate;
+}
+
+.btn-next {
+    padding: 12px 35px; font-size: 0.95rem;
+    font-family: 'Montserrat', sans-serif; font-weight: 500;
+    color: rgba(200,240,255,0.9); background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.35); border-radius: 50px;
+    cursor: pointer; letter-spacing: 1px;
+    transition: all 0.3s;
+    opacity: 0; pointer-events: none;
+    animation: none;
+}
+.btn-next.visible {
+    opacity: 1; pointer-events: all;
+    animation: riseFade 0.7s ease forwards;
+}
+.btn-next:hover {
+    background: rgba(0,212,255,0.15);
+    box-shadow: 0 0 20px rgba(0,212,255,0.4);
+}
+
+/* ===================== FINAL VERSE ===================== */
+.final-verse {
+    position: absolute;
+    /* El corazón está centrado horizontalmente y al 48% vertical */
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.4rem, 4.5vw, 2.2rem);
+    line-height: 1.7;
+    color: rgba(220, 240, 255, 0.95);
+    text-shadow:
+        0 0 15px rgba(0, 200, 255, 0.7),
+        0 0 40px rgba(120, 80, 255, 0.4),
+        0 2px 8px rgba(0,0,0,0.9);
+    animation: verseAppear 2.5s ease forwards;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    z-index: 20;
+}
+.final-verse em {
+    font-style: italic;
+    display: block;
+    font-size: 1.15em;
+    color: #00d4ff;
+    text-shadow:
+        0 0 20px rgba(0, 212, 255, 1),
+        0 0 50px rgba(0, 180, 255, 0.5);
+    margin-top: 6px;
+}
+@keyframes verseAppear {
+    0%   { opacity: 0; transform: translate(-50%, -40%); }
+    50%  { opacity: 0; }
+    100% { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

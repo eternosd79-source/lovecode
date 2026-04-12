@@ -1,0 +1,189 @@
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+body, html { 
+    width: 100vw; height: 100vh; overflow: hidden; 
+    /* Fondo Profundo (Abismo Amatista) */
+    background: radial-gradient(circle at center, #15051a 0%, #05020a 100%); 
+    color: #fff; 
+    font-family: 'Cormorant Garamond', serif; 
+}
+
+/* ==================================
+   SECUENCIA DE INICIO (El Telón de Luz)
+   ================================== */
+.intro-sequence {
+    position: fixed; inset: 0; z-index: 2000; /* Encima de todo al inicio */
+    background: #000; /* Vacío abismal y expectante */
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    transition: opacity 2.5s ease-in-out;
+}
+
+.intro-text {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+    text-align: center; padding: 0 40px;
+    position: absolute;
+    opacity: 0;
+    animation: textFadeIn 2.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.intro-text.fade-out {
+    animation: textFadeOut 2.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes textFadeIn {
+    0% { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+
+@keyframes textFadeOut {
+    0% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+    100% { opacity: 0; transform: translateY(-20px); filter: blur(10px); }
+}
+
+.btn-unlock {
+    padding: 15px 60px; 
+    border-radius: 50px;
+    background: transparent; 
+    border: 1px solid rgba(255, 214, 112, 0.4);
+    color: #ffe8b3; 
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; 
+    text-transform: uppercase; 
+    letter-spacing: 5px;
+    cursor: pointer; 
+    box-shadow: 0 0 20px rgba(255, 214, 112, 0.1);
+    transition: all 0.5s ease;
+    opacity: 0;
+    /* Efecto fantasma que aparece como un suspiro */
+    animation: textFadeIn 3s 0.5s ease-out forwards, floatUnlock 3s infinite 3s ease-in-out alternate;
+}
+
+@keyframes floatUnlock {
+    0% { transform: translateY(0px); box-shadow: 0 0 20px rgba(255, 214, 112, 0.1); }
+    100% { transform: translateY(-5px); box-shadow: 0 0 40px rgba(255, 214, 112, 0.5); }
+}
+
+.btn-unlock:hover {
+    background: rgba(255, 214, 112, 0.15);
+    border-color: #ffe8b3;
+    box-shadow: 0 0 50px rgba(255, 214, 112, 0.8), inset 0 0 15px rgba(255, 214, 112, 0.3);
+    transform: scale(1.05) translateY(-5px);
+}
+
+/* ==================================
+   SISTEMA DE EXPERIENCIA (Fondo+Glass)
+   ================================== */
+#bgCanvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+#victoryCanvas { position: absolute; inset: 0; z-index: 100; pointer-events: none; }
+
+.glass-container {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; max-width: 450px;
+    padding: 45px 30px;
+    z-index: 10;
+    
+    background: rgba(40, 10, 45, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 214, 112, 0.15); 
+    border-top: 1px solid rgba(255, 214, 112, 0.4); 
+    border-radius: 25px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(255, 214, 112, 0.05);
+    text-align: center;
+    transition: opacity 2s ease-in-out, transform 2s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.glass-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -35%) scale(0.95); /* Entra emergiendo de abajo hacia arriba */
+}
+
+.glass-container h2 {
+    font-size: clamp(1.8rem, 4vw, 2.2rem);
+    color: #ffe8b3;
+    font-style: italic;
+    margin-bottom: 15px;
+    text-shadow: 0 0 20px rgba(255, 214, 112, 0.3);
+}
+
+.glass-container p {
+    font-size: 1.3rem;
+    color: rgba(255, 230, 240, 0.9);
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.question {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    color: #ff4d6d;
+    margin-bottom: 40px;
+    text-shadow: 0 0 25px rgba(255, 77, 109, 0.7);
+}
+
+.button-group {
+    display: flex; justify-content: center; gap: 30px;
+    position: relative; height: 50px;
+}
+
+/* ==================================
+   BOTONES Y VICTORIA
+   ================================== */
+.btn {
+    padding: 12px 40px;
+    font-family: inherit; font-size: 1.4rem; font-weight: 700; letter-spacing: 2px;
+    border-radius: 30px; cursor: pointer; transition: all 0.3s ease;
+    background: transparent; outline: none;
+}
+
+.btn-yes {
+    border: 1px solid #ff4d6d; color: #ff4d6d;
+    box-shadow: 0 0 15px rgba(255, 77, 109, 0.3), inset 0 0 10px rgba(255, 77, 109, 0.1);
+}
+.btn-yes:hover {
+    background: rgba(255, 77, 109, 0.2);
+    box-shadow: 0 0 35px rgba(255, 77, 109, 0.7);
+    transform: scale(1.05);
+}
+
+.btn-no {
+    border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.6);
+    position: relative;
+    z-index: 1000;
+}
+
+.success-screen {
+    position: fixed; inset: 0; z-index: 500;
+    background: #020005;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    opacity: 0; pointer-events: none; transition: opacity 2s ease-in-out;
+}
+.success-screen.visible { 
+    opacity: 1; pointer-events: auto; 
+}
+
+.success-title {
+    font-size: clamp(2.5rem, 6vw, 4rem); color: #ffe8b3;
+    text-align: center; text-shadow: 0 0 30px rgba(255, 214, 112, 1);
+    margin-bottom: 20px; z-index: 105; max-width: 80%;
+}
+
+.success-sub { 
+    font-size: 2rem; color: #ff4d6d; font-style: italic; z-index: 105; 
+    text-shadow: 0 0 15px rgba(255, 77, 109, 0.8);
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

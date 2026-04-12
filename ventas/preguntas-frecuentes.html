@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preguntas Frecuentes — LoveCode</title>
+    <meta name="description" content="Resolvemos todas tus dudas sobre LoveCode: pagos, tiempos, plantillas y más.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, #0a0a0f 0%, #040d1a 50%, #0a0a0f 100%);
+            padding: 120px 5% 80px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .page-hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 15px; }
+        .page-hero p { color: var(--color-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .page-content { max-width: 800px; margin: 0 auto; padding: 70px 5%; }
+
+        /* Acordeón de FAQ */
+        .faq-category { margin-bottom: 50px; }
+        .faq-category h2 {
+            font-size: 1.2rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .faq-item:hover { border-color: rgba(192,38,211,0.3); }
+        .faq-question {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: white;
+            user-select: none;
+        }
+        .faq-question i.arrow {
+            color: var(--accent-purple);
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+        .faq-item.open .faq-question i.arrow {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s;
+            padding: 0 25px;
+            color: var(--color-dim);
+            font-size: 0.92rem;
+            line-height: 1.8;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+            padding: 0 25px 20px;
+        }
+        .faq-answer a { color: var(--accent-cyan); }
+        .faq-answer strong { color: white; }
+
+        .cta-bottom {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(192,38,211,0.08), rgba(6,182,212,0.06));
+            border: 1px solid rgba(192,38,211,0.2);
+            border-radius: 20px;
+            padding: 50px 30px;
+            margin-top: 60px;
+        }
+        .cta-bottom h3 { font-size: 1.5rem; margin-bottom: 10px; }
+        .cta-bottom p { color: var(--color-dim); margin-bottom: 25px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration:none;">
+            <i class="fa-solid fa-code"></i>
+            <span>Love<strong>Code</strong></span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#catalogo">Catálogo</a></li>
+            <li><a href="index.html#precios">Precios</a></li>
+            <li><a href="index.html#mis-pedidos">Mis Pedidos</a></li>
+        </ul>
+        <a href="index.html#catalogo" class="btn-primary-sm">Crear Regalo</a>
+    </nav>
+
+    <div class="page-hero">
+        <span class="badge-tech" style="margin-bottom:20px; display:inline-block;">
+            <i class="fa-solid fa-circle-question"></i> FAQ
+        </span>
+        <h1>Preguntas <span class="neon-cyan">Frecuentes</span></h1>
+        <p>¿Tienes dudas? Aquí encontrarás las respuestas más comunes. Si no está tu pregunta, escríbenos por WhatsApp.</p>
+    </div>
+
+    <div class="page-content">
+
+        <!-- PAGOS -->
+        <div class="faq-category">
+            <h2><i class="fa-solid fa-credit-card"></i> Pagos</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué métodos de pago aceptan?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Aceptamos <strong>transferencias bancarias, PayPal, Zelle y Venmo</strong>. Para clientes en Ecuador también aceptamos depósitos y transferencias locales. El proceso es guiado paso a paso por WhatsApp.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cuánto cuesta un regalo?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Los planes van desde <strong>$0 USD (demo gratuita)</strong> hasta <strong>$7 USD (Ultra Premium)</strong> con código fuente incluido. Revisa todos los planes en la <a href="index.html#precios">sección de precios</a>.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿El pago es seguro?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Sí. No almacenamos datos de tarjetas. Los pagos internacionales van directo a <strong>PayPal</strong>, con toda su protección. Los pagos locales se confirman por WhatsApp con comprobante.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿Puedo pedir un reembolso?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Dado que el producto es digital y personalizado, <strong>no ofrecemos reembolsos</strong> una vez activado el link. Si hay algún error de nuestra parte, lo corregimos sin costo adicional. Escríbenos antes de pagar si tienes dudas.
+                </div>
+            </div>
+        </div>
+
+        <!-- REGALOS -->
+        <div class="faq-category">
+            <h2><i class="fa-solid fa-gift"></i> Los Regalos</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿En cuánto tiempo recibo mi regalo?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Una vez confirmado el pago, tu regalo estará listo en <strong>5 a 15 minutos</strong>. En horario nocturno puede ser hasta 8 horas. Siempre te avisamos por WhatsApp.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué recibe la persona que quiero sorprender?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Recibe un <strong>link web único</strong>. Al abrirlo, ve una experiencia visual inmersiva con tu música, tus mensajes y tus fotos (si elegiste un plan que lo incluye). No necesita apps ni cuentas.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cuánto tiempo dura el link activo?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Depende del plan: <strong>Demo = 24 horas</strong>, Básico = 2 semanas, Personalizado = 2.5 meses, Ultra Premium = 6 meses, Membresía = acceso permanente a la plataforma.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿Puedo cambiar los textos después del pago?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Por el momento los textos se fijan al activar el regalo. Si necesitas un cambio pequeño, escríbenos por WhatsApp y con gusto lo evaluamos sin costo extra si es un error menor.
+                </div>
+            </div>
+        </div>
+
+        <!-- MEMBRESÍA -->
+        <div class="faq-category">
+            <h2><i class="fa-solid fa-users"></i> Membresía Hub</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué es la Membresía Hub?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    Es un plan especial de <strong>$4.50 USD de pago único</strong> que te da acceso vitalicio a beneficios exclusivos: agregar fotos reales, votar nuevas experiencias, acceso anticipado a plantillas y soporte prioritario.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    ¿La Membresía reemplaza al plan de regalo?
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </div>
+                <div class="faq-answer">
+                    No. La membresía es un <strong>complemento</strong>. Para crear un regalo, sigues eligiendo un plan (Básico, Personalizado o Ultra Premium). La membresía desbloquea beneficios adicionales sobre ese plan.
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-bottom">
+            <h3>¿No encontraste tu respuesta?</h3>
+            <p>Escríbenos directamente por WhatsApp y te respondemos en minutos.</p>
+            <a href="https://wa.me/593990480389?text=Hola%20LoveCode!%20Tengo%20una%20pregunta%20que%20no%20encontr%C3%A9%20en%20el%20FAQ." 
+               target="_blank" class="btn-whatsapp" style="display:inline-flex; text-decoration:none; font-size:1rem; padding:14px 28px;">
+                <i class="fa-brands fa-whatsapp"></i> Preguntarnos por WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <a href="https://wa.me/593990480389?text=Hola%20LoveCode!%20Tengo%20una%20pregunta." 
+       class="floating-wa" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="wa-bubble-label">¿Tienes dudas?</span>
+    </a>
+
+    <script>
+        function toggleFaq(el) {
+            const item = el.parentElement;
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+    </script>
+</body>
+</html>

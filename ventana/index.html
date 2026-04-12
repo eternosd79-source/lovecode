@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Luz - Te Amo</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+
+    <!-- ============================
+         PANTALLA DE INICIO (INTRO)
+         ============================ -->
+    <div id="intro-screen">
+        <!-- Contenedor de pétalos generados por JS -->
+        <div id="petals-container"></div>
+
+        <!-- Contenido central del intro -->
+        <div class="intro-content">
+            <div class="intro-sparkles">✨ 🌸 ✨</div>
+            <h1 class="intro-title">Preparé algo<br>especial para ti...</h1>
+            <p class="intro-subtitle">Porque cada día merece recordarse</p>
+            <button class="intro-btn" id="introBtn">
+                <span class="btn-text">Abrir 💌</span>
+                <div class="btn-glow"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ONDA DE TRANSICIÓN -->
+    <div id="wave-transition"></div>
+
+    <!-- Contenedor general del background espacial neon -->
+    <div class="background-container">
+        <!-- Corazones generados por JS irán aquí -->
+    </div>
+
+    <!-- Título superior fuera de la tarjeta -->
+    <h1 class="top-title">I love you ♡</h1>
+
+    <!-- Tarjeta Glassmorfismo Principal -->
+    <div class="glass-card" id="mainCard">
+        
+        <!-- Botón de Cerrar (Decorativo/Funcional) -->
+        <div class="close-btn" id="closeBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
+
+        <!-- Contenido Superior -->
+        <h2 class="card-title">Para Luz ✨</h2>
+        
+        <div class="card-body">
+            <p>
+                En cada latido de mi corazón encuentro la melodía perfecta que compone nuestra historia de amor. 
+                Eres la luz que ilumina mis días más oscuros y la razón por la cual cada amanecer tiene sentido. 
+                Tu sonrisa es mi refugio, tu abrazo mi hogar, y tu amor la fuerza que me impulsa a ser mejor cada día. 🌟
+            </p>
+        </div>
+
+        <!-- Galería de 3 Fotos Solapadas en 3D -->
+        <div class="photo-gallery">
+            <!-- Foto Izquierda -->
+            <div class="polaroid photo-left">
+                <!-- Por ahora es un div vacío gris/rosado, luego el usuario cambiará el bg-image -->
+                <div class="photo-img" style="background-image: url('img/1.jpg');"></div>
+                <div class="floating-heart heart-1">💖</div>
+            </div>
+
+            <!-- Foto Derecha -->
+            <div class="polaroid photo-right">
+                <div class="photo-img" style="background-image: url('img/3.jpg');"></div>
+                <div class="floating-heart heart-2">💓</div>
+            </div>
+
+            <!-- Foto Central (Encima) -->
+            <div class="polaroid photo-center">
+                <div class="photo-img" style="background-image: url('img/2.jpg');"></div>
+                <!-- Pequeños brillos y corazones sobre la foto central -->
+                <div class="floating-sparkle sparkle-1">✨</div>
+                <div class="floating-heart heart-3">💗</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Título inferior fuera de la tarjeta -->
+    <h1 class="bottom-title">I love you ♡</h1>
+
+    <script src="app.js?v=1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

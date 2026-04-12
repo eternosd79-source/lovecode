@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>La Supernova del Corazón</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- CONTENEDOR 3D BASE -->
+    <div id="canvas-container"></div>
+    
+    <!-- CAPA INTRODUCTORIA (EL VELO) -->
+    <div class="intro-screen" id="introScreen">
+        <h1 class="intro-text" id="int1">En la inmensidad del universo...</h1>
+        <h2 class="intro-text" id="int2">Hay una fuerza capaz de crear luz pura.</h2>
+        <button class="btn-start hidden" id="btnStart">Descubrirla</button>
+    </div>
+
+    <!-- INSTRUCCIÓN DE INTERACTIVIDAD (Aparece tras el intro) -->
+    <div class="hud-screen hidden" id="hudScreen">
+        <p class="hud-instruction">Mantén presionado para encender la luz</p>
+        <div class="hud-progress-ring">
+            <!-- Anillo que se llenará via stroke-dashoffset en JS -->
+            <svg class="ring-svg" width="120" height="120">
+                <circle class="ring-bg" cx="60" cy="60" r="50"></circle>
+                <circle class="ring-fill" id="energyRing" cx="60" cy="60" r="50"></circle>
+            </svg>
+        </div>
+    </div>
+
+    <!-- CLÍMAX DORADO (SUPERNOVA FINAL) -->
+    <div id="climaxScreen" class="hidden">
+        <h1 id="cl1">Te Amo</h1>
+        <h1 id="cl2">Para Siempre</h1>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+    <!-- LIBRERÍAS DE 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

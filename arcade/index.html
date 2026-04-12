@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Ti · Con Todo Mi Amor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@1,400;1,600;1,700&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Canvas del universo de partículas (silueta del corazón) -->
+    <canvas id="canvas-universe"></canvas>
+
+    <!-- Viñeta CSS -->
+    <div class="vignette"></div>
+
+    <!-- UI Principal -->
+    <div class="ui-layer" id="mainUI">
+
+        <header class="site-header">
+            <div class="header-line"></div>
+            <div class="header-center">
+                <p class="header-eyebrow">— Para ti —</p>
+                <h1 class="main-title">Con todo mi amor</h1>
+            </div>
+            <div class="header-line"></div>
+        </header>
+
+        <main class="center-content">
+            <div class="heart-glow-ring"></div>
+            <div class="pulsing-heart-container">
+                <svg viewBox="0 0 512 512" class="glass-heart" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <!-- Brillo suave rosa -->
+                        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                            <feGaussianBlur stdDeviation="14" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <!-- Gradiente holográfico de cristal -->
+                        <radialGradient id="glassGradient" cx="28%" cy="25%" r="75%" fx="18%" fy="15%">
+                            <stop offset="0%"   stop-color="#fff0f5"/>
+                            <stop offset="12%"  stop-color="#ffc0d4"/>
+                            <stop offset="45%"  stop-color="#e8436a"/>
+                            <stop offset="75%"  stop-color="#8c0028"/>
+                            <stop offset="100%" stop-color="#2e0009"/>
+                        </radialGradient>
+                        <!-- Highlight de reflejo superior -->
+                        <radialGradient id="highlight" cx="35%" cy="22%" r="30%">
+                            <stop offset="0%"  stop-color="rgba(255,255,255,0.55)"/>
+                            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                        </radialGradient>
+                    </defs>
+
+                    <!-- Cuerpo del corazón -->
+                    <path filter="url(#glow)" fill="url(#glassGradient)"
+                          d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/>
+                    <!-- Reflejo de cristal -->
+                    <path fill="url(#highlight)"
+                          d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/>
+                </svg>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p class="footer-hint">Cada estrella en este cielo eres tú</p>
+            <button class="crystal-btn" id="loveBtn">
+                <span class="btn-text">Lo sé, te amo</span>
+            </button>
+        </footer>
+
+    </div>
+
+    <!-- PANTALLA DE DEDICATORIA FINAL -->
+    <div class="dedicatoria-screen hidden" id="dedicatoriaScreen">
+        <div class="ded-card">
+            <div class="ded-corner tl">✦</div>
+            <div class="ded-corner tr">✦</div>
+            <div class="ded-corner bl">✦</div>
+            <div class="ded-corner br">✦</div>
+            <p class="ded-eyebrow">❧ ✦ ❧</p>
+            <h2 class="ded-title">Eres mi razón</h2>
+            <div class="ded-divider"></div>
+            <p class="ded-body">
+                Eres mi razón favorita de sonreír cada mañana.<br>
+                Mi lugar favorito en el mundo entero.<br>
+                Mi hogar, mi calma, mi todo.
+            </p>
+            <p class="ded-signature">Con amor eterno</p>
+            <span class="ded-ornament">✦</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

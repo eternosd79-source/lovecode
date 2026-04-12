@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¿Me Perdonas? 🥺</title>
+    <!-- Fonts: Inter for minimal, Playfair Display for romance -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/492cc5c777.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <!-- PANTALLA INTRO EVAISVA -->
+    <div id="evasiveScreen" class="screen active">
+        <div class="stars-bg"></div>
+        <div class="apology-card">
+            <div class="icon-sad">
+                <i class="fa-solid fa-heart-crack"></i>
+            </div>
+            <!-- Los Textos se rellenaran automatico desde personalizar.js usando id="msgText" -->
+            <h1 class="intro-title" id="msgTitle">Sé que me equivoqué...</h1>
+            <p class="intro-sub" id="msgText">Por favor dime que podemos intentarlo una vez más. Prometo hacer las cosas bien.</p>
+            <h2 class="question">¿Me perdonas?</h2>
+            
+            <div class="button-container">
+                <button class="btn-yes" id="btnYes">Sí, te perdono 💖</button>
+                <button class="btn-no" id="btnNo">No te perdono 💔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA FINAL (ACEPTACIÓN) -->
+    <div id="finalScreen" class="screen">
+        <div id="particlesBox"></div>
+        <div class="final-card">
+            <div class="icon-happy">
+                <i class="fa-solid fa-heart fa-beat" style="color: #ff2d75;"></i>
+            </div>
+            <h1 class="final-title" id="msgTitle2">¡Gracias mi amor!</h1>
+            <p class="final-sub" id="msgText2">Te juro que no te arrepentirás. Eres lo más importante en mi vida.</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

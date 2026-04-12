@@ -1,0 +1,54 @@
+# ================================================
+# LOVECODE — .gitignore
+# ================================================
+
+# ⚠️ CRÍTICO: MP4/MP3 de música NUNCA en el repo
+# Deben vivir en Supabase Storage o CDN externo
+*.mp4
+*.MP4
+*.mp3
+*.MP3
+ventas/*.mp4
+ventas/*.mp3
+
+# Scripts de utilidad locales
+fix_mobile.py
+*.py
+
+# Sistema operativo — Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editores / IDEs
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node (si se llega a usar build tools)
+node_modules/
+npm-debug.log*
+dist/
+build/
+
+# Vercel
+.vercel/
+
+# Variables de entorno — NUNCA en el repo
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Archivos temporales
+*.log
+*.tmp
+*.bak

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galaxia de Amor</title>
+    <!-- Fuentes modernas y elegantes -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+    
+    <!-- INTERFAZ PRINCIPAL -->
+    <div id="ui-layer">
+        <h1 class="main-title">Eres mi galaxia</h1>
+        <p class="zoom-hint">Acércate pellizcando la pantalla o moviendo tu rueda del ratón</p>
+    </div>
+
+    <!-- MOTOR 3D -->
+    <div id="canvas-container"></div>
+    
+    <!-- Elementos HTML flotantes proyectados desde 3D a 2D vía JS -->
+    <div id="labels-container">
+        <!-- JS inyectará <div class="floating-label">Etiqueta</div> -->
+    </div>
+
+
+    <!-- Librería Core Three.js y Controles Orbitales -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="app.js?v=3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

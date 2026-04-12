@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Te Amo 💙</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Cormorant+Garamond:ital,wght@1,600&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Canvas para partículas y estrellas -->
+    <canvas id="canvas"></canvas>
+
+    <!-- ══════ PANTALLA INTRO ══════ -->
+    <div id="introScreen" class="screen active">
+        <div class="intro-content">
+            <p class="intro-label">✦ Para ti ✦</p>
+            <h1 class="intro-title">Con todo<br>mi corazón</h1>
+            <p class="intro-sub">Hay tres palabras que resumen<br>todo lo que siento por ti...</p>
+            <button class="btn-neon" id="startBtn">Descubrirlas ✨</button>
+        </div>
+    </div>
+
+    <!-- ══════ PANTALLA CORAZÓN ══════ -->
+    <div id="heartScreen" class="screen">
+        <!-- Texto sobre el corazón (arriba) -->
+        <p class="heart-caption" id="heartCaption"></p>
+
+        <!-- Corazón de partículas (vive en el canvas) -->
+        <div class="heart-center-text">
+            <h1 id="mainText"><span id="typed"></span><span class="cursor">|</span></h1>
+        </div>
+
+        <!-- Nota inferior y botón avanzar -->
+        <div class="bottom-row">
+            <p class="footer-neon">✦ Para siempre ✦</p>
+            <button class="btn-next" id="nextBtn">Siguiente 💙</button>
+        </div>
+    </div>
+
+    <!-- ══════ PANTALLA FINAL ══════ -->
+    <div id="finalScreen" class="screen">
+        <!-- Texto debajo del corazón, sin tocarlo -->
+        <p class="final-verse">
+            Este corazón de luz<br>
+            <em>late únicamente por ti...</em>
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

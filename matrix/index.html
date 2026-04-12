@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Love 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Lluvia Matrix de amor (Canvas principal) -->
+    <canvas id="matrixCanvas"></canvas>
+    <!-- Vignette encima de la lluvia -->
+    <canvas id="vigCanvas"></canvas>
+
+    <!-- Pantalla Intro -->
+    <div id="introScreen" class="overlay active">
+        <div class="intro-content">
+            <p class="intro-eyebrow">✦ Un mensaje para ti ✦</p>
+            <h1 class="intro-heading">Hay palabras<br>que nunca dejan<br>de caer...</h1>
+            <button class="btn-reveal" id="startBtn">Descubrir 💕</button>
+        </div>
+    </div>
+
+    <!-- Mensaje central que emerge -->
+    <div id="messageOverlay" class="overlay hidden">
+        <div class="message-box" id="messageBox">
+            <p class="msg-line" id="msgLine1"></p>
+            <p class="msg-line big" id="msgLine2"></p>
+            <p class="msg-line" id="msgLine3"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

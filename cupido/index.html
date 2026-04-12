@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>El Flechazo Celestial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- LIENZO DE POLVO ESTELAR Y DIBUJO -->
+    <canvas id="cupidCanvas"></canvas>
+
+    <!-- INTRODUCCIÓN POÉTICA -->
+    <div class="intro-screen" id="introScreen">
+        <h1 class="intro-title" id="introTitle">Un hilo rojo...</h1>
+        <p class="intro-sub" id="introSub" style="display:none;">...nos conecta sin importar el tiempo y la distancia.</p>
+        
+        <button class="btn-reveal" id="btnReveal" style="display:none;">
+            <span>Seguir la Luz</span>
+            <div class="btn-shimmer"></div>
+        </button>
+    </div>
+
+    <!-- EL MENSAJE CLÍMAX (OCULTO AL INICIO) -->
+    <div class="climax-screen hidden" id="climaxScreen">
+        <h2 class="climax-text" id="ct1">Me flechaste desde el primer día que te vi...</h2>
+        <h2 class="climax-text" id="ct2">Y cada latido desde entonces...</h2>
+        <h1 class="climax-grand" id="ct3">...ha sido únicamente tuyo. 💘</h1>
+        <p class="climax-final" id="ct4">✨ T E &nbsp; A M O ✨</p>
+    </div>
+
+    <!-- AUDIO OPCIONAL (Para un sonido celestial/flecha)
+         Comentado para no saltar políticas de autoplay, pero preparado -->
+    <!-- <audio id="arrowSound" src="arrow_magic.mp3" preload="auto"></audio> -->
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

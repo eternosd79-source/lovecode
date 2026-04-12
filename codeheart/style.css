@@ -1,0 +1,270 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100vw;
+    height: 100vh;
+    background-color: #050508; /* Vacío Dark Cyberpunk */
+    overflow: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =================================
+   ZONA 3D
+   ================================= */
+#threejs-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1; 
+    transition: filter 2s ease, transform 3s ease;
+}
+
+#threejs-canvas.blur-bg {
+    filter: blur(20px); 
+    transform: scale(2); /* Efecto salto al hiperespacio */
+}
+
+/* =================================
+   EL IDE DEL AMOR (VENTANA FLOTANTE)
+   ================================= */
+.ide-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* Dejar pasar clics no intencionales al fondo */
+    transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.ide-screen.close-ide {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+}
+
+.ide-window {
+    position: relative;
+    width: 90%;
+    max-width: 650px;
+    background: rgba(15, 10, 25, 0.7); /* Vidrio oscuro lujoso */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(255,100,180,0.15);
+    border-radius: 12px;
+    overflow: hidden;
+    pointer-events: auto; /* Esta área es interactiva */
+}
+
+/* Barra Mac OS */
+.mac-header {
+    height: 38px;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.mac-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.red { background-color: #ff5f56; }
+.yellow { background-color: #ffbd2e; }
+.green { background-color: #27c93f; }
+
+.header-title {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: #8b8b9e;
+    pointer-events: none;
+    font-weight: 500;
+}
+
+/* Panel de Código */
+.ide-body {
+    padding: 30px 25px;
+    min-height: 250px; /* Espacio para que el código no salte */
+    overflow-x: auto;
+}
+
+pre {
+    margin: 0;
+}
+
+code {
+    font-family: 'Fira Code', monospace;
+    font-size: clamp(0.85rem, 3vw, 1.1rem);
+    line-height: 1.7;
+    color: #f8f8f2; /* Dracula white */
+    white-space: pre-wrap;
+}
+
+/* 
+   =========================
+   Syntax Highlighting VIP 
+   (Dracula + Cyberpunk neon)
+   ========================= 
+*/
+.kw { color: #ff79c6; font-weight: 600; text-shadow: 0 0 8px rgba(255,121,198,0.4); } /* Keywords */
+.var { color: #8be9fd; text-shadow: 0 0 8px rgba(139,233,253,0.4); } /* Variables / Parametros */
+.fn { color: #50fa7b; text-shadow: 0 0 8px rgba(80,250,123,0.4); } /* Funciones */
+.str { color: #f1fa8c; text-shadow: 0 0 8px rgba(241,250,140,0.4); } /* Strings */
+.op { color: #ffb86c; } /* Operadores */
+.cm { color: #6272a4; font-style: italic; } /* Comentarios */
+
+.cursor-blink {
+    border-left: 8px solid #ff79c6; /* Cursor rosa grueso vibrante */
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+}
+@keyframes blink { 50% { border-color: transparent; } }
+
+
+/* Footer: Botón de Compilar */
+.ide-footer {
+    background: rgba(0, 0, 0, 0.6);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.btn-run {
+    background: transparent;
+    border: none;
+    font-family: 'Fira Code', monospace;
+    font-size: 1rem;
+    color: #50fa7b;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: translateX(-10px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 10px rgba(80,250,123,0.5);
+}
+
+.cmd-prompt { color: #ff79c6; }
+
+.btn-run.fade-in {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.btn-run:hover {
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255,255,255,0.8);
+}
+
+
+/* =================================
+   PANTALLA CLÍMAX (VICTORIA)
+   ================================= */
+.destiny-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(5, 2, 8, 0.6); 
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    pointer-events: none;
+}
+
+.destiny-screen.visible {
+    opacity: 1;
+}
+
+.glow-bg {
+    position: absolute;
+    width: 200vw;
+    height: 200vh;
+    background: radial-gradient(circle at center, rgba(139, 233, 253, 0.15) 0%, transparent 50%); /* Resplandor cyan pastel */
+    pointer-events: none;
+    z-index: -1;
+    animation: pulseGlow 4s infinite alternate;
+}
+@keyframes pulseGlow {
+    0% { transform: scale(1); opacity: 0.6; }
+    100%{ transform: scale(1.1); opacity: 1; }
+}
+
+.destiny-title {
+    font-family: 'Fira Code', monospace;
+    font-weight: 500;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: #ff5f56; /* Rojo Error de macOS */
+    text-shadow: 0 0 15px rgba(255, 95, 86, 0.6);
+    margin-bottom: 20px;
+    opacity: 0; transform: translateY(10px);
+    transition: all 1.5s ease 0.5s;
+}
+
+.destiny-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    color: #8be9fd; /* Cyan Brillante */
+    text-shadow: 0 0 25px rgba(139, 233, 253, 0.5);
+    margin-bottom: 40px;
+    opacity: 0; transform: translateY(10px);
+    transition: all 2s ease 1.5s; 
+    text-align: center;
+    max-width: 90%;
+}
+
+.destiny-love {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: clamp(4rem, 10vw, 7rem);
+    letter-spacing: 6px;
+    color: #fff;
+    text-shadow: 0 0 10px #ff79c6, 0 0 30px #ff79c6, 0 0 60px #ff79c6; /* Brillo fucsia */
+    opacity: 0; transform: scale(0.9);
+    transition: all 3s cubic-bezier(0.19, 1, 0.22, 1) 3s; 
+}
+
+.destiny-screen.visible .destiny-title,
+.destiny-screen.visible .destiny-subtitle,
+.destiny-screen.visible .destiny-love {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

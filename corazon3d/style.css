@@ -1,0 +1,212 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #010003;
+}
+
+#canvas-container {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1; /* Fondo base interactivo */
+}
+
+.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ==================================
+   1. INTRODUCCIÓN (EL VELO)
+   ================================== */
+.intro-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, rgba(12, 1, 18, 0.95) 0%, rgba(2, 0, 5, 1) 100%);
+    transition: opacity 2s ease, filter 2s ease;
+    gap: 30px;
+}
+
+.intro-screen.fade-out {
+    opacity: 0;
+    filter: blur(15px);
+    pointer-events: none;
+}
+
+.intro-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #ffcccc;
+    text-shadow: 0 0 15px rgba(255, 100, 150, 0.5);
+    text-align: center;
+    max-width: 800px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 2.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.intro-text.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-start {
+    margin-top: 20px;
+    padding: 12px 40px;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 3px;
+    color: #ffd1eb;
+    background: transparent;
+    border: 1px solid rgba(255, 180, 210, 0.4);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.4s;
+    opacity: 0;
+}
+
+.btn-start.visible { opacity: 0.8; }
+.btn-start:hover {
+    background: rgba(255, 120, 180, 0.15);
+    box-shadow: 0 0 20px rgba(255, 100, 150, 0.4);
+    opacity: 1;
+}
+
+/* ==================================
+   2. HUD INTERACTIVO (Anillo de Carga)
+   ================================== */
+.hud-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none; /* Dejar pasar clics al canvas 3D */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Colocar abajo */
+    align-items: center;
+    padding-bottom: 12vh;
+    transition: opacity 1s ease;
+}
+
+.hud-instruction {
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: #ffb3d9;
+    font-weight: 300;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 100, 150, 0.8);
+    opacity: 0.8;
+    animation: slowPulseText 2s infinite alternate;
+}
+
+@keyframes slowPulseText {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}
+
+.hud-progress-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.ring-svg {
+    transform: rotate(-90deg); /* Empezar a llenarse desde arriba (12 O'Clock) */
+}
+
+/* 2 * PI * radio (50) = ~314 */
+.ring-bg {
+    fill: transparent;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 4;
+}
+
+.ring-fill {
+    fill: transparent;
+    stroke: #ff3a8b;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314; /* Completamente vacío */
+    filter: drop-shadow(0 0 8px #ff3a8b);
+    transition: stroke-dashoffset 0.1s linear; 
+}
+
+
+/* ==================================
+   3. CLÍMAX FINAL (SUPERNOVA)
+   ================================== */
+.climax-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* Fondo radial suave post-explosión */
+    background: radial-gradient(circle at center, rgba(255, 50, 120, 0.25) 0%, transparent 60%);
+    transition: opacity 2s ease;
+}
+
+.climax-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(3rem, 10vw, 8rem);
+    color: #fff4d9; /* Dorado perla */
+    font-weight: 700;
+    text-shadow: 0 0 40px rgba(255, 180, 50, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.climax-sub {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: #ffcccc;
+    letter-spacing: 8px;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 3s ease 1s; /* Delay 1s */
+}
+
+/* Efectos activados JS */
+.climax-main.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+.climax-sub.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

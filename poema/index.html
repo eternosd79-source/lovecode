@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Un Poema para Ti ✒️</title>
+    <!-- Fuentes elegantes -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- FONDO DE LUCIÉRNAGAS / MAGIA -->
+    <canvas id="firefliesCanvas"></canvas>
+
+    <!-- PANTALLA INTRO -->
+    <div id="introScreen" class="screen active">
+        <div class="elegant-border">
+            <div class="content-wrapper">
+                <div class="icon-quill">✒️</div>
+                <h1 class="title-main">Un Poema<br>Para Ti</h1>
+                <p class="subtitle">Escrito con el corazón, palabra por palabra.</p>
+                <button class="btn-gold" id="startBtn">Comenzar a leer ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DEL POEMA -->
+    <div id="poemScreen" class="screen">
+        <div class="poem-container">
+            <p id="poemText" class="poem-text"></p>
+            <div class="poem-controls">
+                <p class="progress-text" id="progressText">1 / 4</p>
+                <button class="btn-gold-small" id="nextVerseBtn">Siguiente verso 🕊️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA PREGUNTA -->
+    <div id="questionScreen" class="screen">
+        <div class="question-box">
+            <div class="glow-bg"></div>
+            <p class="q-pre">Y por todo eso...</p>
+            <h1 class="q-main">¿Quieres ser<br>mi novia? ❤️</h1>
+            <div class="buttons-row">
+                <button class="btn-yes" id="yesBtn">Sí, acepto 💍</button>
+                <button class="btn-no" id="noBtn">Lo pensaré 🤔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA CELEBRACIÓN -->
+    <div id="celebScreen" class="screen">
+        <div id="rosesContainer"></div>
+        <div class="celeb-content">
+            <h1 class="c-title">¡El mejor poema<br>es a tu lado! 🌹</h1>
+            <p class="c-sub">Gracias por convertirte en la musa de mi vida.<br>Te adoro. 💖</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

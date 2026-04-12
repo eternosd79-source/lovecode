@@ -1,0 +1,302 @@
+/* ============================================
+   ARCADE → REDISEÑO ROMÁNTICO PREMIUM
+   Paleta: Terciopelo Borgoña · Rosa Champagne · Oro
+   ============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+
+body, html {
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, #220010 0%, #0e0006 60%, #04000a 100%);
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+}
+
+/* Canvas siempre al fondo */
+#canvas-universe {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+}
+
+/* Viñeta quemada elegante */
+.vignette {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.75) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ============================================
+   UI PRINCIPAL
+   ============================================ */
+.ui-layer {
+    position: fixed; inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 20px 50px;
+}
+
+/* HEADER */
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 700px;
+    opacity: 0;
+    animation: fadeDown 2s ease 0.5s forwards;
+}
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.5), transparent);
+}
+.header-center { text-align: center; }
+
+.header-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: rgba(229, 178, 153, 0.7);
+    margin-bottom: 6px;
+}
+
+.main-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: normal;
+    color: #ffdcb4;
+    text-shadow:
+        0 0 20px rgba(255, 180, 120, 0.5),
+        0 0 60px rgba(220, 100, 120, 0.2);
+    line-height: 1;
+    letter-spacing: 2px;
+}
+
+/* CORAZÓN */
+.center-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    opacity: 0;
+    animation: fadeIn 2s ease 1s forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* Anillo de resplandor detrás del corazón */
+.heart-glow-ring {
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(220, 60, 100, 0.2) 0%, transparent 70%);
+    animation: breathe 3s infinite ease-in-out;
+    pointer-events: none;
+}
+@keyframes breathe {
+    0%, 100% { transform: scale(1);   opacity: 0.6; }
+    50%       { transform: scale(1.4); opacity: 1.0; }
+}
+
+.pulsing-heart-container {
+    width: clamp(150px, 30vw, 220px);
+    height: clamp(150px, 30vw, 220px);
+    animation: heartbeat 2.4s infinite cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    filter: drop-shadow(0 0 18px rgba(255, 100, 140, 0.6))
+            drop-shadow(0 0 50px rgba(200, 30, 80, 0.3));
+}
+@keyframes heartbeat {
+    0%   { transform: scale(1.00); }
+    14%  { transform: scale(1.10); }
+    28%  { transform: scale(1.00); }
+    42%  { transform: scale(1.08); }
+    70%  { transform: scale(1.00); }
+    100% { transform: scale(1.00); }
+}
+
+.glass-heart { width: 100%; height: 100%; }
+
+/* FOOTER */
+.site-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    opacity: 0;
+    animation: fadeUp 2s ease 1.5s forwards;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.footer-hint {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
+    color: rgba(255, 210, 190, 0.65);
+    letter-spacing: 2px;
+}
+
+/* Botón de Cristal Glassmorphism */
+.crystal-btn {
+    padding: 14px 48px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #ffe4c4;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(229, 178, 153, 0.4);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+.crystal-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+.crystal-btn:hover {
+    background: rgba(229, 178, 153, 0.1);
+    border-color: rgba(229, 178, 153, 0.8);
+    box-shadow: 0 0 25px rgba(229, 178, 153, 0.25),
+                inset 0 0 15px rgba(229, 178, 153, 0.1);
+    transform: translateY(-2px);
+    color: #fff;
+}
+.crystal-btn:active { transform: translateY(0) scale(0.98); }
+
+/* ============================================
+   PANTALLA FINAL DE DEDICATORIA
+   ============================================ */
+.dedicatoria-screen {
+    position: fixed; inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at center, rgba(30, 0, 12, 0.9), rgba(3, 0, 6, 0.97));
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    padding: 20px;
+}
+.dedicatoria-screen.hidden { display: none; }
+.dedicatoria-screen.visible { opacity: 1; }
+
+.ded-card {
+    position: relative;
+    max-width: 600px; width: 100%;
+    background: linear-gradient(145deg, rgba(40, 5, 15, 0.7), rgba(10, 0, 5, 0.85));
+    border: 1px solid rgba(229, 178, 153, 0.25);
+    box-shadow:
+        0 0 0 4px rgba(229, 178, 153, 0.06),
+        0 40px 80px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(200, 60, 100, 0.15);
+    backdrop-filter: blur(20px);
+    padding: 55px 60px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 16px;
+}
+
+/* Esquinas doradas */
+.ded-corner {
+    position: absolute;
+    font-size: 1.2rem;
+    color: #c9a84c;
+    text-shadow: 0 0 8px rgba(201, 168, 76, 0.5);
+}
+.ded-corner.tl { top: 16px; left: 18px; }
+.ded-corner.tr { top: 16px; right: 18px; }
+.ded-corner.bl { bottom: 16px; left: 18px; }
+.ded-corner.br { bottom: 16px; right: 18px; }
+
+.ded-eyebrow {
+    color: #c9a84c; letter-spacing: 8px;
+    font-size: 0.9rem; opacity: 0.8;
+    opacity: 0; transform: translateY(8px);
+    transition: all 1.5s ease 0.3s;
+}
+.ded-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    color: #ffccd5;
+    text-shadow: 0 0 20px rgba(255, 150, 180, 0.4);
+    font-weight: normal;
+    opacity: 0; transform: translateY(12px);
+    transition: all 1.5s ease 0.6s;
+}
+.ded-divider {
+    width: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+    transition: width 2s ease 1.2s;
+}
+.ded-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    line-height: 1.8; color: rgba(255, 230, 210, 0.9);
+    opacity: 0; transform: translateY(10px);
+    transition: all 1.5s ease 1.5s;
+}
+.ded-signature {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: normal;
+    color: #ffb4c2;
+    opacity: 0; transform: translateY(10px);
+    transition: all 1.5s ease 2s;
+}
+.ded-ornament {
+    color: #c9a84c; font-size: 1rem; opacity: 0.7;
+    opacity: 0; transition: all 1s ease 2.6s;
+}
+
+/* Revelar al añadir .visible a la pantalla */
+.dedicatoria-screen.visible .ded-eyebrow,
+.dedicatoria-screen.visible .ded-title,
+.dedicatoria-screen.visible .ded-body,
+.dedicatoria-screen.visible .ded-signature,
+.dedicatoria-screen.visible .ded-ornament {
+    opacity: 1; transform: translateY(0);
+}
+.dedicatoria-screen.visible .ded-divider { width: 160px; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 480px) {
+    .ui-layer { padding: 30px 15px 40px; }
+    .ded-card { padding: 40px 25px; }
+    .header-line { display: none; }
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

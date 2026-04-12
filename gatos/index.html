@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Siete Vidas Bajo la Luna</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,600;1,700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- CAPA 0: Cielo Estrellado -->
+    <canvas id="starCanvas"></canvas>
+
+    <!-- =========================================
+         PANTALLA 1: INTRO CINEMATOGRÁFICO
+         ========================================= -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-content">
+            <!-- Corazones flotan en el fondo del intro -->
+            <div class="floating-hearts" id="floatingHearts"></div>
+
+            <!-- Frases que aparecen en secuencia -->
+            <p class="intro-phrase" id="phrase1">Hay personas que llegan a tu vida...</p>
+            <p class="intro-phrase" id="phrase2" style="display:none;">...y la cambian para siempre. 🌙</p>
+            <p class="intro-phrase" id="phrase3" style="display:none;">Tú eres esa persona para mí.</p>
+            
+            <button class="btn-enter" id="btnEnter" style="display:none;">
+                <span>Abrir el mensaje</span>
+                <div class="btn-sparkle"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- =========================================
+         PANTALLA 2: LA ESCENA PRINCIPAL (OCULTA)
+         ========================================= -->
+    <div class="main-experience hidden" id="mainExperience">
+
+        <!-- Detalles románticos flotantes -->
+        <div class="petals-layer" id="petalsLayer"></div>
+
+        <!-- La obra de arte -->
+        <div class="art-scene" id="mainArtFrame">
+            <div class="art-glow"></div>
+            <img src="romantic_cats_moon.png" alt="Gatos bajo la luna" class="masterpiece-art">
+            <!-- Corazón decorativo superpuesto -->
+            <div class="heart-overlay" id="heartOverlay">💕</div>
+        </div>
+
+        <!-- Frase romántica pequeña encima de la imagen -->
+        <p class="sub-romantic-text">Podría recorrer mil galaxias buscándote y aún así elegiría perderte en la misma.</p>
+
+        <!-- UI Central Flotante -->
+        <div class="glass-ui" id="glassUI">
+            <h2 class="question" id="mainText">¿Te gustaría compartir tus siete vidas conmigo?</h2>
+            
+            <div class="button-group">
+                <button id="btnYes" class="btn btn-yes">✨ ACEPTAR</button>
+                <div class="no-container" id="noWrapper">
+                    <button id="btnNo" class="btn btn-no">RECHAZAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         PANTALLA 3: VICTORIA (OCULTA)
+         ========================================= -->
+    <div class="victory-screen hidden" id="victoryScreen">
+        <canvas id="victoryCanvas"></canvas>
+        <div class="victory-art">
+            <img src="romantic_cats_moon.png" alt="Nuestra luna" class="victory-img">
+            <div class="victory-glow"></div>
+        </div>
+        <h1 class="victory-title">Sería el mayor honor de todas mis vidas. 🌙💕</h1>
+        <p class="victory-sub">Y en cada una de ellas, te elegiría a ti.</p>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

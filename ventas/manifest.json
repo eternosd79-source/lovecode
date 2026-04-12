@@ -1,0 +1,40 @@
+{
+    "name": "LoveCode — Regalos Digitales Románticos",
+    "short_name": "LoveCode",
+    "description": "Crea experiencias web mágicas y personalizadas para esa persona especial.",
+    "start_url": "/ventas/",
+    "display": "standalone",
+    "background_color": "#0a0a0f",
+    "theme_color": "#c026d3",
+    "orientation": "portrait-primary",
+    "lang": "es",
+    "icons": [
+        {
+            "src": "/ventas/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/ventas/screenshot-main.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "label": "LoveCode — Página Principal"
+        }
+    ],
+    "categories": ["lifestyle", "entertainment"],
+    "shortcuts": [
+        {
+            "name": "Ver Catálogo",
+            "url": "/ventas/#catalogo",
+            "description": "Ver las 31 experiencias románticas"
+        },
+        {
+            "name": "Mis Pedidos",
+            "url": "/ventas/#mis-pedidos",
+            "description": "Rastrear mi regalo digital"
+        }
+    ]
+}

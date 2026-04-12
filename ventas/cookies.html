@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Cookies — LoveCode</title>
+    <meta name="description" content="Información sobre el uso de cookies en LoveCode.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-hero {
+            background: linear-gradient(135deg, #0a0a0f, #030a08);
+            padding: 120px 5% 70px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .page-hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); margin-bottom: 12px; }
+        .page-hero p { color: var(--color-dim); max-width: 600px; margin: 0 auto; }
+        .legal-content { max-width: 800px; margin: 0 auto; padding: 70px 5%; }
+        .legal-content h2 {
+            font-size: 1.1rem;
+            color: #10b981;
+            margin: 40px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legal-content p { color: var(--color-dim); line-height: 1.9; margin-bottom: 15px; font-size: 0.95rem; }
+        .legal-content ul { margin: 10px 0 15px 20px; color: var(--color-dim); font-size: 0.95rem; line-height: 1.9; }
+        .legal-content ul li { margin-bottom: 6px; }
+        .legal-content strong { color: white; }
+        .legal-date {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 0.82rem;
+            color: var(--color-dim);
+            margin-bottom: 40px;
+            display: inline-block;
+        }
+        .cookie-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.88rem;
+        }
+        .cookie-table th {
+            background: rgba(255,255,255,0.05);
+            padding: 12px 15px;
+            text-align: left;
+            color: white;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .cookie-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--color-dim);
+            vertical-align: top;
+        }
+        .cookie-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .badge-necessary {
+            background: rgba(16,185,129,0.15);
+            color: #10b981;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge-analytics {
+            background: rgba(6,182,212,0.15);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration:none;">
+            <i class="fa-solid fa-code"></i>
+            <span>Love<strong>Code</strong></span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#catalogo">Catálogo</a></li>
+            <li><a href="index.html#precios">Precios</a></li>
+        </ul>
+        <a href="index.html#catalogo" class="btn-primary-sm">Crear Regalo</a>
+    </nav>
+
+    <div class="page-hero">
+        <span class="badge-tech" style="margin-bottom:20px; display:inline-block;">
+            <i class="fa-solid fa-cookie-bite"></i> Legal
+        </span>
+        <h1>Política de <span style="color:#10b981;">Cookies</span></h1>
+        <p>Usamos cookies mínimas y necesarias. Aquí te explicamos cuáles y para qué.</p>
+    </div>
+
+    <div class="legal-content">
+        <span class="legal-date"><i class="fa-solid fa-calendar"></i> Última actualización: Abril 2025</span>
+
+        <h2><i class="fa-solid fa-circle-info"></i> ¿Qué son las cookies?</h2>
+        <p>
+            Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. 
+            Son ampliamente utilizadas para que los sitios funcionen correctamente y para mejorar la experiencia del usuario.
+        </p>
+
+        <h2><i class="fa-solid fa-cookie"></i> Cookies que usamos</h2>
+        <p>LoveCode usa un número mínimo de cookies, todas con propósito claro:</p>
+
+        <table class="cookie-table">
+            <thead>
+                <tr>
+                    <th>Cookie</th>
+                    <th>Tipo</th>
+                    <th>Duración</th>
+                    <th>Propósito</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>sb-*</code></td>
+                    <td><span class="badge-necessary">Necesaria</span></td>
+                    <td>Sesión</td>
+                    <td>Autenticación segura de sesión con Supabase (solo admin)</td>
+                </tr>
+                <tr>
+                    <td><code>lc_ref</code></td>
+                    <td><span class="badge-necessary">Funcional</span></td>
+                    <td>30 días</td>
+                    <td>Recuerda si ingresaste desde un link de referido</td>
+                </tr>
+                <tr>
+                    <td><code>lastOrderId</code></td>
+                    <td><span class="badge-necessary">Funcional</span></td>
+                    <td>Sesión</td>
+                    <td>Guarda tu último ID de pedido en el navegador para facilitar el seguimiento</td>
+                </tr>
+                <tr>
+                    <td><code>_vercel_*</code></td>
+                    <td><span class="badge-analytics">Analítica</span></td>
+                    <td>90 días</td>
+                    <td>Métricas anónimas de rendimiento del sitio (Vercel Analytics)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2><i class="fa-solid fa-ban"></i> Lo que NO hacemos</h2>
+        <ul>
+            <li>❌ No usamos cookies de publicidad ni rastreo de terceros</li>
+            <li>❌ No vendemos información de cookies a anunciantes</li>
+            <li>❌ No compartimos cookies con redes sociales sin tu consentimiento</li>
+        </ul>
+
+        <h2><i class="fa-solid fa-sliders"></i> ¿Cómo controlar las cookies?</h2>
+        <p>
+            Puedes controlar y/o eliminar las cookies desde la configuración de tu navegador. Ten en cuenta que 
+            desactivar las cookies necesarias puede afectar el funcionamiento del sitio. 
+        </p>
+        <ul>
+            <li><strong>Chrome:</strong> Configuración → Privacidad → Cookies</li>
+            <li><strong>Firefox:</strong> Opciones → Privacidad y Seguridad</li>
+            <li><strong>Safari:</strong> Preferencias → Privacidad</li>
+        </ul>
+
+        <h2><i class="fa-solid fa-envelope"></i> Contacto</h2>
+        <p>
+            Si tienes preguntas sobre el uso de cookies, escríbenos por 
+            <a href="https://wa.me/593990480389" target="_blank" style="color:#10b981;">WhatsApp</a>.
+        </p>
+    </div>
+
+    <a href="https://wa.me/593990480389?text=Hola%20LoveCode!%20Tengo%20una%20pregunta." 
+       class="floating-wa" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="wa-bubble-label">¿Tienes dudas?</span>
+    </a>
+
+</body>
+</html>

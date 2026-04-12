@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoveCode - El Regalo Digital Más Romántico del Mundo</title>
+    
+    <!-- PWA & Favicon -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c026d3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- SEO -->
+    <meta name="description" content="Crea experiencias web mágicas y personalizadas para esa persona especial. 31 experiencias románticas con tu música, fotos y mensajes. Desde $3 USD.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://lovecode.me">
+    
+    <!-- Open Graph & Twitter -->
+    <meta property="og:title" content="LoveCode — El Regalo Digital más Romántico">
+    <meta property="og:description" content="31 experiencias web inmersivas personalizadas con tu música, tus fotos y tus palabras. Desde $3 USD.">
+    <meta property="og:image" content="https://lovecode.me/assets/preview-main.png">
+    <meta property="og:url" content="https://lovecode.me">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LoveCode — Regalos Digitales Románticos">
+    <meta name="twitter:description" content="31 experiencias web inmersivas desde $3 USD">
+
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=3">
+
+</head>
+<body>
+
+    <!-- SPLASH SCREEN -->
+    <div id="splashScreen">
+        <div class="splash-logo">
+            <i class="fa-solid fa-code"></i>
+            <span>Love<strong>Code</strong></span>
+        </div>
+        <div class="splash-bar"><div class="splash-fill"></div></div>
+        <p class="splash-tagline">Cargando experiencias mágicas...</p>
+    </div>
+
+    <!-- TOAST NOTIFICACIÓN -->
+    <div class="toast-notification" id="toastNotif">
+        <div class="toast-icon"><i class="fa-solid fa-check"></i></div>
+        <div class="toast-text">
+            <strong id="toastTitle">¡Pedido registrado!</strong>
+            <span id="toastMsg">Revisa tu WhatsApp para continuar.</span>
+        </div>
+    </div>
+
+    <!-- VIDEO RESUMEN MODAL -->
+    <div class="video-modal-overlay" id="videoModal">
+        <div class="video-modal-box">
+            <button class="btn-close" id="btnCloseVideo" style="position:absolute;top:15px;right:20px;"><i class="fa-solid fa-times"></i></button>
+            <h3 class="neon-text" style="margin-bottom:5px;"><i class="fa-solid fa-film"></i> Vista Previa de tu Regalo</h3>
+            <p style="color:var(--color-dim);font-size:0.85rem;margin-bottom:10px;">Así es como lucirá el regalo al abrirlo</p>
+            <canvas class="video-canvas-preview" id="previewCanvas" width="400" height="280"></canvas>
+            <button class="btn-primary" id="btnDownloadPreview" style="width:100%;margin-top:10px;">
+                <i class="fa-solid fa-download"></i> Descargar Vista Previa (PNG)
+            </button>
+        </div>
+    </div>
+
+    <!-- Navegación Superior -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-code"></i>
+            <span>Love<strong>Code</strong></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#inicio"><i class="fa-solid fa-house"></i> Inicio</a></li>
+            <li><a href="#catalogo"><i class="fa-solid fa-layer-group"></i> Catálogo</a></li>
+            <li><a href="#precios"><i class="fa-solid fa-tags"></i> Precios</a></li>
+            <li><a href="#mis-pedidos" class="nav-special"><i class="fa-solid fa-magnifying-glass"></i> Mis Pedidos</a></li>
+        </ul>
+        <a href="#catalogo" class="btn-primary-sm">Crear Regalo</a>
+        <!-- Hamburger Mobile -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
+            <li><a href="#inicio" class="mobile-nav-link"><i class="fa-solid fa-house"></i> Inicio</a></li>
+            <li><a href="#catalogo" class="mobile-nav-link"><i class="fa-solid fa-layer-group"></i> Catálogo</a></li>
+            <li><a href="#precios" class="mobile-nav-link"><i class="fa-solid fa-tags"></i> Precios</a></li>
+            <li><a href="#mis-pedidos" class="mobile-nav-link"><i class="fa-solid fa-magnifying-glass"></i> Mis Pedidos</a></li>
+        </ul>
+        <div class="mobile-cta">
+            <a href="#catalogo" class="btn-primary mobile-nav-link"><i class="fa-solid fa-rocket"></i> Crear mi Regalo</a>
+        </div>
+    </div>
+
+    <!-- Sección Hero Principal -->
+    <header class="hero-section" id="inicio">
+        <div class="hero-bg">
+            <div class="glow-orb pink"></div>
+            <div class="glow-orb cyan"></div>
+        </div>
+        <div class="hero-content">
+            <span class="badge-tech"><span class="live-dot"></span> Regalo Digital Personalizado</span>
+            <h1>El Regalo Más <span class="neon-text">Romántico</span> y Único</h1>
+            <p>Sorprende a esa persona especial con una página web inmersiva de alto impacto, con tu música favorita, tus fotos y mensajes del corazón.</p>
+            <div class="hero-buttons">
+                <a href="#catalogo" class="btn-primary"><i class="fa-solid fa-rocket"></i> Ver las 31 Experiencias</a>
+                <a href="#precios" class="btn-secondary"><i class="fa-solid fa-dollar-sign"></i> Ver Planes desde $3</a>
+            </div>
+            <div class="hero-trust">
+                <div class="hero-trust-item"><i class="fa-solid fa-shield-halved"></i> <strong>Pago Seguro</strong></div>
+                <div class="hero-trust-item"><i class="fa-solid fa-clock"></i> <strong>Listo en minutos</strong></div>
+                <div class="hero-trust-item"><i class="fa-solid fa-globe"></i> <strong>En todo el mundo</strong></div>
+                <div class="hero-trust-item"><i class="fa-brands fa-whatsapp"></i> <strong>Soporte WhatsApp</strong></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- STATS BAR EN VIVO -->
+    <div class="stats-bar reveal">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number" id="statRegalos">0<span>+</span></span>
+                <span class="stat-label">Regalos Entregados</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">31<span></span></span>
+                <span class="stat-label">Experiencias Únicas</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">30<span></span></span>
+                <span class="stat-label">Canciones Románticas</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">$3<span></span></span>
+                <span class="stat-label">Precio de Entrada</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Catálogo dinámico (Renderizado mediante JS) -->
+    <section class="section" id="catalogo">
+        <div class="section-header reveal">
+            <h2>NUESTROS <span class="neon-purple">31 CÓDIGOS</span></h2>
+            <p>Selecciona tu base interactiva preferida. ¡Puedes previsualizarlas todas!</p>
+        </div>
+
+        <!-- Filtros de categorias -->
+        <div class="category-filters" id="catFilters">
+            <button class="filter-btn active" data-cat="all">Todos</button>
+            <button class="filter-btn" data-cat="Gratis">Gratis</button>
+            <button class="filter-btn" data-cat="Premium">Premium</button>
+            <button class="filter-btn" data-cat="Interactivo">Interactivos</button>
+            <button class="filter-btn" data-cat="Cinemático">Cinemáticos</button>
+        </div>
+
+        <div class="catalog-grid" id="catalogGrid">
+            <!-- RENDER DESDE APP.JS -->
+        </div>
+    </section>
+
+    <!-- Sección de Precios -->
+    <section class="section" id="precios">
+        <div class="section-header">
+            <h2>NIVELES DE <span class="neon-cyan">MAGIA</span></h2>
+            <p>Escoge qué tanta personalización necesita tu dedicatoria.</p>
+        </div>
+
+        <div class="pricing-grid">
+            
+            <div class="pricing-card" style="border: 1px dashed rgba(255,255,255,0.2);">
+                <div class="pricing-header">
+                    <h4>Prueba Demo</h4>
+                    <div class="price"><span>$</span>0 <span>USD</span></div>
+                    <div class="duration-badge">Duración: 24 Horas</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fa-solid fa-check"></i> (Solo habilitado en 2 plantillas)</li>
+                    <li><i class="fa-solid fa-xmark dim"></i> Sin Edición de Textos o Nombres</li>
+                    <li><i class="fa-solid fa-xmark dim"></i> Sin Subida de Fotos ni Música</li>
+                    <li><i class="fa-solid fa-check" style="color:#fbbf24;"></i> Con Marca de Agua "LoveCode"</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h4>Básico</h4>
+                    <div class="price"><span>$</span>3 <span>USD</span></div>
+                    <div class="duration-badge">Duración: 2 Semanas</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fa-solid fa-check"></i> Textos y Nombres Editables</li>
+                    <li><i class="fa-solid fa-check"></i> Diseño Base sin alterar</li>
+                    <li><i class="fa-solid fa-xmark dim"></i> Sin Subida de Fotos</li>
+                    <li><i class="fa-solid fa-xmark dim"></i> Sin Música de Fondo</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card membership-bg">
+                <div class="pricing-header">
+                    <h4 class="neon-purple">Membresía Hub <i class="fa-solid fa-users"></i></h4>
+                    <div class="price"><span>$</span>4.50 <span>USD</span></div>
+                    <div class="duration-badge">Acceso Vitalicio</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fa-solid fa-check"></i> <strong>Añadir Fotografías Reales</strong> a tu regalo</li>
+                    <li><i class="fa-solid fa-check"></i> <strong>Votar próximos códigos</strong> a crear</li>
+                    <li><i class="fa-solid fa-check"></i> Acceso anticipado a nuevas plantillas</li>
+                    <li><i class="fa-solid fa-check"></i> Soporte prioritario por WhatsApp</li>
+                    <li><i class="fa-solid fa-check"></i> Descuentos en próximos regalos</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card popular">
+                <div class="popular-badge">Más Vendido</div>
+                <div class="pricing-header">
+                    <h4>Personalizado</h4>
+                    <div class="price"><span>$</span>5 <span>USD</span></div>
+                    <div class="duration-badge">Duración: 2.5 Meses</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fa-solid fa-check"></i> Textos y Nombres Editables</li>
+                    <li><i class="fa-solid fa-check"></i> <strong>Añadir Fotografías Reales</strong></li>
+                    <li><i class="fa-solid fa-check"></i> Mantenimiento en nube</li>
+                    <li><i class="fa-solid fa-xmark dim"></i> Sin Música</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card premium">
+                <div class="pricing-header">
+                    <h4>Ultra Premium <i class="fa-solid fa-crown"></i></h4>
+                    <div class="price"><span>$</span>7 <span>USD</span></div>
+                    <div class="duration-badge">Duración: 6 Meses</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fa-solid fa-check"></i> <strong>Código Fuente Incluido</strong> (Es tuyo)</li>
+                    <li><i class="fa-solid fa-check"></i> <strong>Pista de Música MP3 Sincronizada</strong></li>
+                    <li><i class="fa-solid fa-check"></i> Todas tus Fotos HD Integradas</li>
+                    <li><i class="fa-solid fa-check"></i> Atención VIP Inmediata</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- LIVE PREVIEW MODAL -->
+    <div class="modal-overlay preview-modal-bg" id="previewModal">
+        <div class="preview-container">
+            <div class="preview-header">
+                <h3 id="prevTitle">Vista Previa</h3>
+                <button class="btn-close" id="btnClosePreview"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div class="preview-body">
+                <div class="device-frame">
+                    <iframe id="previewIframe" src="" frameborder="0"></iframe>
+                </div>
+                <div class="preview-info">
+                    <h4>Textos Base Que Podrás Modificar:</h4>
+                    <p id="prevOriginalText" class="original-text-box">Ejemplo de texto.</p>
+                </div>
+            </div>
+            
+            <div class="preview-footer">
+                <button class="btn-primary" id="btnPreviewToBuy" style="width: 100%;">¡Me Encanta, Lo Quiero! <i class="fa-solid fa-heart"></i></button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL CHECKOUT VIZARD (Flujo de Pago) -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="wizard-container">
+            <button class="btn-close" id="btnCloseWizard"><i class="fa-solid fa-times"></i></button>
+            
+            <div class="wizard-header">
+                <h3>Personalizando: <span id="lblSelectedTemplate" class="neon-text">Plantilla</span></h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <div class="step-indicators">
+                    <span class="step-dot active">1</span>
+                    <span class="step-dot">2</span>
+                    <span class="step-dot">3</span>
+                    <span class="step-dot">4</span>
+                </div>
+            </div>
+
+            <div class="wizard-body">
+                
+                <!-- PASO 1: Nivel de Precio -->
+                <div class="wizard-step active" id="step1">
+                    <h4>Elige tu Nivel de Compra/Pase</h4>
+                    <div class="options-grid">
+                        <label class="radio-card plan-radio" id="optGratis">
+                            <input type="radio" name="planType" value="Gratis ($0, Solo demo 24h)">
+                            <div class="rc-content">
+                                <h5>Prueba Demo (Limitada)</h5><span>$0 USD</span>
+                            </div>
+                        </label>
+                        <label class="radio-card plan-radio">
+                            <input type="radio" name="planType" value="Básico ($3, 2 semanas)" checked>
+                            <div class="rc-content">
+                                <h5>Básico</h5><span>$3 USD</span>
+                            </div>
+                        </label>
+                        <label class="radio-card plan-radio">
+                            <input type="radio" name="planType" value="Membresía Hub ($4.50, Comunidad+Fotos)">
+                            <div class="rc-content">
+                                <h5 class="neon-purple">Suscripción Pase VIP</h5><span>$4.50 USD</span>
+                            </div>
+                        </label>
+                        <label class="radio-card plan-radio">
+                            <input type="radio" name="planType" value="Personalizado ($5, 2.5 mes., Fotos)">
+                            <div class="rc-content">
+                                <h5>Fotografías</h5><span>$5 USD</span>
+                            </div>
+                        </label>
+                        <label class="radio-card plan-radio">
+                            <input type="radio" name="planType" value="Ultra Premium ($7, 6 mes., Fotos/Música/Código)">
+                            <div class="rc-content">
+                                <h5 class="neon-cyan"><i class="fa-solid fa-crown"></i> Ultra (Audio/Fotos/Código)</h5><span>$7 USD</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PASO 2: Textos -->
+                <div class="wizard-step" id="step2">
+                    <h4>Detalles del Regalo</h4>
+                    
+                    <div class="form-group">
+                        <label>Relación / Target</label>
+                        <select id="inpDestino" class="form-input" style="padding:10px; background:#0f0f12; color:#fff; margin-bottom: 15px;">
+                            <option value="Mi Pareja / Amor">Mi Pareja / Amor</option>
+                            <option value="Mejor Amigo/a">Mejor Amigo/a</option>
+                            <option value="Amigo/a Especial (Declaración)">Amigo/a Especial (Declarándome)</option>
+                            <option value="Familiar (Mama/Hijo)">Familiar (Mamá/Papá/Hijo)</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="grpDate" style="display:none; margin-bottom: 15px;">
+                        <label><i class="fa-regular fa-calendar-days"></i> Fecha de Inicio Exacta (Para el cronómetro)</label>
+                        <input type="text" id="inpDate" placeholder="Ej: 14 de Febrero 2021" class="form-input">
+                    </div>
+                    
+                    <div id="grpTextosBase">
+                        <div class="wiz-original-text">
+                            <p style="font-size: 0.8rem; color: var(--accent-cyan); margin-bottom:5px;">👁️ Personaliza todos los textos de la experiencia:</p>
+                        </div>
+    
+                        <div id="dynamicTextContainer">
+                            <!-- Se llena dinámicamente desde app.js -->
+                        </div>
+                        
+                        <!-- NUEVO: Toggle de Foto Flotante para cambiar de Texto a Foto -->
+                        <div id="grpFloatImageToggle" style="margin-top:20px; background:rgba(0,0,0,0.2); padding:15px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); display:none;">
+                            <label style="display:flex; align-items:center; cursor:pointer;">
+                                <input type="checkbox" id="chkUseFloatImg" style="margin-right:10px; transform:scale(1.3);">
+                                <span style="font-weight:bold; color:var(--accent-fuchsia);">Reemplazar textos por Foto (Mover Libremente)</span>
+                            </label>
+                            
+                            <div id="floatImgControls" style="display:none; margin-top:15px;">
+                                <p style="font-size:0.8rem; color:var(--color-dim); margin-bottom:10px;">En lugar de usar textos, inyectaremos tu foto por encima del diseño original.</p>
+                                <div class="form-group" style="margin-bottom:10px;">
+                                    <label>URL de la Foto (Drive/Imgur):</label>
+                                    <input type="text" id="flImgUrl" class="form-input" placeholder="https://...">
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Ancho (%)</label>
+                                        <input type="range" id="flImgS" min="10" max="100" value="40" style="width:100%;">
+                                    </div>
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Posición X (↔️)</label>
+                                        <input type="range" id="flImgX" min="0" max="100" value="50" style="width:100%;">
+                                    </div>
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Posición Y (↕️)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="msgGratisRestriccion" style="display:none; text-align:center; padding:20px; background:rgba(255,0,50,0.1); border-radius:10px; border:1px solid rgba(255,0,50,0.3); color:#ff5e7e; margin-top:15px;">
+                        <i class="fa-solid fa-lock" style="font-size:1.5rem; margin-bottom:10px;"></i>
+                        <p><strong>Edición de Textos Bloqueada</strong></p>
+                        <p style="font-size:0.85rem;">Has elegido el Plan Gratuito (Demo). Los textos se entregarán tal cual como viste en la Plantilla Original sin modificaciones.</p>
+                    </div>
+                </div>
+
+                <!-- PASO 3: Multimedia Dinámico-->
+                <div class="wizard-step" id="step3">
+                    <h4 id="titleMultimedia">Música Personalizada</h4>
+                    <p class="step-desc" id="multimediaDesc">Busca tu canción preferida si tu plan lo permite.</p>
+                    
+                    <div class="form-group" id="grpMusic" style="display:none; margin-top:15px;">
+                        <label><i class="fa-solid fa-music"></i> Elige la Canción:</label>
+                        <select id="selMusic" class="form-input" style="padding:10px; background:#0f0f12; color:#fff; margin-bottom: 15px;">
+                            <option value="">-- SELECCIONA UNA CANCIÓN --</option>
+                        </select>
+
+                        <!-- REPRODUCTOR PROFESIONAL DE RECORTE (NUEVO) -->
+                        <div id="proMusicEditor" class="pro-music-editor" style="display: none;">
+                            <div class="editor-header">
+                                <div class="song-info">
+                                    <h5 id="editorSongName">Nombre de la Canción</h5>
+                                    <span id="editorTimer">00:00 / 00:00</span>
+                                </div>
+                                <div class="editor-actions">
+                                    <button type="button" id="btnPlayEditor" class="btn-play-editor">
+                                        <i class="fa-solid fa-play"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="waveform-container" id="waveformContainer">
+                                <!-- Las barras de la "onda" se generarán dinámicamente -->
+                                <div class="waveform-bars" id="waveformBars"></div>
+                                
+                                <!-- Capa de progreso de reproducción -->
+                                <div id="editorProgress" class="editor-progress"></div>
+                                
+                                <!-- Zona de selección (Recorte) -->
+                                <div id="selectionRange" class="selection-range">
+                                    <div class="handle handle-left" id="handleLeft">
+                                        <div class="handle-line"></div>
+                                        <div class="handle-tag">INICIO</div>
+                                    </div>
+                                    <div class="handle handle-right" id="handleRight">
+                                        <div class="handle-line"></div>
+                                        <div class="handle-tag">FIN</div>
+                                    </div>
+                                </div>
+
+                                <!-- Línea de tiempo (Playhead) -->
+                                <div id="editorPlayhead" class="editor-playhead"></div>
+                            </div>
+
+                            <div class="editor-controls">
+                                <div class="control-group">
+                                    <label>INICIA EN:</label>
+                                    <div class="time-display" id="displayStart">00:00</div>
+                                </div>
+                                <div class="control-group">
+                                    <label>DURACIÓN:</label>
+                                    <div class="time-display highlight" id="displayDuration">30s</div>
+                                </div>
+                                <div class="control-group">
+                                    <label>TERMINA EN:</label>
+                                    <div class="time-display" id="displayEnd">00:30</div>
+                                </div>
+                                <button type="button" id="btnPreviewTrimPro" class="btn-preview-trim">
+                                    <i class="fa-solid fa-scissors"></i> PROBAR RECORTE
+                                </button>
+                            </div>
+
+                            <div class="editor-footer">
+                                <p><i class="fa-solid fa-circle-info"></i> Arrastra los bordes de la zona iluminada para ajustar el recorte perfecto.</p>
+                            </div>
+                            
+                            <audio id="audioPreviewElement"></audio>
+                            <!-- Inputs ocultos para mantener compatibilidad con la lógica existente -->
+                            <input type="number" id="musicStart" value="0" style="display:none;">
+                            <input type="number" id="musicDuration" value="30" style="display:none;">
+                        </div>
+
+                        <input type="text" id="inpMusic" placeholder="Pega el link de tu canción (mp3/mp4)..." class="form-input" style="display:none; margin-top: 10px;">
+                    </div>
+                    
+                    <div style="text-align: right; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:15px;">
+                        <button type="button" class="btn-secondary-sm" id="btnPreviewCustom" style="padding: 10px 20px; font-size: 0.95rem; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); background: rgba(6,182,212,0.15); border-radius: 8px; cursor: pointer; font-weight: 600; width:100%;">
+                            <i class="fa-solid fa-eye"></i> Ver Previa Final Completa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASO 4: Resumen y Banco -->
+                <div class="wizard-step final-step" id="step4">
+                    <div class="step4-layout">
+                        <div class="step4-left">
+                            <i class="fa-solid fa-receipt final-icon" style="color:var(--accent-cyan)"></i>
+                            <h4>Confirmación y Pago</h4>
+                            <p>Tu orden está lista. Selecciona cómo pagarás:</p>
+                            
+                            <ul class="summary-list">
+                                <li><strong>Plantilla:</strong> <span id="sumTemplate"></span></li>
+                                <li><strong>Plan Elegido:</strong> <span id="sumPlan" class="neon-cyan"></span></li>
+                            </ul>
+
+                            <div class="payment-tabs">
+                                <button class="btn-pay-tab active" id="btnTabEcuador">🇪🇨 Solo Ecuador</button>
+                                <button class="btn-pay-tab" id="btnTabMundo">🌍 Resto del Mundo</button>
+                            </div>
+                        </div>
+
+                        <div class="step4-right">
+                            <div class="payment-content active" id="payEcuador">
+                                <p class="step-desc" style="margin-bottom:10px;">Escanea y envía foto del comprobante:</p>
+                                <div class="qr-container">
+                                    <div class="qr-box">
+                                        <span>Banco Pichincha</span>
+                                        <img src="qrPichincha.png" alt="QR Banco Pichincha">
+                                    </div>
+                                    <div class="qr-box">
+                                        <span>Banco de Loja</span>
+                                        <img src="qrLoja.png" alt="QR Banco de Loja">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="payment-content" id="payMundo" style="display:none;">
+                                <p class="step-desc" style="padding:10px 15px 5px;">Paga directamente con PayPal de forma 100% segura:</p>
+                                <div class="paypal-wrapper">
+                                    <div id="paypal-button-container"></div>
+                                    <p class="paypal-note"><i class="fa-solid fa-lock"></i> Pago seguro procesado por PayPal. Tu regalo se activa automáticamente.</p>
+                                </div>
+                                <div class="paypal-divider">o también puedes</div>
+                                <p class="step-desc" style="text-align:center;">Pagar vía <strong>Zelle/Venmo</strong> enviando screenshot a WhatsApp</p>
+                            </div>
+
+                            <button class="btn-whatsapp" id="btnFinishOrder" style="margin-top:10px"><i class="fa-brands fa-whatsapp"></i> Generar Pedido a WP</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="wizard-footer">
+                <button class="btn-secondary" id="btnPrev" style="visibility:hidden">Atrás</button>
+                <button class="btn-primary" id="btnNext">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Mis Pedidos -->
+    <section class="section" id="mis-pedidos" style="background: rgba(10,10,15,0.6); padding-bottom: 60px;">
+        <div class="section-header">
+            <h2>RASTREAR <span class="neon-cyan">MI REGALO</span></h2>
+            <p>Ingresa tu ID de orden para ver el estado, tu link de regalo, y tu panel de afiliado si tienes Membresía Hub.</p>
+        </div>
+        <div class="search-order-box">
+            <input type="text" id="inpOrderId" placeholder="Ej: 8a4b-2c1d-9f..." class="form-input" style="max-width: 400px; text-align:center;">
+            <button class="btn-primary" id="btnTrackOrder"><i class="fa-solid fa-search"></i> Consultar Estado</button>
+        </div>
+        
+        <div id="orderStatusResult" class="order-result-card" style="display:none;">
+            <!-- Render dinámico de estado de orden -->
+        </div>
+    </section>
+
+    <!-- MODAL QR PARA CÓDIGOS GRATIS -->
+    <div class="modal-overlay" id="qrModal" style="z-index: 10001;">
+        <div class="wizard-container" style="max-width: 400px; text-align: center; padding: 40px;">
+            <button class="btn-close" id="btnCloseQR"><i class="fa-solid fa-times"></i></button>
+            <h3 class="neon-cyan" id="qrModalTitle">Escanear Código</h3>
+            <p style="font-size: 0.9rem; color: var(--color-dim); margin-bottom: 20px;">Escanea este código con tu celular para ver el regalo al instante.</p>
+            <div id="qrContainer" style="background: white; padding: 20px; display: inline-block; border-radius: 12px; margin-bottom: 20px;"></div>
+            <div class="final-link-box">
+                <input type="text" id="qrDirectLink" readonly class="form-input">
+                <button onclick="copyQRLink()"><i class="fa-solid fa-copy"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ÉXITO (CONFIRMACIÓN DE PEDIDO) -->
+    <div class="modal-overlay" id="successModal" style="z-index: 10002;">
+        <div class="wizard-container" style="max-width: 450px; text-align: center; padding: 40px;">
+            <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px;">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="neon-cyan" style="margin-bottom: 10px;">¡Pedido Generado!</h3>
+            <p style="color: var(--color-dim); font-size: 0.9rem; margin-bottom: 25px;">Tu orden ha sido registrada correctamente. Copia tu ID de seguimiento:</p>
+            
+            <!-- 3D Gift Box Container -->
+            <div id="threeContainer" style="width: 100%; height: 180px; margin: -20px 0 10px 0; overflow: visible;"></div>
+
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed var(--accent-cyan); margin-bottom: 30px;">
+                <span id="displayOrderId" style="font-family: var(--font-code); font-size: 1.4rem; font-weight: bold; color: white; letter-spacing: 2px;">-------</span>
+            </div>
+
+            <p style="font-size: 0.85rem; margin-bottom: 20px;">Haz clic abajo para ir a WhatsApp y finalizar tu compra enviando el comprobante.</p>
+            
+            <button class="btn-whatsapp" id="btnGoToWA" style="width: 100%; justify-content: center; font-size: 1rem; padding: 15px;">
+                <i class="fa-brands fa-whatsapp"></i> Ir a WhatsApp Ahora
+            </button>
+        </div>
+    </div>
+
+    <!-- NUEVO: MODAL DE CONFIRMACIÓN ESTILIZADO -->
+    <div class="modal-overlay" id="confirmModal" style="z-index: 10003;">
+        <div class="wizard-container" style="max-width: 400px; text-align: center; padding: 40px; border: 1px solid var(--accent-cyan);">
+            <div style="font-size: 3rem; color: var(--accent-cyan); margin-bottom: 15px;">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <h3 id="confirmTitle" style="margin-bottom: 10px; color: white;">¿Continuar?</h3>
+            <p id="confirmMessage" style="color: var(--color-dim); margin-bottom: 25px; font-size: 0.9rem;"></p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="btnConfirmCancel" class="btn-secondary" style="flex: 1; padding: 12px;">Cancelar</button>
+                <button id="btnConfirmOk" class="btn-primary" style="flex: 1; padding: 12px; background: var(--accent-cyan); color: #000;">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NUEVO: MODAL DE EDICIÓN DE TIEMPO (PROFESIONAL) -->
+    <div class="modal-overlay" id="timeEditModal" style="z-index: 10004;">
+        <div class="wizard-container" style="max-width: 350px; text-align: center; padding: 30px; border: 1px solid var(--accent-purple);">
+            <div style="font-size: 2.5rem; color: var(--accent-purple); margin-bottom: 15px;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <h3 id="timeEditTitle" style="margin-bottom: 5px; color: white; font-size: 1.2rem;">Editar Tiempo</h3>
+            <p id="timeEditDesc" style="color: var(--color-dim); margin-bottom: 20px; font-size: 0.85rem;">Ingresa el valor en segundos o MM:SS</p>
+            
+            <div style="margin-bottom: 25px;">
+                <input type="text" id="inpTimeEdit" class="form-input" placeholder="Ej: 01:20 o 80" 
+                       style="text-align: center; font-size: 1.5rem; letter-spacing: 2px; border-color: var(--accent-purple); color: white; background: rgba(192, 38, 211, 0.05);">
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button id="btnTimeCancel" class="btn-secondary" style="flex: 1; padding: 12px; font-size: 0.9rem;">Cancelar</button>
+                <button id="btnTimeSave" class="btn-primary" style="flex: 1; padding: 12px; background: var(--accent-purple); color: white; font-size: 0.9rem;">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ FOOTER PROFESIONAL ============ -->
+    <footer class="site-footer" id="footer">
+        <div class="footer-grid">
+            <!-- Columna 1: Marca -->
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="fa-solid fa-code" style="color:var(--accent-purple);"></i>
+                    <span>Love<strong>Code</strong></span>
+                </div>
+                <p>Creamos experiencias web románticas e inmersivas, personalizadas con tu música, tus fotos y tus palabras. El regalo digital más único del mundo.</p>
+                <div class="footer-socials">
+                    <a href="https://wa.me/593990480389" class="footer-social-btn wa" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" class="footer-social-btn" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="footer-social-btn tiktok" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="footer-social-btn" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+
+            <!-- Columna 2: Soporte -->
+            <div class="footer-col">
+                <h5>Soporte</h5>
+                <ul class="footer-links">
+                    <li><a href="como-funciona.html"><i class="fa-solid fa-chevron-right"></i> Cómo Funciona</a></li>
+                    <li><a href="preguntas-frecuentes.html"><i class="fa-solid fa-chevron-right"></i> Preguntas Frecuentes</a></li>
+                    <li><a href="privacidad.html"><i class="fa-solid fa-chevron-right"></i> Política de Privacidad</a></li>
+                    <li><a href="terminos.html"><i class="fa-solid fa-chevron-right"></i> Términos de Servicio</a></li>
+                </ul>
+            </div>
+
+            <!-- Columna 4: Newsletter -->
+            <div class="footer-newsletter">
+                <h5>Notificaciones</h5>
+                <p>Recibe alertas de nuevas experiencias románticas y promociones exclusivas.</p>
+                <form class="newsletter-form" id="newsletterForm" onsubmit="handleNewsletter(event)">
+                    <input type="email" placeholder="tu@email.com" id="newsletterEmail" required>
+                    <button type="submit"><i class="fa-solid fa-paper-plane"></i> Suscribirme</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px;">
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    © 2025 LoveCode. Todos los derechos reservados.
+                    <a href="privacidad.html">Privacidad</a>
+                    <a href="terminos.html">Términos</a>
+                    <a href="cookies.html">Cookies</a>
+                </div>
+                <div class="footer-legal" style="font-size:0.78rem;">
+                    © 2025 LoveCode — El regalo digital más romántico del mundo ❤️
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll To Top -->
+    <a href="#inicio" class="scroll-top" id="scrollTop" title="Volver arriba">
+        <i class="fa-solid fa-chevron-up"></i>
+    </a>
+
+    <!-- Botón Flotante WhatsApp -->
+    <a href="https://wa.me/593990480389?text=Hola%20LoveCode!%20Tengo%20una%20pregunta%20sobre%20los%20regalos%20digitales." 
+       class="floating-wa" 
+       target="_blank" 
+       title="Chatea con nosotros">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="wa-bubble-label">¿Tienes dudas?</span>
+    </a>
+
+    <!-- ============ SCRIPTS ============ -->
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Three.js para 3D Preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- PayPal SDK (se carga dinámicamente según precio en checkout) -->
+    <script id="paypal-sdk" defer></script>
+    <!-- Vercel Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <!-- Módulos LoveCode (orden crítico) -->
+    <script src="js/config.js?v=3"></script>
+    <script src="js/catalog.js?v=3"></script>
+    <script src="js/thumbnails.js?v=3"></script>
+    <script src="js/audio-editor.js?v=3"></script>
+    <script src="js/preview.js?v=3"></script>
+    <script src="js/checkout.js?v=3"></script>
+    <script src="js/tracking.js?v=3"></script>
+    <script src="js/affiliates.js?v=3"></script>
+    <script src="js/paypal.js?v=3"></script>
+    <script src="js/video-resumen.js?v=3"></script>
+    <script src="js/three-preview.js?v=3"></script>
+    <script src="js/ui.js?v=3"></script>
+    <script src="js/main.js?v=3"></script>
+</body>
+</html>

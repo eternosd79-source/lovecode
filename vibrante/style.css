@@ -1,0 +1,210 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Fira Code', monospace;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    /* Negro puro pedido por los tutoriales de canvas para hacer pops a los neones */
+    background-color: #000;
+    overflow: hidden;
+    color: #fff;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* =================================
+   PANTALLA DE INICIO (INTRO)
+   ================================= */
+.intro-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: #000;
+    z-index: 50; /* Arriba de todo para tapar el corazón mientras inicia */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.intro-question {
+    font-family: 'Great Vibes', cursive;
+    font-size: 4.5rem;
+    color: #ffd6e7; /* Rosado pastel elegante */
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 0 20px;
+    text-shadow: 0 0 15px rgba(255, 43, 79, 0.4);
+}
+
+.intro-click-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.6);
+    animation: pulseIntroText 1.5s infinite alternate;
+}
+
+@keyframes pulseIntroText {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    100% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+}
+
+@media screen and (max-width: 600px) {
+    .intro-question { font-size: 3.2rem; }
+}
+
+/* =================================
+   EL CANAL DE LAS PARTICULAS
+   ================================= */
+#heartbeatCanvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -1; /* Detrás de los textos pero dentro del flipper */
+    pointer-events: none;
+}
+
+/* =================================
+   EFECTO 3D (FLIP CARD TEXTOS)
+   ================================= */
+.flip-container {
+    perspective: 1000px;
+    width: 100vw;
+    height: 100vh;
+    cursor: pointer;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 10; /* Arriba del canvas */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flipper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.flipper.flipped {
+    transform: rotateY(180deg);
+}
+
+.front, .back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.front {
+    transform: rotateY(0deg);
+    background: transparent;
+}
+
+.back {
+    transform: rotateY(180deg);
+    background: transparent;
+    flex-direction: column;
+}
+
+/* =================================
+   TEXTOS ROMÁNTICOS NEON
+   ================================= */
+.neon-text {
+    font-family: 'Great Vibes', cursive;
+    color: #fff;
+    text-shadow: 0 0 10px #ff1a1a, 0 0 20px #ff1a1a, 0 0 40px #ff1a1a, 0 0 80px #ff1a1a, 0 0 120px #ff1a1a;
+    pointer-events: none;
+    text-align: center;
+}
+
+.front .center-text {
+    position: absolute;
+    top: 38%; /* Posición centro del corazón */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    animation: heartPulse 1.2s infinite alternate ease-in-out;
+}
+
+@media screen and (max-width: 600px) {
+    .front .center-text {
+        font-size: 3.5rem;
+        top: 38%;
+    }
+    .back .special-msg {
+        font-size: 3.5rem;
+        position: absolute;
+        top: 38%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+    }
+}
+
+.back .special-msg {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4.5rem;
+    line-height: 1.3;
+    width: 100%;
+}
+
+.click-hint {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    animation: pulseHint 1.5s infinite alternate;
+    pointer-events: none;
+    letter-spacing: 1px;
+}
+
+@keyframes pulseHint {
+    0% { transform: translateX(-50%) scale(0.95); opacity: 0.4; }
+    100% { transform: translateX(-50%) scale(1.05); opacity: 0.9; text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+}
+
+@media screen and (max-width: 600px) {
+    .click-hint {
+        top: 65%;
+    }
+}
+
+@keyframes heartPulse {
+    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; text-shadow: 0 0 10px #ff1a1a, 0 0 30px #ff1a1a, 0 0 60px #ff1a1a, 0 0 100px #ff1a1a, 0 0 150px #ff1a1a; }
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

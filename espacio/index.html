@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viaje Espacial</title>
+    <!-- Usamos Montserrat para una tipografía moderna como en el video -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+    
+    <!-- Pantalla inicial para requerir clic del usuario (permitirá audio futuro y fullscreen) -->
+    <div id="pantalla-inicio" class="activa">
+        <h2 class="texto-latido">Toca para iniciar el viaje</h2>
+        <span class="pulsar">✨ 🚀 ✨</span>
+    </div>
+    
+    <!-- Lienzo del espacio 3D -->
+    <canvas id="spaceCanvas"></canvas>
+    
+    <script src="app.js?v=10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

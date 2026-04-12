@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c026d3"/>
+      <stop offset="100%" style="stop-color:#f43f5e"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="url(#bg)"/>
+  <!-- Código: < > símbolo -->
+  <text x="8" y="30" font-family="monospace" font-size="14" fill="rgba(255,255,255,0.4)" font-weight="bold">&lt;/&gt;</text>
+  <!-- Corazón -->
+  <path d="M32 46 C32 46 16 36 16 26 C16 20 20 16 26 18 C28 19 30 21 32 23 C34 21 36 19 38 18 C44 16 48 20 48 26 C48 36 32 46 32 46Z" fill="white" opacity="0.95"/>
+</svg>

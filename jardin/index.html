@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jardín de Luz Eterno</title>
+    <!-- Mantenemos la tipografía hiper premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- El lienzo celestial y botánico siempre está activo por detrás -->
+    <canvas id="gardenCanvas"></canvas>
+
+    <!-- Pantalla de Inicio / Cortina de Misterio -->
+    <div class="intro-overlay" id="introOverlay">
+        <h2 class="pre-title">Tengo algo para ti...</h2>
+        <button class="btn-start" id="btnStart">Entrar al Jardín</button>
+    </div>
+
+    <!-- UI Superior Flotante (Se desliza al entrar) -->
+    <div class="ui-layer" id="uiLayer">
+        <h1 class="garden-title">Flores para ti, mi amor</h1>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Almas Gemelas</title>
+    <!-- Fuentes Elegantes -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital@0;1&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=6">
+</head>
+<body>
+    
+    <!-- PANTALLA DE INICIO (INTRO) -->
+    <div id="introScreen" class="intro-screen">
+        <h1 class="intro-question">¿Sabes lo que quiero contigo?</h1>
+        <p class="intro-click-text">Da clic aquí para descubrirlo</p>
+    </div>
+
+    <!-- Universo Estrellado de Fondo -->
+    <div id="starsContainer"></div>
+
+    <!-- Sistema Principal de Interacción Canvas -->
+    <canvas id="soulsCanvas"></canvas>
+
+    <!-- UI Overlay (Frente) -->
+    <div class="ui-layer">
+        
+        <h1 class="top-instruction" id="lblInstruction">Haz click para unir los corazones</h1>
+
+        <!-- Etiquetas de Almas Separadas -->
+        <div class="labels-container" id="lblSouls">
+            <span class="lbl-tu">Tú</span>
+            <span class="lbl-yo">Yo</span>
+            <span class="lbl-iloveyou">I Love You</span>
+        </div>
+
+        <!-- Mensaje Final Revelado (Pergamino Romántico) -->
+        <div class="romantic-message" id="msgRomantic">
+            <p>Ahora somos uno...</p>
+            <p>
+                Te amo mi amor. Gracias por estar a mi lado en cada momento.
+                No quiero ser solo alguien en tu vida, quiero ser tu persona favorita,
+                tu refugio seguro, tu compañero en los momentos bonitos.
+            </p>
+            <h2 class="finale-text">❤️</h2>
+        </div>
+
+    </div>
+
+    <!-- Motor JavaScript -->
+    <script src="app.js?v=6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

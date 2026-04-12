@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galaxia de Flores Amarillas</title>
+    <!-- Fuente tipo manuscrita -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            font-family: 'Caveat', cursive;
+            color: #fff;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* ----- PANTALLA DE INICIO ----- */
+        #intro-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1.5s ease;
+        }
+
+        #intro-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #big-sunflower-container {
+            width: 350px;
+            height: 350px;
+            cursor: pointer;
+            -webkit-filter: drop-shadow(0 0 50px rgba(255, 200, 0, 0.7));
+            filter: drop-shadow(0 0 50px rgba(255, 200, 0, 0.7));
+            -webkit-tap-highlight-color: transparent;
+            -webkit-animation: breathe 2.5s infinite alternate;
+            animation: breathe 2.5s infinite alternate;
+        }
+
+        .spin-petals {
+            -webkit-transform-origin: 100px 100px;
+            transform-origin: 100px 100px;
+            -webkit-animation: spin-cw 20s linear infinite;
+            animation: spin-cw 20s linear infinite;
+        }
+
+        .breathe-flower {
+            -webkit-animation: breathe 3s infinite alternate;
+            animation: breathe 3s infinite alternate;
+        }
+
+        .touch-text {
+            margin-top: 40px;
+            font-size: 45px;
+            color: #fff;
+            text-shadow: 0 0 10px #ffea00, 0 0 20px #ffea00;
+            -webkit-animation: pulse-text 1.5s infinite alternate;
+            animation: pulse-text 1.5s infinite alternate;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* ----- GALAXIA 3D ----- */
+        #galaxy-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-perspective: 1200px;
+            perspective: 1200px;
+        }
+
+        #galaxy-screen.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Títulos fijos en lo más alto de la pantalla */
+        .galaxy-title {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .galaxy-title .subtitle {
+            font-size: 28px;
+            color: #ffffff;
+            margin-bottom: -5px;
+            text-shadow: 0 0 10px #fff;
+            letter-spacing: 1px;
+        }
+
+        .galaxy-title .main-title {
+            font-size: 40px;
+            line-height: 1.1;
+            color: #fffbcf;
+            text-shadow: 0 0 10px #ffea00, 0 0 20px #ffea00;
+        }
+
+        /* El mundo que gira y hace zoom */
+        #world {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            -webkit-transform: scale(0.6) rotateX(65deg) rotateZ(0deg);
+            transform: scale(0.6) rotateX(65deg) rotateZ(0deg);
+        }
+
+        /* Sol Central */
+        .center-sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #ffffff 10%, #fff700 50%, #ff8c00 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 80px 30px #ffea00, 0 0 150px 60px #ff9d00, 0 0 250px 100px rgba(255, 100, 0, 0.4);
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .sun-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 480px;
+            height: 480px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 15px rgba(255, 255, 255, 0.9), 0 0 0 35px rgba(255, 230, 0, 0.6), 0 0 100px 50px rgba(255, 200, 0, 0.3);
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .orbit-item {
+            position: absolute;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        /* BILLBOARD: MÍRE SIEMPRE FRENTE AL USUARIO */
+        .billboard {
+            position: absolute;
+            text-align: center;
+            white-space: nowrap;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .orbit-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 8px #ffea00, 0 0 20px #ffea00, 0 0 40px #ff8800;
+            user-select: none;
+            -webkit-user-select: none;
+            letter-spacing: 1px;
+        }
+
+        .orbit-flower {
+            -webkit-filter: drop-shadow(0 0 25px rgba(255, 200, 0, 0.9));
+            filter: drop-shadow(0 0 25px rgba(255, 200, 0, 0.9));
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .galaxy-star {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .drag-hint {
+            position: fixed;
+            bottom: 80px;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            pointer-events: none;
+            z-index: 100;
+            -webkit-animation: pulse-text 2s infinite alternate;
+            animation: pulse-text 2s infinite alternate;
+        }
+
+        /* --- Animaciones Clave (con prefijos Safari) --- */
+        @-webkit-keyframes spin-cw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
+        @keyframes spin-cw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
+
+        @-webkit-keyframes breathe { from { -webkit-transform: scale(1); transform: scale(1); } to { -webkit-transform: scale(1.05); transform: scale(1.05); } }
+        @keyframes breathe { from { -webkit-transform: scale(1); transform: scale(1); } to { -webkit-transform: scale(1.05); transform: scale(1.05); } }
+
+        @-webkit-keyframes pulse-text { from { opacity: 0.6; text-shadow: 0 0 5px #ffea00; } to { opacity: 1; text-shadow: 0 0 20px #ffea00, 0 0 40px #ffffff; } }
+        @keyframes pulse-text { from { opacity: 0.6; text-shadow: 0 0 5px #ffea00; } to { opacity: 1; text-shadow: 0 0 20px #ffea00, 0 0 40px #ffffff; } }
+    </style>
+</head>
+
+<body>
+
+    <!-- INICIO -->
+    <div id="intro-screen">
+        <div id="big-sunflower-container" onclick="startExperience()"></div>
+        <div class="touch-text" onclick="startExperience()">Toca para iniciar</div>
+    </div>
+
+    <!-- GALAXIA -->
+    <div id="galaxy-screen">
+        <div class="galaxy-title">
+            <div class="main-title">Esto es para ti Dani 🌻</div>
+        </div>
+        <div class="drag-hint" id="drag-hint" style="display:none;">Desliza para girar ⟷ | Pellizca para Zoom</div>
+
+        <div id="world">
+            <div class="sun-ring"></div>
+            <!-- El Sol en el centro perfecto -->
+            <div class="center-sun billboard" data-z="15"></div>
+        </div>
+    </div>
+
+    <!-- AUDIO OCULTO -->
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_14e5907409.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // --- 1. GENERADORES DE SVG ESTRUCTURAL (GIRASOLES ORIGINALES REALES) ---
+        const sunflowerDefs = `
+            <defs>
+                <radialGradient id="petalGrad" cx="50%" cy="100%" r="100%">
+                    <stop offset="0%" stop-color="#ffb700"/>
+                    <stop offset="60%" stop-color="#ffd000"/>
+                    <stop offset="100%" stop-color="#ffee00"/>
+                </radialGradient>
+                <radialGradient id="centerGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="60%" stop-color="#3b2200"/>
+                    <stop offset="100%" stop-color="#1c1000"/>
+                </radialGradient>
+            </defs>
+        `;
+
+        // EL GIRASOL ESPECTACULAR DE REFERENCIA PARA LA PANTALLA DE INICIO
+        function createIntroSunflowerSVG() {
+            let petals = '';
+            for (let layer = 0; layer < 4; layer++) {
+                let count = 30 + layer * 8;
+                for (let i = 0; i < count; i++) {
+                    const angle = (360 / count) * i + (layer * 3);
+                    const length = 110 - layer * 12;
+                    const pathD = `M150 150 C 120 ${150 - length*0.4}, 130 ${150 - length*0.8}, 150 ${150 - length} C 170 ${150 - length*0.8}, 180 ${150 - length*0.4}, 150 150`;
+                    const fill = layer > 1 ? "url(#petalGrad)" : "#ffd500";
+                    const strokeColor = layer > 2 ? "#b36b00" : "#d48000";
+                    petals += `<path d="${pathD}" fill="${fill}" stroke="${strokeColor}" stroke-width="0.5" transform="rotate(${angle} 150 150)"></path>`;
+                }
+            }
+            
+            let textureStr = '';
+            for (let r = 8; r <= 65; r += 4) {
+                textureStr += `<circle cx="150" cy="150" r="${r}" fill="none" stroke="#3b2200" stroke-width="2" stroke-dasharray="${r * 0.1} ${r * 0.15}"></circle>`;
+            }
+            for (let r = 10; r <= 60; r += 5) {
+                textureStr += `<circle cx="150" cy="150" r="${r}" fill="none" stroke="#1c1000" stroke-width="1.5" stroke-dasharray="${r * 0.15} ${r * 0.25}"></circle>`;
+            }
+
+            return `
+            <svg viewBox="0 0 300 300" style="width:100%; height:100%; overflow:visible;">
+                ${sunflowerDefs}
+                <g class="spin-petals" style="transform-origin: 150px 150px; -webkit-transform-origin: 150px 150px; animation-duration: 25s; -webkit-animation-duration: 25s;">
+                    ${petals}
+                </g>
+                <circle cx="150" cy="150" r="70" fill="url(#centerGrad)"></circle>
+                <g>${textureStr}</g>
+            </svg>
+            `;
+        }
+
+        function getSunflowerHead(x, y, scale) {
+            let petals = '';
+            for (let layer = 0; layer < 2; layer++) {
+                for (let i = 0; i < 24; i++) {
+                    const angle = (360 / 24) * i + (layer * 7.5);
+                    const pathD = layer === 0 ? "M100 100 Q 80 20, 100 -10 Q 120 20, 100 100" : "M100 100 Q 85 30, 100 5 Q 115 30, 100 100";
+                    petals += `<path d="${pathD}" fill="url(#petalGrad)" stroke="#e69900" stroke-width="0.5" transform="rotate(${angle} 100 100)"></path>`;
+                }
+            }
+            
+            let textureStr = '';
+            for (let r = 10; r <= 32; r += 6) {
+                textureStr += `<circle cx="100" cy="100" r="${r}" fill="none" stroke="#5e3a00" stroke-width="3" stroke-dasharray="${r * 0.2} ${r * 0.3}"></circle>`;
+            }
+
+            return `
+            <g transform="translate(${x}, ${y}) scale(${scale})">
+                <g class="spin-petals" style="transform-origin: 100px 100px; -webkit-transform-origin: 100px 100px;">${petals}</g>
+                <circle cx="100" cy="100" r="38" fill="url(#centerGrad)"></circle>
+                <g>${textureStr}</g>
+            </g>
+            `;
+        }
+
+        document.getElementById('big-sunflower-container').innerHTML = createIntroSunflowerSVG();
+
+        // --- 2. CONFIGURACIÓN DEL UNIVERSO 3D ---
+        const phrases = [
+            "Eres especial", "Eres maravillosa", "Te quiero", "Eres valiente",
+            "Eres fuerte", "Eres responsable", "Eres única", "Eres increíble",
+            "Eres hermosa", "Eres inteligente", "Eres dulce", "Eres amable",
+            "Eres brillante", "Eres sincera", "Eres auténtica", "Eres inspiradora",
+            "Eres luchadora", "Eres admirable", "Eres cariñosa", "Eres tierna",
+            "Eres divertida", "Eres alegre", "Eres luz", "Eres magia",
+            "Eres importante", "Eres valiosa", "Eres capaz", "Eres decidida",
+            "Eres noble", "Eres fiel", "Eres encantadora", "Eres positiva",
+            "Eres perseverante", "Eres creativa", "Eres atenta", "Eres genuina",
+            "Eres poderosa", "Eres soñadora", "Eres especial para mí", "Eres mi alegría",
+            "Eres mi paz", "Eres mi motivación", "Eres mi razón de sonreír", "Eres todo lo bonito",
+            "Eres única en el mundo", "Eres inolvidable", "Eres perfecta a tu manera", "Eres un regalo",
+            "Eres lo mejor", "Eres todo para mí"
+        ];
+
+        const world = document.getElementById('world');
+
+        function buildGalaxy() {
+            for (let i = 0; i < 30; i++) {
+                const radius = 400 + Math.random() * 2200;
+                const angle = Math.random() * Math.PI * 2;
+                const wrapper = createWrapper(radius, angle);
+
+                const content = document.createElement('div');
+                content.className = 'billboard orbit-flower';
+                
+                content.innerHTML = `
+                <svg viewBox="0 0 200 200" style="width: 140px; height: 140px; overflow:visible;">
+                    ${sunflowerDefs}
+                    ${getSunflowerHead(0, 0, 1)}
+                </svg>`;
+
+                wrapper.appendChild(content);
+                world.appendChild(wrapper);
+            }
+
+            phrases.forEach((textStr) => {
+                const radius = 350 + Math.random() * 2000;
+                const angle = Math.random() * Math.PI * 2;
+                const wrapper = createWrapper(radius, angle, (Math.random() - 0.5) * 300);
+
+                const content = document.createElement('div');
+                content.className = 'billboard orbit-text';
+                content.innerText = textStr;
+
+                if (Math.random() > 0.5) content.style.color = '#ffea00';
+                else content.style.color = '#ffffff';
+
+                content.style.fontSize = (28 + Math.random() * 18) + 'px';
+
+                wrapper.appendChild(content);
+                world.appendChild(wrapper);
+            });
+
+            for (let i = 0; i < 1500; i++) {
+                const star = document.createElement('div');
+                star.className = 'galaxy-star';
+                const r = Math.random() * 3000;
+                const ang = Math.random() * Math.PI * 2;
+                const z = (Math.random() - 0.5) * 1000;
+                const x = Math.cos(ang) * r;
+                const y = Math.sin(ang) * r;
+                star.style.left = `calc(50% + ${x}px)`;
+                star.style.top = `calc(50% + ${y}px)`;
+                
+                // Safari compat in stars
+                const transformZ = `translateZ(${z}px)`;
+                star.style.transform = transformZ;
+                star.style.webkitTransform = transformZ;
+                
+                const size = Math.random() > 0.8 ? '4px' : '2px';
+                star.style.width = size; star.style.height = size;
+                star.style.backgroundColor = Math.random() > 0.7 ? '#ffea00' : '#ffffff';
+                world.appendChild(star);
+            }
+        }
+
+        function createWrapper(radius, angleRadians, zOffset = 0) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'orbit-item';
+            const x = Math.cos(angleRadians) * radius;
+            const y = Math.sin(angleRadians) * radius;
+            wrapper.style.left = `calc(50% + ${x}px)`;
+            wrapper.style.top = `calc(50% + ${y}px)`;
+            if (zOffset === 0) zOffset = (Math.random() - 0.5) * 100;
+            
+            const trans = `translateZ(${zOffset}px)`;
+            wrapper.style.transform = trans;
+            wrapper.style.webkitTransform = trans;
+            return wrapper;
+        }
+
+        buildGalaxy();
+
+
+        // --- 3. LÓGICA INTERACTIVA ---
+        let isDragging = false;
+        let startX = 0;
+        let currentRotZ = 0;
+        let targetRotZ = 0;
+
+        let currentScale = 0.5;
+        let targetScale = 0.5;
+        let initialPinchDist = null;
+        let initialPinchScale = 1;
+
+        const CAM_ANGLE_X = 65;
+
+        function handleDragStart(x) {
+            if (!document.getElementById('galaxy-screen').classList.contains('visible')) return;
+            isDragging = true; startX = x;
+            document.getElementById('drag-hint').style.display = 'none';
+        }
+        function handleDragMove(x) {
+            if (!isDragging) return;
+            targetRotZ += (x - startX) * 0.4;
+            startX = x;
+        }
+        function handleDragEnd() { isDragging = false; initialPinchDist = null; }
+
+        document.addEventListener('mousedown', e => handleDragStart(e.clientX));
+        document.addEventListener('mousemove', e => handleDragMove(e.clientX));
+        document.addEventListener('mouseup', handleDragEnd);
+
+        window.addEventListener('wheel', (e) => {
+            if (!document.getElementById('galaxy-screen').classList.contains('visible')) return;
+            targetScale += e.deltaY * -0.001;
+            targetScale = Math.min(Math.max(0.15, targetScale), 2.5);
+        });
+
+        document.addEventListener('touchstart', e => {
+            if (!document.getElementById('galaxy-screen').classList.contains('visible')) return;
+            if (e.touches.length === 2) {
+                isDragging = false;
+                initialPinchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialPinchScale = targetScale;
+            } else if (e.touches.length === 1) {
+                handleDragStart(e.touches[0].clientX);
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', e => {
+            if (!document.getElementById('galaxy-screen').classList.contains('visible')) return;
+            e.preventDefault();
+
+            if (e.touches.length === 2 && initialPinchDist) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const delta = dist / initialPinchDist;
+                targetScale = Math.min(Math.max(0.15, initialPinchScale * delta), 2.5);
+            } else if (e.touches.length === 1) {
+                handleDragMove(e.touches[0].clientX);
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', handleDragEnd);
+
+        function animate() {
+            currentRotZ += (targetRotZ - currentRotZ) * 0.08;
+            currentScale += (targetScale - currentScale) * 0.1;
+
+            if (!isDragging && !initialPinchDist) targetRotZ -= 0.12;
+
+            const worldTrans = `scale(${currentScale}) rotateX(${CAM_ANGLE_X}deg) rotateZ(${currentRotZ}deg)`;
+            world.style.transform = worldTrans;
+            world.style.webkitTransform = worldTrans;
+
+            const billboards = document.querySelectorAll('.billboard');
+            billboards.forEach(b => {
+                const zOff = b.classList.contains('center-sun') ? "translateZ(10px)" : "";
+                const bTrans = `translate(-50%, -50%) ${zOff} rotateZ(${-currentRotZ}deg) rotateX(${-CAM_ANGLE_X}deg)`;
+                b.style.transform = bTrans;
+                b.style.webkitTransform = bTrans;
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 4. FLUJO DE INICIO ---
+        function startExperience() {
+            const audio = document.getElementById('bgMusic');
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log('Audio autoplay bloqueado', e));
+
+            document.getElementById('intro-screen').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('intro-screen').style.display = 'none';
+                document.getElementById('galaxy-screen').classList.add('visible');
+                setTimeout(() => document.getElementById('drag-hint').style.display = 'block', 1000);
+            }, 1000);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

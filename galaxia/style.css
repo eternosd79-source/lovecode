@@ -1,0 +1,157 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    /* Fondo Oscuro cósmico, un violeta/azul casi negro profundo */
+    background-color: #040814;
+    overflow: hidden;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Detras de todo */
+}
+
+
+
+/* =================================
+   ETIQUETAS FLOTANTES (CSS PROYECTADO DESDE 3D)
+   ================================= */
+#labels-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    pointer-events: none;
+}
+.floating-label {
+    position: absolute;
+    transform: translate(-50%, -50%); /* Centrar respecto al punto (x,y) */
+    font-family: 'Great Vibes', cursive;
+    font-size: 9rem; /* Tamaño monumental para nitidez absurda */
+    font-weight: 400;
+    
+    /* Configuración de letras: borde blanco brillante, relleno casi transparente */
+    color: rgba(255, 255, 255, 0.1);
+    -webkit-text-stroke: 3px rgba(255, 255, 255, 0.9);
+    
+    /* El resplandor cambiará de color gracias a variables inyectadas */
+    text-shadow: 
+        0 0 15px var(--glow-color, #ff66cc),
+        0 0 40px var(--glow-color, #ff66cc);
+        
+    white-space: nowrap;
+    transition: opacity 0.5s ease-out, font-size 0.1s linear; /* Suavizar LOD */
+    opacity: 0; /* Inicialmente ocultos por el zoom-level */
+}
+
+/* Clases dinámicas de colores para los textos estelares */
+.text-glow-blue { --glow-color: #3b82f6; } /* Azul intenso */
+.text-glow-pink { --glow-color: #ec4899; } /* Rosa */
+.text-glow-gold { --glow-color: #fbbf24; } /* Oro */
+.text-glow-cyan { --glow-color: #06b6d4; } /* Cian espectacular */
+
+/* =================================
+   FOTOS PROYECTADAS (LOD Y EFECTO PLANETA)
+   ================================= */
+.floating-photo {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 250px;  /* Altísima resolución base para no pixelarse al hacer zoom */
+    height: 250px;
+    border-radius: 50%;
+    
+    /* Eliminar borde y crear un sombreado en 3D que le da atmósfera al planeta/foto */
+    box-shadow: 
+        inset -40px -40px 60px rgba(0,0,0,0.8), /* Sombra convexa (crea curvatura real) */
+        inset 0 0 20px rgba(255,255,255,0.4), /* Reflejo interno */
+        0 0 35px rgba(255, 255, 255, 0.6);   /* Atmósfera que expulsa luz al vacío */
+        
+    object-fit: cover;
+    opacity: 0; /* Invisibles hasta que te acercas */
+}
+
+/* =================================
+   PLANETAS CSS PROCEDURALES
+   ================================= */
+.css-planet {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: inset -20px -20px 40px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.1);
+    opacity: 0;
+}
+/* Texturas hermosas y realistas basadas en CSS */
+.planet-jupiter { background: radial-gradient(circle at 30% 30%, #f6d365 0%, #fda085 50%, #d39c7e 100%); }
+.planet-tierra { background: radial-gradient(circle at 30% 30%, #4facfe 0%, #00f2fe 50%, #274687 100%); }
+.planet-marte { background: radial-gradient(circle at 30% 30%, #ff0844 0%, #ffb199 60%, #c1440e 100%); }
+.planet-luna { background: radial-gradient(circle at 30% 30%, #e2e2e2 0%, #999999 50%, #444444 100%); }
+.planet-venus { background: radial-gradient(circle at 30% 30%, #ff9a9e 0%, #fecfef 50%, #a18cd1 100%); }
+
+/* =================================
+   INTERFAZ PRINCIPAL FIJA
+   ================================= */
+#ui-layer {
+    position: absolute;
+    top: 5vh;
+    width: 100%;
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.main-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 4.5rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 102, 204, 0.8), 0 0 40px rgba(255, 102, 204, 0.4);
+    margin-bottom: 5px;
+}
+
+.zoom-hint {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 1.5px;
+    animation: pulseHint 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseHint {
+    0% { opacity: 0.3; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+}
+
+@media screen and (max-width: 600px) {
+    .main-title { font-size: 3rem; }
+    .zoom-hint { font-size: 0.85rem; padding: 0 10px; }
+}
+
+
+
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

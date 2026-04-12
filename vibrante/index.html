@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Corazón Vibrante (Rafael Codex)</title>
+    <!-- Fuentes Románticas -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+    
+    <!-- PANTALLA DE INICIO (INTRO) -->
+    <div id="introScreen" class="intro-screen">
+        <h1 class="intro-question">¿Quieres saber lo que siento por ti?</h1>
+        <p class="intro-click-text">Haz clic aquí para descubrirlo</p>
+    </div>
+
+    <!-- UI Overlay: Flip Card para los textos y el corazón -->
+    <div class="flip-container" id="heartContainer">
+        <div class="flipper" id="flipper">
+            <!-- MOTOR GRÁFICO (Canvas que gira con la carta) -->
+            <canvas id="heartbeatCanvas"></canvas>
+
+            <!-- LADO FRONTAL -->
+            <div class="front">
+                <h1 class="center-text neon-text">Te Amo</h1>
+                <p class="click-hint">Haz clic en mí</p>
+            </div>
+
+            <!-- LADO TRASERO -->
+            <div class="back">
+                <h1 class="neon-text special-msg">Eres especial<br>para mí</h1>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Script de Alto Rendimiento (Físico Realtime) -->
+    <script src="app.js?v=5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

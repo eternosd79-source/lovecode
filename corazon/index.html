@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorpresa para ti</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+</head>
+
+<body>
+
+    <!-- PANTALLA 1: INICIO & CUBO DE RUBIK -->
+    <div id="pantalla-inicio" class="pantalla activa">
+        <div class="scene-rubik">
+            <div class="cube" id="rubik">
+                <div class="face front">
+                    <div class="grid-wrapper"></div>
+                </div>
+                <div class="face right">
+                    <div class="grid-wrapper"></div>
+                </div>
+                <div class="face left">
+                    <div class="grid-wrapper"></div>
+                </div>
+                <div class="face bottom">
+                    <div class="grid-wrapper"></div>
+                </div>
+
+                <div class="face back">
+                    <div class="grid-wrapper"></div>
+                    <div class="tapa-hinge">
+                        <div class="face top" id="tapa-caja">
+                            <div class="grid-wrapper"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="flecha-saliendo">
+                    <svg viewBox="0 0 650 100" fill="#e01e37" width="100%" height="100%">
+                        <rect x="40" y="45" width="530" height="10" rx="4" />
+                        <polygon points="0,35 60,50 0,65 30,50" fill="#ffffff" />
+                        <polygon points="570,30 650,50 570,70" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <p id="texto-clic">Haz clic aquí <span style="color:#ff0a54;">❤️</span></p>
+    </div>
+
+    <!-- PANTALLA 2: ESCENA CORAZÓN 3D ATRAVESADO -->
+    <div id="escena-3d" class="pantalla">
+
+        <!-- CAPA ESTÁTICA 1: POEMA (Superior e Inferior) -->
+        <div class="poema-estatico visible" id="poema-frontal">
+            <div class="contenedor-texto-corazon superior"
+                style="position: absolute; top: 12vh; left: 50%; transform: translateX(-50%); width: 90vw; max-width: 400px; text-align: center; z-index: 10;">
+                <h1 class="texto-latido poema">
+                    Es poco decir que eres mi luz,<br>
+                    mi cielo, mi otra mitad...
+                </h1>
+            </div>
+            <div class="contenedor-texto-corazon inferior"
+                style="position: absolute; bottom: 4vh; left: 50%; transform: translateX(-50%); width: 90vw; max-width: 400px; text-align: center; z-index: 10;">
+                <h1 class="texto-latido poema">
+                    Es poco decir que daría la vida<br>
+                    por tu amor y aún más...<br>
+                    y por eso
+                </h1>
+            </div>
+        </div>
+
+        <!-- CAPA ROTATIVA: FLIP CARD -->
+        <div id="tarjeta-3d">
+
+            <!-- Canvas DIRECTO en tarjeta-3d (sin backface-visibility):
+                 el corazón de partículas ES visible desde ambas caras del flip -->
+            <canvas id="corazonCanvas"></canvas>
+
+            <!-- CAPA FLECHA: AHORA DENTRO DE LA TARJETA PARA GIRAR CON ELLA -->
+            <div class="flecha-3d-container oculto" id="flecha-impacto">
+                <svg viewBox="0 0 650 100" fill="#e01e37" width="100%" height="100%"
+                    style="filter: drop-shadow(0px 3px 10px rgba(224,30,55,0.9));">
+                    <rect x="10" y="45" width="55" height="10" rx="4" />
+                    <rect x="585" y="45" width="15" height="10" rx="4" />
+                    <polygon points="0,35 60,50 0,65 30,50" fill="#ffffff" />
+                    <polygon points="585,30 650,50 585,70" />
+                </svg>
+            </div>
+
+            <!-- Cara FRONTAL: solo instrucción (desaparece al girar) -->
+            <div class="cara-frontal-corazon">
+                <p id="instruccion" class="oculto">✨ Haz clic en el corazón ✨</p>
+            </div>
+
+            <!-- Cara TRASERA: texto "Mi corazón es tuyo" (aparece al girar) -->
+            <div class="cara-texto trasera">
+                <div class="contenedor-texto-corazon" style="margin: auto;">
+                    <h1 class="texto-latido">Mi corazón<br>es tuyo</h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="app.js?v=10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+
+</html>

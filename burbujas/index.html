@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Razones para Amarte 🫧</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600;1,700&family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- CANVAS DE POLVO DORADO (Fondo permanente) -->
+    <canvas id="dustCanvas"></canvas>
+
+    <!-- PANTALLA 1: INTRO -->
+    <div id="intro" class="screen active">
+        <div class="intro-content">
+            <div class="golden-ornament top">✦ ✦ ✦</div>
+            <h1 class="intro-title">Razones<br>para Amarte</h1>
+            <p class="intro-sub">Cada burbuja esconde una razón especial...<br>Reviéntalas todas y descúbrelas</p>
+            <div class="golden-ornament">❧ ✦ ❧</div>
+            <button class="btn-start" id="startBtn">Descubrir</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: CAMPO DE BURBUJAS -->
+    <div id="gameScreen" class="screen">
+        <div class="top-bar">
+            <span class="bubbles-left">Razones por descubrir: <strong id="bubbleCount">8</strong></span>
+            <span class="top-hint">Tócalas todas 🫧</span>
+        </div>
+        <div class="bubble-field" id="bubbleField"></div>
+    </div>
+
+    <!-- PANTALLA 3: EL GRAN MURAL DE RAZONES -->
+    <div id="celebScreen" class="screen">
+        <canvas id="goldCanvas"></canvas>
+
+        <!-- Texto inicial que entra antes de la carta -->
+        <div class="reveal-header" id="revealHeader">
+            <h1 class="reveal-title">Mis Razones<br>para Amarte</h1>
+            <div class="golden-line-hr"></div>
+        </div>
+
+        <!-- La carta/mural que se expande con todas las frases -->
+        <div class="reasons-mural" id="reasonsMural">
+            <div class="mural-top-ornament">❧ ✦ ❧</div>
+            <h2 class="mural-opening">Te amo porque...</h2>
+            <ul class="reasons-list" id="reasonsList">
+                <!-- Llenado por JS -->
+            </ul>
+            <div class="mural-divider">— ✦ —</div>
+            <p class="mural-closing-text">Eres absolutamente todo para mí.</p>
+            <h3 class="mural-signature">Con amor eterno</h3>
+            <div class="mural-bottom-ornament">✦</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flores Amarillas</title>
+    <!-- Mismas fuentes premium del resto del proyecto -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600;1,700&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Fondo Mágico Nocturno -->
+    <div class="bg-layer" id="backgroundArea"></div>
+    <div class="vignette"></div>
+
+    <!-- Canvas para el Árbol de Flores Amarillas (ahora será dorado!) -->
+    <canvas id="treeCanvas"></canvas>
+
+    <!-- Contenedor UI: Textos y Cronómetro en z-index superior -->
+    <div class="ui-layer">
+        
+        <!-- Zona Superior: Dedicatoria -->
+        <div class="poem-container">
+            <h1 class="title">Flores Amarillas<br>para mi amor</h1>
+            <p class="message">Si pudiera elegir un lugar seguro,<br>siempre sería a tu lado...</p>
+        </div>
+
+        <!-- Zona Inferior: Cronómetro de Amor en Glassmorphism -->
+        <div class="chrono-card">
+            <p class="timer-intro">Nuestro amor florece desde hace...</p>
+            <div class="golden-line"></div>
+            <div class="chronometer">
+                <div class="time-box">
+                    <span class="num" id="days">0</span>
+                    <span class="label">días</span>
+                </div>
+                <div class="time-box">
+                    <span class="num" id="hours">0</span>
+                    <span class="label">horas</span>
+                </div>
+                <div class="time-box">
+                    <span class="num" id="minutes">0</span>
+                    <span class="label">minutos</span>
+                </div>
+                <div class="time-box">
+                    <span class="num" id="seconds">0</span>
+                    <span class="label">segundos</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

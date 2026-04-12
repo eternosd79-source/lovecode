@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Propuesta Especial</title>
+    <!-- Tipografía Hiper Premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- Secuencia de Inicio Cinematográfica Mágica -->
+    <div class="intro-sequence" id="introSequence">
+        <h1 class="intro-text" id="introText1">He estado pensando mucho...</h1>
+        <h1 class="intro-text" id="introText2" style="display:none;">y hay algo que mi corazón ya no puede ocultar.</h1>
+        <button class="btn-unlock" id="btnUnlock" style="display:none;">Revelar Mensaje</button>
+    </div>
+
+    <!-- Mágico Fondo Atmosférico de Canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- La "Carta" de Cristal (Inicialmente oculta) -->
+    <div class="glass-container hidden" id="glassCard">
+        <h2>Llevo tiempo queriendo decirte esto...</h2>
+        <p>Eres mi universo entero y cada día me enamoras más. 🌌</p>
+        <h3 class="question">¿Quieres ser mi novia?</h3>
+        
+        <div class="button-group">
+            <button id="btnYes" class="btn btn-yes">SÍ</button>
+            <button id="btnNo" class="btn btn-no">NO</button>
+        </div>
+    </div>
+
+    <!-- Pantalla Épica de Victoria -->
+    <div class="success-screen" id="successScreen">
+        <canvas id="victoryCanvas"></canvas> <!-- Efectos dorados inmensos -->
+        <h1 class="success-title">El universo de la luz acaba de sonreír al escuchar tu respuesta. 💫</h1>
+        <p class="success-sub">El mejor 'Sí' de mi vida.</p>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../ventas/personalizar.js"></script>
+</body>
+</html>

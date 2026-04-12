@@ -1,0 +1,387 @@
+/* =============================================
+   PANTALLA DE INICIO - LLUVIA DE PÉTALOS
+   ============================================= */
+
+#intro-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: radial-gradient(circle at 50% 40%, #1a0030 0%, #0d0018 60%, #050008 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#intro-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Pétalos cayendo */
+#petals-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.petal {
+    position: absolute;
+    top: -60px;
+    font-size: 1.4rem;
+    opacity: 0;
+    animation: petalFall linear infinite;
+    filter: drop-shadow(0 0 6px rgba(255, 100, 200, 0.7));
+}
+
+@keyframes petalFall {
+    0%   { transform: translateY(0)   rotate(0deg)   translateX(0);   opacity: 0; }
+    10%  { opacity: 0.9; }
+    80%  { opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(720deg) translateX(40px); opacity: 0; }
+}
+
+/* Contenido Central del Intro */
+.intro-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    animation: introFadeIn 1.2s ease forwards;
+}
+
+@keyframes introFadeIn {
+    0%   { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.intro-sparkles {
+    font-size: 2rem;
+    animation: sparkleFloat 3s ease-in-out infinite alternate;
+    letter-spacing: 10px;
+}
+
+@keyframes sparkleFloat {
+    0%   { transform: translateY(0) scale(1);    opacity: 0.8; }
+    100% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+}
+
+.intro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    font-style: italic;
+    color: #fff;
+    line-height: 1.3;
+    text-shadow: 
+        0 0 20px rgba(255, 100, 200, 0.9),
+        0 0 50px rgba(255, 50, 150, 0.5);
+}
+
+.intro-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    color: rgba(255, 200, 230, 0.85);
+    letter-spacing: 2px;
+}
+
+/* Botón con efecto de onda luminosa */
+.intro-btn {
+    position: relative;
+    margin-top: 10px;
+    padding: 16px 48px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #fff;
+    background: linear-gradient(135deg, #e91e8c, #9c27b0);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 
+        0 0 20px rgba(233, 30, 140, 0.6),
+        0 0 50px rgba(156, 39, 176, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: btnPulse 2s ease-in-out infinite alternate;
+}
+
+.intro-btn:hover {
+    transform: scale(1.07);
+    box-shadow: 
+        0 0 35px rgba(233, 30, 140, 0.9),
+        0 0 80px rgba(156, 39, 176, 0.5);
+}
+
+.intro-btn:active { transform: scale(0.97); }
+
+@keyframes btnPulse {
+    0%   { box-shadow: 0 0 15px rgba(233,30,140,0.5),  0 0 40px rgba(156,39,176,0.2); }
+    100% { box-shadow: 0 0 30px rgba(233,30,140,0.9),  0 0 70px rgba(156,39,176,0.5); }
+}
+
+.btn-glow {
+    position: absolute;
+    top: -50%; left: -60%;
+    width: 60%; height: 200%;
+    background: rgba(255,255,255,0.2);
+    transform: skewX(-20deg);
+    animation: btnShine 2.5s ease-in-out infinite;
+}
+
+@keyframes btnShine {
+    0%, 100% { left: -60%; opacity: 0; }
+    40%       { left:  120%; opacity: 1; }
+}
+
+/* =============================================
+   ONDA DE TRANSICIÓN (Ripple al click)
+   ============================================= */
+#wave-transition {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #e91e8c 0%, #9c27b0 50%, #1a0030 100%);
+    transform: scale(0);
+    z-index: 999;
+    pointer-events: none;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    opacity: 0;
+}
+
+#wave-transition.ripple-active {
+    transform: scale(300);
+    opacity: 1;
+}
+
+#wave-transition.ripple-done {
+    transform: scale(300);
+    opacity: 0;
+}
+
+/* =============================================
+   Reset y Configuración de Fuente
+   ============================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    /* Fondo radial oscuro y profundo (Cyber-Rosa) */
+    background: radial-gradient(circle at 50% 50%, #2f011b 0%, #15000e 60%, #080006 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 1. Fondo Interactivo (Contenedor Visual) */
+.background-container {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Partículas Decorativas CSS */
+.bg-heart {
+    position: absolute;
+    bottom: -10%;
+    color: rgba(255, 100, 180, 0.4);
+    font-size: 24px;
+    animation: driftUp 8s ease-in infinite;
+    text-shadow: 0 0 10px rgba(255, 0, 150, 0.6);
+}
+@keyframes driftUp {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    20% { opacity: 0.8; }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
+}
+
+/* 2. Textos Exterioren I Love You (Neón/Glow) */
+.top-title, .bottom-title {
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-style: italic;
+    color: #ff3377;
+    text-shadow: 
+        0 0 5px #ff0055, 
+        0 0 15px #ff0055, 
+        0 0 30px #cc0044;
+    z-index: 10;
+    letter-spacing: 2px;
+}
+.top-title { top: 6vh; }
+.bottom-title { bottom: 6vh; }
+
+/* 3. Tarjeta Principal (Glassmorphism) */
+.glass-card {
+    position: relative;
+    z-index: 5;
+    width: 90%;
+    max-width: 400px;
+    height: 68vh;
+    min-height: 550px;
+    
+    /* Efecto Vidrio (Glassmorphism) */
+    background: rgba(40, 0, 20, 0.4); /* Translúcido y super oscuro */
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    
+    /* Borde fino, sombra brillante */
+    border: 1px solid rgba(255, 100, 150, 0.3);
+    border-radius: 28px;
+    box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 0, 100, 0.2) inset,
+        0 0 60px rgba(255, 0, 100, 0.4);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    
+    /* Entrada Animada de la tarjeta */
+    animation: zoomIn 1.5s ease-out forwards;
+    opacity: 0;
+}
+@keyframes zoomIn {
+    0% { transform: scale(0.85) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Botón de  Cerrar Superior Derecho */
+.close-btn {
+    position: absolute;
+    top: 15px; right: 15px;
+    width: 28px; height: 28px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.close-btn:hover { background: rgba(255, 0, 100, 0.5); }
+.close-btn svg {
+    width: 14px; height: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Textos dentro de la Tarjeta */
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: #ffb3d9;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 100, 200, 0.8);
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.card-body p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: center;
+    color: #fdfdfd;
+    padding: 0 10px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    margin-bottom: 30px;
+}
+
+/* 4. Galería de Fotos (Stacked Polaroids) */
+.photo-gallery {
+    position: relative;
+    width: 100%;
+    height: 180px; /* Espacio para las fotos al fondo de la tarjeta */
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.polaroid {
+    position: absolute;
+    width: 110px;
+    height: 140px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px;
+    padding-bottom: 20px; /* Clásico borde inferior grueso estilo polaroid */
+    border-radius: 6px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    transition: transform 0.4s ease;
+}
+
+/* Espacio donde irá la foto */
+.photo-img {
+    width: 100%;
+    height: 100%;
+    background-color: #ffd1dc; /* Color Placeholder (Rosa pastel) */
+    background-size: cover;
+    background-position: center;
+    border-radius: 4px;
+}
+
+/* Posicionamiento 3D Solapado */
+.photo-left {
+    transform: rotate(-12deg) scale(0.9) translateX(-90px);
+    z-index: 1;
+}
+.photo-right {
+    transform: rotate(12deg) scale(0.9) translateX(90px);
+    z-index: 1;
+}
+.photo-center {
+    transform: scale(1.05) translateY(-10px);
+    z-index: 3;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+}
+
+/* Hover: Al interactuar, la foto se asoma */
+.photo-left:hover { transform: rotate(-8deg) scale(1.1) translateX(-90px) translateY(-10px); z-index: 5; }
+.photo-right:hover { transform: rotate(8deg) scale(1.1) translateX(90px) translateY(-10px); z-index: 5; }
+.photo-center:hover { transform: scale(1.15) translateY(-15px); }
+
+/* Decoraciones sobre las fotos (Corazones y brillos) */
+.floating-heart, .floating-sparkle {
+    position: absolute;
+    font-size: 1.2rem;
+    pointer-events: none;
+    filter: drop-shadow(0 0 5px rgba(255,50,150,0.8));
+    animation: gentleBob 3s infinite alternate ease-in-out;
+}
+.heart-1 { top: -10px; left: -10px; font-size: 1.5rem; }
+.heart-2 { bottom: -10px; right: -10px; }
+.heart-3 { top: 20px; right: 10px; font-size: 1.8rem; }
+.sparkle-1 { bottom: 20px; left: -15px; font-size: 1.2rem; }
+
+@keyframes gentleBob {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}

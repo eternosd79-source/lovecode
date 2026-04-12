@@ -1,0 +1,337 @@
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+body, html { 
+    width: 100vw; height: 100vh; overflow: hidden; 
+    background: radial-gradient(ellipse at bottom, #1a0d3a 0%, #04030f 100%); 
+    color: #fff; 
+    font-family: 'Montserrat', sans-serif; 
+}
+
+#starCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+/* ==================================
+   UTILIDADES
+   ================================== */
+.hidden { opacity: 0; pointer-events: none; }
+.visible { opacity: 1; pointer-events: auto; }
+
+/* ==================================
+   PANTALLA 1: INTRO CINEMATOGRÁFICO
+   ================================== */
+.intro-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: linear-gradient(160deg, #0d0020 0%, #1a0533 50%, #070014 100%);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 2s ease;
+}
+
+.intro-content {
+    position: relative;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Corazones flotantes del intro */
+.floating-hearts {
+    position: fixed; inset: 0; pointer-events: none; overflow: hidden;
+}
+.float-heart {
+    position: absolute;
+    font-size: 1.2rem;
+    animation: floatUp linear infinite;
+    opacity: 0;
+}
+@keyframes floatUp {
+    0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.7; }
+    90%  { opacity: 0.5; }
+    100% { transform: translateY(-20px) rotate(360deg); opacity: 0; }
+}
+
+/* Frases del intro */
+.intro-phrase {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw; max-width: 600px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 0 40px rgba(200,160,255,0.6);
+    line-height: 1.4;
+    opacity: 0;
+}
+
+.intro-phrase.active {
+    animation: phraseReveal 2.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+.intro-phrase.exit {
+    animation: phraseExit 1.5s ease-in forwards;
+}
+
+@keyframes phraseReveal {
+    0%   { opacity: 0; transform: translate(-50%, calc(-50% + 30px)); filter: blur(8px); }
+    100% { opacity: 1; transform: translate(-50%, -50%); filter: blur(0px); }
+}
+@keyframes phraseExit {
+    0%   { opacity: 1; transform: translate(-50%, -50%); filter: blur(0px); }
+    100% { opacity: 0; transform: translate(-50%, calc(-50% - 30px)); filter: blur(8px); }
+}
+
+/* Botón de Entrada */
+.btn-enter {
+    position: relative;
+    margin-top: 60px;
+    padding: 16px 60px;
+    border-radius: 50px;
+    background: transparent;
+    border: 1px solid rgba(230, 180, 255, 0.4);
+    color: #f0d8ff;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    letter-spacing: 3px;
+    cursor: pointer;
+    overflow: hidden;
+    opacity: 0;
+    animation: btnAppear 2s 0.5s ease forwards, pulseBorder 3s infinite 2.5s;
+    transition: all 0.4s;
+}
+@keyframes btnAppear {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 10px rgba(200,120,255,0.2); }
+    50%       { box-shadow: 0 0 40px rgba(200,120,255,0.7), inset 0 0 20px rgba(200,120,255,0.1); }
+}
+.btn-enter:hover {
+    background: rgba(200,120,255,0.15);
+    border-color: rgba(230, 180, 255, 0.9);
+    box-shadow: 0 0 50px rgba(200,120,255,0.6);
+    transform: scale(1.05);
+}
+.btn-sparkle {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: shimmer 2.5s infinite;
+}
+@keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ==================================
+   PANTALLA 2: EXPERIENCIA PRINCIPAL
+   ================================== */
+.main-experience {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start;
+    padding-top: 3vh;
+    transition: opacity 2s ease;
+}
+
+/* Pétalos cayendo */
+.petals-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 11; }
+.petal {
+    position: absolute;
+    font-size: 1.1rem;
+    animation: petalFall linear infinite;
+    opacity: 0;
+}
+@keyframes petalFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.8; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+/* La obra de arte */
+.art-scene {
+    position: relative;
+    width: min(55vw, 280px);
+    height: min(55vw, 280px);
+    margin-bottom: 12px;
+    z-index: 12;
+    animation: sceneFloat 6s ease-in-out infinite alternate;
+}
+@keyframes sceneFloat {
+    from { transform: translateY(0px); }
+    to   { transform: translateY(-15px); }
+}
+
+.masterpiece-art {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgba(255,200,255,0.25);
+    box-shadow: 0 10px 50px rgba(0,0,0,0.8);
+}
+
+.art-glow {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%; height: 95%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #a040ff 0%, transparent 70%);
+    filter: blur(35px);
+    opacity: 0.4;
+    z-index: -1;
+    animation: glowPulse 4s infinite ease-in-out alternate;
+}
+@keyframes glowPulse {
+    0%   { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.15); }
+}
+
+.heart-overlay {
+    position: absolute; top: -10px; right: -10px;
+    font-size: 1.8rem;
+    animation: heartBeat 1.5s ease-in-out infinite;
+}
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.3); }
+}
+
+/* Frase romántica pequeña */
+.sub-romantic-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+    color: rgba(220, 200, 255, 0.7);
+    text-align: center;
+    max-width: 80%;
+    line-height: 1.6;
+    margin-bottom: 18px;
+    z-index: 12;
+}
+
+/* Tarjeta de cristal */
+.glass-ui {
+    width: 90%; max-width: 480px;
+    padding: 28px 20px 20px;
+    z-index: 12;
+    background: rgba(20, 10, 40, 0.35);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 22px;
+    border: 1px solid rgba(200,160,255,0.12);
+    border-top: 1px solid rgba(200,160,255,0.35);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), inset 0 0 30px rgba(160,80,255,0.05);
+    text-align: center;
+    transition: all 2s ease-in-out;
+}
+
+.question {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    color: #e8d8ff;
+    font-style: italic;
+    margin-bottom: 24px;
+    text-shadow: 0 0 20px rgba(200,160,255,0.4);
+    transition: all 1.5s ease;
+}
+
+.button-group {
+    display: flex; justify-content: center; gap: 20px;
+    align-items: center; position: relative; height: 50px;
+    transition: opacity 1s;
+}
+
+/* ==================================
+   BOTONES
+   ================================== */
+.btn {
+    padding: 12px 32px;
+    font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 2px;
+    border-radius: 30px; cursor: pointer; transition: all 0.4s ease;
+    background: transparent; outline: none;
+}
+.btn-yes {
+    border: 1px solid #c084ff; color: #c084ff;
+    box-shadow: 0 0 15px rgba(192,132,255,0.3), inset 0 0 10px rgba(192,132,255,0.08);
+}
+.btn-yes:hover {
+    background: rgba(192,132,255,0.2);
+    box-shadow: 0 0 35px rgba(192,132,255,0.7);
+    transform: scale(1.07);
+}
+.no-container { position: relative; z-index: 1000; }
+.btn-no { border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.5); }
+
+.dissolve-out { animation: dissolve 0.4s forwards; }
+.dissolve-in  { animation: appear 0.4s forwards; }
+@keyframes dissolve {
+    0%   { filter: blur(0);   opacity: 1; transform: scale(1); }
+    100% { filter: blur(15px); opacity: 0; transform: scale(1.5); }
+}
+@keyframes appear {
+    0%   { filter: blur(15px); opacity: 0; transform: scale(0.5); }
+    100% { filter: blur(0);   opacity: 1; transform: scale(1); }
+}
+
+/* ==================================
+   PANTALLA 3: VICTORIA ÉPICA
+   ================================== */
+.victory-screen {
+    position: fixed; inset: 0; z-index: 200;
+    background: #03000a;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 2s ease;
+}
+.victory-screen.visible { opacity: 1; pointer-events: auto; }
+
+#victoryCanvas { position: absolute; inset: 0; pointer-events: none; }
+
+.victory-art {
+    position: relative;
+    width: min(60vw, 280px); height: min(60vw, 280px);
+    margin-bottom: 30px; z-index: 205;
+    animation: sceneFloat 6s ease-in-out infinite alternate;
+}
+.victory-img {
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: 50%;
+    border: 2px solid rgba(255, 220, 100, 0.5);
+    box-shadow: 0 0 80px rgba(255, 200, 80, 0.5);
+}
+.victory-glow {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 120%; height: 120%; border-radius: 50%;
+    background: radial-gradient(circle, #ffcc55 0%, transparent 70%);
+    filter: blur(40px); opacity: 0.6; z-index: -1;
+}
+
+.victory-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #ffe8b3;
+    text-align: center;
+    text-shadow: 0 0 40px rgba(255,220,100,0.8);
+    max-width: 80%; z-index: 205;
+    margin-bottom: 15px;
+}
+.victory-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    color: rgba(255,200,220,0.85);
+    text-shadow: 0 0 20px rgba(255,150,180,0.5);
+    z-index: 205;
+}
+
+
+/* ===============================
+   GLOBAL MOBILE FIXES 
+   =============================== */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
