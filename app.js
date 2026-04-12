@@ -22,7 +22,7 @@ try {
 }
 
 // ===================================
-// BIBLIOTECA DE MÚSICA CURADA (ARCHIVOS LOCALES EN /ventas/)
+// BIBLIOTECA DE MÚSICA CURADA (ARCHIVOS LOCALES EN /)
 // ===================================
 const musicLibrary = [
     { name: "506", path: "506.mp4" },
