@@ -136,7 +136,7 @@ async function renderAffiliateDashboard(orderId) {
             .filter(r => r.status === 'paid')
             .reduce((sum, r) => sum + (r.commission_usd || 0), 0);
 
-        const siteBase = window.location.origin;
+        const siteBase = window.SITE_BASE_URL;
         const refLink  = `${siteBase}/?ref=${affiliate.ref_code}`;
 
         return `

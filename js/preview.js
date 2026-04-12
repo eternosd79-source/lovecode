@@ -30,7 +30,7 @@ function attachCatalogListeners() {
 
             if (prevTitle)       prevTitle.innerText = "Vista Previa: " + data.name;
             if (prevOriginalText) prevOriginalText.innerText = data.textRef || '';
-            if (previewIframe)   previewIframe.src = data.path;
+            if (previewIframe)   previewIframe.src = window.SITE_BASE_URL + data.path.replace("./", "");
 
             if (btnPreviewToBuy) {
                 if (data.badge.includes('Gratis')) {
@@ -99,7 +99,7 @@ if (btnPreviewToBuy) {
             const queryString = params.toString();
             if (queryString) finalPath += (finalPath.includes('?') ? '&' : '?') + queryString;
 
-            window.open(finalPath, '_blank');
+            window.open(window.SITE_BASE_URL + finalPath.replace('./', ''), '_blank');
             document.body.style.overflow = 'auto';
         } else {
             if (previewModal) previewModal.classList.remove('active');
@@ -118,7 +118,7 @@ if (btnPreviewToBuy) {
 // -------------------------------------------------------
 function showFreeQR(id, name) {
     const targetName = prompt("¿Para quién es este QR? (Opcional)");
-    let fullLink = window.location.origin + "/" + id + "/index.html";
+    let fullLink = window.SITE_BASE_URL + id + "/index.html";
     if (targetName) fullLink += "?para=" + encodeURIComponent(targetName);
 
     qrModalTitle.innerText = "QR: " + name + (targetName ? " para " + targetName : "");

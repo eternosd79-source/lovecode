@@ -1,3 +1,19 @@
+
+// ============================================================
+// BASE URL DYNAMICS (FIXES GITHUB PAGES TRAILING SLASH)
+// ============================================================
+function getBaseAppUrl() {
+    let url = window.location.href.split('?')[0].split('#')[0];
+    if (url.endsWith('.html')) {
+        url = url.substring(0, url.lastIndexOf('/'));
+    }
+    if (!url.endsWith('/')) {
+        url += '/';
+    }
+    return url;
+}
+window.SITE_BASE_URL = getBaseAppUrl();
+
 // ============================================================
 // LOVECODE — CONFIG GLOBAL, SUPABASE & BIBLIOTECA DE MÚSICA
 // ============================================================
