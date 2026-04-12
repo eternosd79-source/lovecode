@@ -1171,14 +1171,14 @@ if (btnPreviewCustom) {
         }
 
         if (dataForm.musicUrl) {
-            // Si la música es local (ej: "ADMV.mp4"), anteponer "../ventas/"
+            // Si la música es local (ej: "ADMV.mp4"), anteponer "../"
             let mFinal = dataForm.musicUrl;
             if (!mFinal.startsWith('http')) {
                 // Asegurarse de que el path sea relativo a la plantilla
                 // Si la música está en d:\PLANTILLA\ventas\ADMV.mp4
                 // Y la plantilla en d:\PLANTILLA\arbol\index.html
-                // El path relativo correcto es ../ventas/ADMV.mp4
-                mFinal = "../ventas/" + mFinal;
+                // El path relativo correcto es ../ADMV.mp4
+                mFinal = "../" + mFinal;
             }
             params.append('musica', mFinal);
             if (dataForm.musicStart) params.append('mStart', dataForm.musicStart);

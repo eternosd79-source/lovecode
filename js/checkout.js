@@ -169,7 +169,7 @@ if (btnPreviewCustom) {
 
         if (liveMusicUrl) {
             let mFinal = liveMusicUrl;
-            if (!mFinal.startsWith('http')) mFinal = "../ventas/" + mFinal;
+            if (!mFinal.startsWith('http')) mFinal = "../" + mFinal;
             params.append('musica', mFinal);
             if (dataForm.musicStart)    params.append('mStart', dataForm.musicStart);
             if (dataForm.musicDuration) params.append('mDur', dataForm.musicDuration);
