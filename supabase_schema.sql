@@ -1,5 +1,5 @@
 -- ============================================================
--- LOVECODE — SUPABASE SCHEMA v3.0
+-- CORAZÓNCÓDIGO — SUPABASE SCHEMA v3.0
 -- NUEVAS TABLAS: templates, orders, affiliates, referrals, newsletter_subscribers
 -- Ejecutar en Supabase > SQL Editor
 -- ============================================================

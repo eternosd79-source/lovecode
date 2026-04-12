@@ -45,13 +45,13 @@ serve(async (req) => {
     // 1. Enviar email de confirmación al cliente (si proveyó email, por ahora no pedimos, 
     // pero si en el futuro se pide o lo asociamos por auth)
     // NOTA: Como en la UI actual solo pedimos el WhatsApp, este email va principalmente 
-    // como notificación interna al ADMIN de LoveCode.
+    // como notificación interna al ADMIN de CorazónCódigo.
 
-    const adminEmail = Deno.env.get('ADMIN_EMAIL') || 'hola@lovecode.me'
+    const adminEmail = Deno.env.get('ADMIN_EMAIL') || 'hola@corazoncodigo.me'
     
     const htmlEmail = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-        <h2 style="color: #c026d3;">¡Nuevo Pedido en LoveCode! 💜</h2>
+        <h2 style="color: #c026d3;">¡Nuevo Pedido en CorazónCódigo! 💜</h2>
         <p><strong>ID Orden:</strong> ${order.id}</p>
         <p><strong>Cliente:</strong> ${order.customer_name || 'No especificado'}</p>
         <p><strong>Regalo para:</strong> ${order.target_name || 'No especificado'}</p>
@@ -70,7 +70,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'LoveCode <pedidos@lovecode.me>',
+        from: 'CorazónCódigo <pedidos@corazoncodigo.me>',
         to: [adminEmail],
         subject: `Nuevo Pedido: ${order.template_name} - ${order.customer_name || 'Cliente'}`,
         html: htmlEmail

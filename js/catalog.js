@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — CATÁLOGO DE 31 EXPERIENCIAS
+// CORAZÓNCÓDIGO — CATÁLOGO DE 31 EXPERIENCIAS
 // ============================================================
 
 const catalogData = [

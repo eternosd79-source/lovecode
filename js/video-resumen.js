@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — VIDEO-RESUMEN.JS
+// CORAZÓNCÓDIGO — VIDEO-RESUMEN.JS
 // Genera una vista previa visual (canvas) del regalo
 // que el cliente puede descargar como PNG o compartir
 //
@@ -25,7 +25,7 @@ function generateVideoPreview(params = {}) {
 
     const style = (typeof THUMB_STYLES !== 'undefined' && THUMB_STYLES[params.templateId])
         ? THUMB_STYLES[params.templateId]
-        : { bg: ['#0a0a0f', '#151620'], accent: '#c026d3', icon: '💝', label: params.templateName || 'LoveCode' };
+        : { bg: ['#0a0a0f', '#151620'], accent: '#c026d3', icon: '💝', label: params.templateName || 'CorazónCódigo' };
 
     // === FONDO DEGRADADO ===
     const bg = ctx.createLinearGradient(0, 0, W, H);
@@ -58,11 +58,11 @@ function generateVideoPreview(params = {}) {
     ctx.fillText(style.icon, W/2, 90);
     ctx.shadowBlur = 0;
 
-    // === ENCABEZADO LOVECODE ===
+    // === ENCABEZADO CORAZÓNCÓDIGO ===
     ctx.font = '10px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.fillText('❤ LOVECODE.ME', W/2, 20);
+    ctx.fillText('❤ CORAZÓNCÓDIGO.ME', W/2, 20);
 
     // === LÍNEA DECORATIVA ===
     const lineG = ctx.createLinearGradient(80, 0, W-80, 0);
@@ -114,11 +114,11 @@ function generateVideoPreview(params = {}) {
         ctx.fillText(`📅 ${params.dateStr}`, 15, H-15);
     }
 
-    // === SELLO LoveCode ===
+    // === SELLO CorazónCódigo ===
     ctx.font = 'bold 10px Arial, sans-serif';
     ctx.textAlign = 'right';
     ctx.fillStyle = style.accent;
-    ctx.fillText('lovecode.me ✨', W-15, H-15);
+    ctx.fillText('corazoncodigo.me ✨', W-15, H-15);
 }
 
 /**
@@ -129,7 +129,7 @@ function openVideoPreview() {
     if (!modal) return;
 
     // Tomar datos del formulario activo
-    const templateName = document.getElementById('lblSelectedTemplate')?.textContent || 'LoveCode';
+    const templateName = document.getElementById('lblSelectedTemplate')?.textContent || 'CorazónCódigo';
     const templateId   = typeof activeTemplateInfo !== 'undefined' ? activeTemplateInfo?.id : '';
     const selectedPlan = document.querySelector('input[name="planType"]:checked');
     const destino      = document.getElementById('inpDestino')?.value || '';
@@ -155,7 +155,7 @@ function downloadCanvasPreview() {
     const canvas = document.getElementById('previewCanvas');
     if (!canvas) return;
     const link = document.createElement('a');
-    link.download = 'mi-regalo-lovecode.png';
+    link.download = 'mi-regalo-corazoncodigo.png';
     link.href = canvas.toDataURL('image/png', 1.0);
     link.click();
 }

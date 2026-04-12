@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — 3D GIFT PREVIEW (THREE.JS)
+// CORAZÓNCÓDIGO — 3D GIFT PREVIEW (THREE.JS)
 // Módulo para renderizar un modelo 3D (Caja de Regalo/Corazón)
 // en el modal de éxito utilizando Three.js
 // ============================================================
@@ -137,7 +137,7 @@ function animate3D() {
 }
 
 // Escuchar cuando se abre el modal de checkout success
-document.addEventListener('lovecode:order-completed', () => {
+document.addEventListener('corazoncodigo:order-completed', () => {
     // Pequeño delay para asegurar que el contenedor esté visible
     setTimeout(init3DSuccess, 300);
 });

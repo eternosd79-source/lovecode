@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — UI.JS
+// CORAZÓNCÓDIGO — UI.JS
 // Módulo de mejoras de interfaz:
 //   - Splash screen management
 //   - Menú hamburguesa

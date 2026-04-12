@@ -1,10 +1,10 @@
 // ============================================================
-// LOVECODE — AFFILIATES.JS
+// CORAZÓNCÓDIGO — AFFILIATES.JS
 // Sistema completo de afiliados para Membresía Hub ($4.50)
 // 
 // Flujo:
 //   1. Cliente compra Membresía Hub → se crea registro en 'affiliates'
-//   2. Recibe link único: lovecode.me/?ref=CODIGO
+//   2. Recibe link único: corazoncodigo.me/?ref=CODIGO
 //   3. Cuando alguien compra via ese link → se registra en 'referrals'
 //   4. Admin puede pagar comisión (20% por venta)
 //   5. Cliente ve su dashboard en "Mis Pedidos"
@@ -170,7 +170,7 @@ async function renderAffiliateDashboard(orderId) {
             <p style="font-size:0.75rem; color:var(--color-dim); margin-top:12px;">
                 <i class="fa-solid fa-circle-info"></i>
                 Los pagos de comisiones se realizan vía WhatsApp al acumular $5+ en ganancias.
-                <a href="https://wa.me/${CONFIG?.whatsappNumber || '593990480389'}?text=Hola%20LoveCode!%20Quiero%20cobrar%20mis%20comisiones%20de%20afiliado." 
+                <a href="https://wa.me/${CONFIG?.whatsappNumber || '593990480389'}?text=Hola%20CorazónCódigo!%20Quiero%20cobrar%20mis%20comisiones%20de%20afiliado." 
                    target="_blank" style="color:var(--accent-cyan); text-decoration:none;">
                    Solicitar pago →
                 </a>

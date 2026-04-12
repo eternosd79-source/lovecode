@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — CHECKOUT WIZARD (4 pasos de personalización)
+// CORAZÓNCÓDIGO — CHECKOUT WIZARD (4 pasos de personalización)
 // ============================================================
 
 const modal              = document.getElementById('checkoutModal');
@@ -58,7 +58,7 @@ function openCheckoutWizard(templateName) {
     dataForm.template = templateName;
 
     // Dispatch analytics event
-    document.dispatchEvent(new CustomEvent('lovecode:checkout-opened', {
+    document.dispatchEvent(new CustomEvent('corazoncodigo:checkout-opened', {
         detail: { templateId: activeTemplateInfo?.id, templateName }
     }));
 
@@ -418,7 +418,7 @@ function processFinalOrder(order, isOffline = false) {
     } catch(e) {}
 
     // --- Dispatch analytics event ---
-    document.dispatchEvent(new CustomEvent('lovecode:order-completed', {
+    document.dispatchEvent(new CustomEvent('corazoncodigo:order-completed', {
         detail: { orderId: order.id, price, plan: dataForm.plan }
     }));
 

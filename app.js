@@ -7,8 +7,8 @@ let db = null; // Renombramos para evitar conflicto con el objeto global 'supaba
 
 const CONFIG = {
     whatsappNumber: "593990480389",
-    supportMsg: "Hola LoveCode! Tengo una pregunta antes de comprar.",
-    paymentMsg: (id, name, plan) => `Hola LoveCode! He realizado el pago de mi pedido: ID: [${id}] Cliente: [${name}] Plan: [${plan}] Adjunto el comprobante de transferencia. 💖`
+    supportMsg: "Hola CorazónCódigo! Tengo una pregunta antes de comprar.",
+    paymentMsg: (id, name, plan) => `Hola CorazónCódigo! He realizado el pago de mi pedido: ID: [${id}] Cliente: [${name}] Plan: [${plan}] Adjunto el comprobante de transferencia. 💖`
 };
 
 try {
@@ -629,7 +629,7 @@ function renderCatalog(filter = 'all') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("LoveCode: Iniciando App...");
+    console.log("CorazónCódigo: Iniciando App...");
     renderCatalog();
     initProMusicEditor();
     

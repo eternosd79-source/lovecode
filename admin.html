@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | LoveCode</title>
+    <title>Admin Panel | CorazónCódigo</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -47,7 +47,7 @@
         <div style="text-align:center; margin-bottom:30px;">
             <i class="fa-solid fa-shield-halved" style="font-size:2.5rem; color:var(--accent-purple); margin-bottom:15px; display:block;"></i>
             <h2 class="neon-purple" style="margin:0 0 8px;">Acceso Restringido</h2>
-            <p style="color:var(--color-dim); font-size:0.9rem;">Panel de administración LoveCode</p>
+            <p style="color:var(--color-dim); font-size:0.9rem;">Panel de administración CorazónCódigo</p>
         </div>
         <input type="email" id="adminEmail" placeholder="Email de administrador..." class="form-input" style="max-width:320px; text-align:center; margin-bottom:12px;">
         <input type="password" id="adminPass" placeholder="Contraseña..." class="form-input" style="max-width:320px; text-align:center; margin-bottom:20px;">
@@ -63,7 +63,7 @@
     <div id="adminContent" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap:wrap; gap:15px;">
             <div>
-                <h1>Panel de Control <span class="neon-purple">LoveCode</span></h1>
+                <h1>Panel de Control <span class="neon-purple">CorazónCódigo</span></h1>
                 <p id="adminUserLabel" style="color:var(--color-dim); font-size:0.85rem;">Cargando...</p>
             </div>
             <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
@@ -305,7 +305,7 @@
                 const qrCanvas = document.querySelector("#qrcode canvas");
                 if (qrCanvas) {
                     const link = document.createElement("a");
-                    link.download = "QR_LoveCode_" + document.getElementById('promoTemplateSelect').value + ".png";
+                    link.download = "QR_CorazónCódigo_" + document.getElementById('promoTemplateSelect').value + ".png";
                     link.href = qrCanvas.toDataURL("image/png");
                     link.click();
                     return;
@@ -315,7 +315,7 @@
             }
             
             const link = document.createElement("a");
-            link.download = "QR_LoveCode_" + document.getElementById('promoTemplateSelect').value + ".png";
+            link.download = "QR_CorazónCódigo_" + document.getElementById('promoTemplateSelect').value + ".png";
             link.href = qrImg.src;
             link.click();
         }

@@ -80,7 +80,7 @@ function triggerDownload() {
     
     const a = document.createElement('a');
     a.href = zipUrl;
-    a.download = `${folder}_lovecode.zip`;
+    a.download = `${folder}_corazoncodigo.zip`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

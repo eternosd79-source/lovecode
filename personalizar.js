@@ -1,5 +1,5 @@
 /**
- * LoveCode - Personalizador Universal
+ * CorazónCódigo - Personalizador Universal
  * Este script lee parámetros de la URL y personaliza la animación.
  * Soporta: 
  *   ?para=Nombre (Personalización directa por URL)
@@ -29,11 +29,11 @@
     `;
 
     const loadingHTML = `
-        <div id="lovecode-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#050005; z-index:999999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.8s ease;">
+        <div id="corazoncodigo-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#050005; z-index:999999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.8s ease;">
             <div style="width:50px; height:50px; border:3px solid rgba(255,255,255,0.1); border-top:3px solid #ff2d75; border-radius:50%; animation: lc-spin 1s linear infinite;"></div>
             <p style="color:white; font-family:sans-serif; margin-top:15px; letter-spacing:2px; font-size:0.8rem; opacity:0.7;">PREPARANDO TU REGALO...</p>
         </div>
-        <div id="lovecode-start-overlay" class="lc-start-overlay">
+        <div id="corazoncodigo-start-overlay" class="lc-start-overlay">
             <button class="lc-start-btn">Toca para Abrir tu Regalo ✨</button>
             <p style="color:white; margin-top:20px; font-family:sans-serif; opacity:0.7; font-size: 0.9rem; letter-spacing:1px;">Enciende la magia y el sonido</p>
         </div>
@@ -72,7 +72,7 @@
         // Confirm nativo es sincrónico (detiene el hilo), pero en web moderna 
         // lo mejor es usar callbacks o promesas. Para no romper los códigos viejos,
         // avisaremos que este confirm ahora es visual.
-        console.warn("LoveCode: Se detectó un confirm(). Por seguridad visual, se muestra el modal estilizado.");
+        console.warn("CorazónCódigo: Se detectó un confirm(). Por seguridad visual, se muestra el modal estilizado.");
         const modal = document.getElementById('lc-custom-modal');
         document.getElementById('lc-modal-title').innerText = "Confirmación";
         document.getElementById('lc-modal-text').innerText = msg;
@@ -111,7 +111,7 @@
     }
 
     function removeLoader() {
-        const loader = document.getElementById('lovecode-loader');
+        const loader = document.getElementById('corazoncodigo-loader');
         if (loader) {
             loader.style.opacity = '0';
             setTimeout(() => {
@@ -364,7 +364,7 @@
             console.error("Error en personalización:", err);
         } finally {
             setTimeout(() => {
-                const startOverlay = document.getElementById('lovecode-start-overlay');
+                const startOverlay = document.getElementById('corazoncodigo-start-overlay');
                 if (startOverlay) {
                     startOverlay.style.display = 'flex';
                     startOverlay.addEventListener('click', () => {

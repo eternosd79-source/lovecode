@@ -1,6 +1,6 @@
 {
-    "name": "LoveCode — Regalos Digitales Románticos",
-    "short_name": "LoveCode",
+    "name": "CorazónCódigo — Código para amarte",
+    "short_name": "CorazónCódigo",
     "description": "Crea experiencias web mágicas y personalizadas para esa persona especial.",
     "start_url": "/",
     "display": "standalone",
@@ -21,7 +21,7 @@
             "src": "/screenshot-main.png",
             "sizes": "1280x720",
             "type": "image/png",
-            "label": "LoveCode — Página Principal"
+            "label": "CorazónCódigo — Página Principal"
         }
     ],
     "categories": ["lifestyle", "entertainment"],

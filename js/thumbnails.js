@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — GENERADOR DE THUMBNAILS (Canvas API)
+// CORAZÓNCÓDIGO — GENERADOR DE THUMBNAILS (Canvas API)
 // Genera previews visuales únicos para cada experiencia
 // No requiere imágenes externas — 100% programático
 // ============================================================
@@ -114,11 +114,11 @@ function generateThumb(id) {
     ctx.fillText(style.label, 320, 325);
     ctx.shadowBlur = 0;
 
-    // --- Etiqueta "LOVECODE" arriba ---
+    // --- Etiqueta "CORAZÓNCÓDIGO" arriba ---
     ctx.font = '11px Inter, Arial, sans-serif';
     ctx.fillStyle = hexToRgba(style.accent, 0.6);
     ctx.letterSpacing = '3px';
-    ctx.fillText('❤ LOVECODE.ME', 320, 55);
+    ctx.fillText('❤ CORAZÓNCÓDIGO.ME', 320, 55);
 
     // --- Puntos decorativos (dots pattern) ---
     ctx.fillStyle = hexToRgba(style.accent, 0.08);

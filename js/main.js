@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE v3.0 — INICIALIZACIÓN PRINCIPAL
+// CORAZÓNCÓDIGO v3.0 — INICIALIZACIÓN PRINCIPAL
 // Punto de entrada: conecta todos los módulos
 //
 // Orden de carga en index.html:
@@ -10,7 +10,7 @@
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('%c❤ LoveCode v3.0', 'color:#f43f5e;font-size:16px;font-weight:bold;');
+    console.log('%c❤ CorazónCódigo v3.0', 'color:#f43f5e;font-size:16px;font-weight:bold;');
     console.log('%cInicializando módulos...', 'color:#06b6d4;');
 
     // ─── 1. Renderizar Catálogo (incluyendo thumbnails) ────
@@ -73,17 +73,17 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================================
 function initAnalyticsEvents() {
     // Evento: vista de plantilla (cuando abre preview)
-    document.addEventListener('lovecode:preview-opened', (e) => {
+    document.addEventListener('corazoncodigo:preview-opened', (e) => {
         trackEvent('view_template', { template: e.detail?.templateId });
     });
 
     // Evento: inicio de checkout
-    document.addEventListener('lovecode:checkout-opened', (e) => {
+    document.addEventListener('corazoncodigo:checkout-opened', (e) => {
         trackEvent('begin_checkout', { template: e.detail?.templateId });
     });
 
     // Evento: pedido completado
-    document.addEventListener('lovecode:order-completed', (e) => {
+    document.addEventListener('corazoncodigo:order-completed', (e) => {
         trackEvent('purchase', {
             value:    e.detail?.price,
             currency: 'USD',

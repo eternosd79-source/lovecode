@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — PAYPAL.JS
+// CORAZÓNCÓDIGO — PAYPAL.JS
 // Integración PayPal Checkout para pagos internacionales
 //
 // Flujo:
@@ -83,7 +83,7 @@ function renderPayPalButton(amount) {
                 const price = parseFloat(currentPaypalAmount).toFixed(2);
                 return actions.order.create({
                     purchase_units: [{
-                        description: 'LoveCode — Experiencia Romántica Digital',
+                        description: 'CorazónCódigo — Experiencia Romántica Digital',
                         amount: {
                             currency_code: 'USD',
                             value: price
@@ -164,7 +164,7 @@ async function handlePayPalSuccess(paypalDetails) {
     );
 
     // Notificar al admin por WhatsApp
-    const waMsg = `💸 PAGO PAYPAL RECIBIDO\n\nID Transacción: ${paypalTxId}\nPagador: ${payerName} (${payerEmail})\nMonto: $${currentPaypalAmount} USD\nOrden LoveCode: ${window._currentOrderId || 'N/A'}\n\n✅ Favor activar el pedido en el admin panel.`;
+    const waMsg = `💸 PAGO PAYPAL RECIBIDO\n\nID Transacción: ${paypalTxId}\nPagador: ${payerName} (${payerEmail})\nMonto: $${currentPaypalAmount} USD\nOrden CorazónCódigo: ${window._currentOrderId || 'N/A'}\n\n✅ Favor activar el pedido en el admin panel.`;
     const waLink = `https://wa.me/${CONFIG?.whatsappNumber || '593990480389'}?text=${encodeURIComponent(waMsg)}`;
 
     // Cerrar wizard y mostrar modal éxito

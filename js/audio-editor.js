@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — EDITOR PROFESIONAL DE MÚSICA (Pro Music Editor)
+// CORAZÓNCÓDIGO — EDITOR PROFESIONAL DE MÚSICA (Pro Music Editor)
 // Permite previsualizar, reproducir y recortar canciones
 // de la biblioteca local. Las músicas solo se reproducen
 // en streaming dentro de cada experiencia — sin descarga.

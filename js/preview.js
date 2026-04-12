@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — MODALES DE PREVIEW Y QR
+// CORAZÓNCÓDIGO — MODALES DE PREVIEW Y QR
 // ============================================================
 
 const previewModal    = document.getElementById('previewModal');

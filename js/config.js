@@ -15,7 +15,7 @@ function getBaseAppUrl() {
 window.SITE_BASE_URL = getBaseAppUrl();
 
 // ============================================================
-// LOVECODE — CONFIG GLOBAL, SUPABASE & BIBLIOTECA DE MÚSICA
+// CORAZÓNCÓDIGO — CONFIG GLOBAL, SUPABASE & BIBLIOTECA DE MÚSICA
 // ============================================================
 
 const supabaseUrl = 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
@@ -24,9 +24,9 @@ let db = null;
 
 const CONFIG = {
     whatsappNumber: "593990480389",
-    supportMsg: "Hola LoveCode! Tengo una pregunta antes de comprar.",
+    supportMsg: "Hola CorazónCódigo! Tengo una pregunta antes de comprar.",
     paymentMsg: (id, name, plan) =>
-        `Hola LoveCode! He realizado el pago de mi pedido:\n\nID: [${id}]\nCliente: [${name}]\nPlan: [${plan}]\n\nAdjunto el comprobante de transferencia. 💖`
+        `Hola CorazónCódigo! He realizado el pago de mi pedido:\n\nID: [${id}]\nCliente: [${name}]\nPlan: [${plan}]\n\nAdjunto el comprobante de transferencia. 💖`
 };
 
 try {

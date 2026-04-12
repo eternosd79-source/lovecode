@@ -1,5 +1,5 @@
 // ============================================================
-// LOVECODE — TRACKING DE PEDIDOS (Mis Pedidos)
+// CORAZÓNCÓDIGO — TRACKING DE PEDIDOS (Mis Pedidos)
 // El cliente ingresa su ID de orden para ver el estado
 // y recibir el link de su regalo o el botón de descarga ZIP.
 //
@@ -56,7 +56,7 @@ if (btnTrackOrder) {
                         <i class="fa-solid fa-circle-exclamation"></i>
                         <h4>Orden no encontrada</h4>
                         <p>Verifica que el ID sea correcto o contacta a soporte por WhatsApp.</p>
-                        <a href="https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent('Hola LoveCode! Necesito ayuda para ubicar mi pedido. Mi ID aproximado es: ' + id)}"
+                        <a href="https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent('Hola CorazónCódigo! Necesito ayuda para ubicar mi pedido. Mi ID aproximado es: ' + id)}"
                            target="_blank" class="btn-whatsapp" style="display:inline-flex; margin-top:15px; text-decoration:none;">
                            <i class="fa-brands fa-whatsapp"></i> Contactar Soporte
                         </a>
@@ -78,7 +78,7 @@ function renderOrderStatus(order) {
 
     // WhatsApp para enviar comprobante (número real desde CONFIG)
     const waComprobante = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(
-        `Hola LoveCode! Te envío el comprobante de pago de mi pedido #${displayId}. ¡Gracias!`
+        `Hola CorazónCódigo! Te envío el comprobante de pago de mi pedido #${displayId}. ¡Gracias!`
     )}`;
 
     const isPaid = order.status === 'paid';
