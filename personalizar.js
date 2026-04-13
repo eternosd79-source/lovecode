@@ -96,10 +96,11 @@
     
     const urlParams = new URLSearchParams(window.location.search);
     const para = urlParams.get('para');
-    const orderId = urlParams.get('orderId');
+    // Soportar ambos parámetros: ?id= (tabla Pedidos/token) y ?orderId= (tabla orders/UUID)
+    const orderId = urlParams.get('orderId') || urlParams.get('id');
     const directMsg = urlParams.get('msg');
     const directDate = urlParams.get('fecha');
-    const directMusic = urlParams.get('musica'); // Capturar música directa
+    const directMusic = urlParams.get('musica');
     let mStart = urlParams.get('mStart');
     let mDur = urlParams.get('mDur');
 
@@ -133,38 +134,57 @@
             if (orderId && typeof supabase !== 'undefined') {
                 try {
                     const db = supabase.createClient(supabaseUrl, supabaseKey);
-                    const { data: order, error } = await db
-                    .from('orders')
-                    .select('target_name, custom_message, custom_date, photo_urls, music_url, music_slice, dynamic_texts')
-                    .or(`id.eq.${orderId},id.ilike.${orderId}%`)
-                    .single();
-                
-                if (order) {
-                    customData.para = order.target_name || customData.para;
-                    customData.mensaje = order.custom_message || customData.mensaje;
-                    customData.fecha = order.custom_date || customData.fecha;
-                    customData.fotos = order.photo_urls || [];
-                    customData.musica = order.music_url;
-                    
-                    if (order.music_slice) {
-                        mStart = order.music_slice.start !== undefined ? order.music_slice.start : mStart;
-                        mDur   = order.music_slice.duration !== undefined ? order.music_slice.duration : mDur;
-                    }
 
-                    // Cargar textos dinámicos si existen
-                    if (order.dynamic_texts) {
-                        for (const [key, value] of Object.entries(order.dynamic_texts)) {
-                            // Inyectar en el DOM usando la misma lógica que los parámetros txt_
-                            console.log(`Inyectando texto dinámico de DB: ${key}`);
-                            const elById = document.getElementById(key);
-                            if (elById) elById.innerText = value;
-                            
-                            const elsByClass = document.querySelectorAll(`.${key}`);
-                            elsByClass.forEach(el => el.innerText = value);
+                    // 1. Buscar primero en tabla 'Pedidos' por token (pruebas manuales)
+                    let order = null;
+                    const { data: pedido } = await db
+                        .from('Pedidos')
+                        .select('token, tipo_plantilla, mensaje, nombre, fecha, musica, fotos')
+                        .eq('token', orderId)
+                        .maybeSingle();
+
+                    if (pedido) {
+                        // Mapear columnas de Pedidos al formato estándar
+                        customData.para        = pedido.nombre   || customData.para;
+                        customData.mensaje     = pedido.mensaje  || customData.mensaje;
+                        customData.fecha       = pedido.fecha    || customData.fecha;
+                        customData.fotos       = pedido.fotos    || [];
+                        customData.musica      = pedido.musica   || customData.musica;
+                        console.log('✅ Pedido encontrado en tabla Pedidos:', pedido.token);
+                    } else {
+                        // 2. Si no está en Pedidos, buscar en tabla 'orders' por UUID
+                        const { data: orderData } = await db
+                            .from('orders')
+                            .select('target_name, custom_message, custom_date, photo_urls, music_url, music_slice, dynamic_texts')
+                            .or(`id.eq.${orderId},id.ilike.${orderId}%`)
+                            .maybeSingle();
+
+                        if (orderData) {
+                            order = orderData;
+                            customData.para    = order.target_name    || customData.para;
+                            customData.mensaje = order.custom_message || customData.mensaje;
+                            customData.fecha   = order.custom_date    || customData.fecha;
+                            customData.fotos   = order.photo_urls     || [];
+                            customData.musica  = order.music_url;
+
+                            if (order.music_slice) {
+                                mStart = order.music_slice.start    !== undefined ? order.music_slice.start    : mStart;
+                                mDur   = order.music_slice.duration !== undefined ? order.music_slice.duration : mDur;
+                            }
+
+                            if (order.dynamic_texts) {
+                                for (const [key, value] of Object.entries(order.dynamic_texts)) {
+                                    const elById = document.getElementById(key);
+                                    if (elById) elById.innerText = value;
+                                    document.querySelectorAll(`.${key}`).forEach(el => el.innerText = value);
+                                }
+                            }
+                            console.log('✅ Pedido encontrado en tabla orders:', order);
+                        } else {
+                            console.warn('⚠️ No se encontró pedido con ID:', orderId);
                         }
                     }
-                }
-                } catch (e) { console.error("Error Supabase:", e); }
+                } catch (e) { console.error('Error Supabase:', e); }
             }
 
             window.ccData = customData;
