@@ -710,8 +710,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- PayPal SDK (se carga dinámicamente según precio en checkout) -->
     <script id="paypal-sdk" defer></script>
-    <!-- Vercel Analytics -->
-    <script defer src="/_vercel/insights/script.js"></script>
+    <!-- Vercel Analytics (carga silenciosa si no está habilitado en el panel) -->
+    <script>
+        (function() {
+            var s = document.createElement('script');
+            s.src = '/_vercel/insights/script.js';
+            s.defer = true;
+            s.onerror = function() { /* Analytics no activado — sin efecto */ };
+            document.head.appendChild(s);
+        })();
+    </script>
 
     <!-- Módulos CorazónCódigo (orden crítico) -->
     <script src="js/config.js?v=3"></script>
