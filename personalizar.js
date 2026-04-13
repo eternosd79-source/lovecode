@@ -167,7 +167,7 @@
                 } catch (e) { console.error("Error Supabase:", e); }
             }
 
-            window.loveCodeData = customData;
+            window.ccData = customData;
 
             if (customData.para) {
                 const elements = ['loveText', 'cl1', 'phraseTop', 'mainTitle', 'targetName', 'msgLove'];
@@ -328,7 +328,7 @@
 
             // 7. Aplicar Foto Flotante Global (Remplaza textos)
             // Se lee de Supabase (dynamic_texts) o de los URLSearchParams
-            const orderDyn = window.loveCodeData && window.loveCodeData.orderData ? window.loveCodeData.orderData.dynamic_texts : null;
+            const orderDyn = window.ccData && window.ccData.orderData ? window.ccData.orderData.dynamic_texts : null;
             const tempOrder = typeof order !== 'undefined' ? order : null;
             const dynSource = (tempOrder && tempOrder.dynamic_texts) ? tempOrder.dynamic_texts : null;
             
