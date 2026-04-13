@@ -135,55 +135,56 @@
                 try {
                     const db = supabase.createClient(supabaseUrl, supabaseKey);
 
-                    // 1. Buscar primero en tabla 'Pedidos' por token (pruebas manuales)
-                    let order = null;
-                    const { data: pedido } = await db
-                        .from('Pedidos')
-                        .select('token, tipo_plantilla, mensaje, nombre, fecha, musica, fotos')
-                        .eq('token', orderId)
-                        .maybeSingle();
-
-                    if (pedido) {
-                        // Mapear columnas de Pedidos al formato estándar
-                        customData.para        = pedido.nombre   || customData.para;
-                        customData.mensaje     = pedido.mensaje  || customData.mensaje;
-                        customData.fecha       = pedido.fecha    || customData.fecha;
-                        customData.fotos       = pedido.fotos    || [];
-                        customData.musica      = pedido.musica   || customData.musica;
-                        console.log('✅ Pedido encontrado en tabla Pedidos:', pedido.token);
-                    } else {
-                        // 2. Si no está en Pedidos, buscar en tabla 'orders' por UUID
-                        const { data: orderData } = await db
-                            .from('orders')
-                            .select('target_name, custom_message, custom_date, photo_urls, music_url, music_slice, dynamic_texts')
-                            .or(`id.eq.${orderId},id.ilike.${orderId}%`)
+                    // 1. Buscar en tabla 'Pedidos' por token — solo columnas existentes
+                    let encontrado = false;
+                    try {
+                        const { data: pedido, error: errPed } = await db
+                            .from('Pedidos')
+                            .select('token, tipo_plantilla, mensaje')
+                            .eq('token', orderId)
                             .maybeSingle();
 
-                        if (orderData) {
-                            order = orderData;
-                            customData.para    = order.target_name    || customData.para;
-                            customData.mensaje = order.custom_message || customData.mensaje;
-                            customData.fecha   = order.custom_date    || customData.fecha;
-                            customData.fotos   = order.photo_urls     || [];
-                            customData.musica  = order.music_url;
-
-                            if (order.music_slice) {
-                                mStart = order.music_slice.start    !== undefined ? order.music_slice.start    : mStart;
-                                mDur   = order.music_slice.duration !== undefined ? order.music_slice.duration : mDur;
-                            }
-
-                            if (order.dynamic_texts) {
-                                for (const [key, value] of Object.entries(order.dynamic_texts)) {
-                                    const elById = document.getElementById(key);
-                                    if (elById) elById.innerText = value;
-                                    document.querySelectorAll(`.${key}`).forEach(el => el.innerText = value);
-                                }
-                            }
-                            console.log('✅ Pedido encontrado en tabla orders:', order);
-                        } else {
-                            console.warn('⚠️ No se encontró pedido con ID:', orderId);
+                        if (pedido && !errPed) {
+                            encontrado = true;
+                            if (pedido.mensaje) customData.mensaje = pedido.mensaje;
+                            console.log('✅ Pedido en Pedidos:', pedido.token, '| Plantilla:', pedido.tipo_plantilla);
                         }
+                    } catch (e) { /* Pedidos sin acceso — continuar */ }
+
+                    // 2. Si no encontró en Pedidos, buscar en 'orders' (sistema oficial)
+                    if (!encontrado) {
+                        try {
+                            const { data: order, error: errOrd } = await db
+                                .from('orders')
+                                .select('target_name, custom_message, custom_date, photo_urls, music_url, music_slice, dynamic_texts')
+                                .or(`id.eq.${orderId},id.ilike.${orderId}%`)
+                                .maybeSingle();
+
+                            if (order && !errOrd) {
+                                encontrado = true;
+                                customData.para    = order.target_name    || customData.para;
+                                customData.mensaje = order.custom_message || customData.mensaje;
+                                customData.fecha   = order.custom_date    || customData.fecha;
+                                customData.fotos   = order.photo_urls     || [];
+                                customData.musica  = order.music_url      || customData.musica;
+
+                                if (order.music_slice) {
+                                    mStart = order.music_slice.start    !== undefined ? order.music_slice.start    : mStart;
+                                    mDur   = order.music_slice.duration !== undefined ? order.music_slice.duration : mDur;
+                                }
+                                if (order.dynamic_texts) {
+                                    for (const [key, value] of Object.entries(order.dynamic_texts)) {
+                                        const elById = document.getElementById(key);
+                                        if (elById) elById.innerText = value;
+                                        document.querySelectorAll(`.${key}`).forEach(el => el.innerText = value);
+                                    }
+                                }
+                                console.log('✅ Pedido en orders:', orderId);
+                            }
+                        } catch (e) { /* orders no existe — continuar */ }
                     }
+
+                    if (!encontrado) console.warn('⚠️ No se encontró pedido con ID:', orderId);
                 } catch (e) { console.error('Error Supabase:', e); }
             }
 
