@@ -121,6 +121,26 @@
         }
     }
 
+    // Espera activa hasta que la librería de Supabase esté disponible en la página
+    function waitForSupabase(timeout = 8000) {
+        return new Promise((resolve) => {
+            if (typeof supabase !== 'undefined' && supabase.createClient) {
+                return resolve(true);
+            }
+            const start = Date.now();
+            const interval = setInterval(() => {
+                if (typeof supabase !== 'undefined' && supabase.createClient) {
+                    clearInterval(interval);
+                    resolve(true);
+                } else if (Date.now() - start > timeout) {
+                    clearInterval(interval);
+                    console.warn('⚠️ Supabase no cargó a tiempo. Modo sin base de datos.');
+                    resolve(false);
+                }
+            }, 100);
+        });
+    }
+
     async function applyPersonalization() {
         try {
             let customData = {
@@ -131,7 +151,8 @@
                 musica: directMusic
             };
 
-            if (orderId && typeof supabase !== 'undefined') {
+            const supabaseReady = await waitForSupabase();
+            if (orderId && supabaseReady) {
                 try {
                     const db = supabase.createClient(supabaseUrl, supabaseKey);
 
