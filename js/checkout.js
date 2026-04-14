@@ -516,12 +516,35 @@ function updatePhotoPreview() {
         placeholder.style.display = 'flex';
     }
 
+    // Actualizar iframe en vivo con la foto inyectada
+    const iframe = document.getElementById('livePreviewIframe');
+    if (iframe && activeTemplateInfo && activeTemplateInfo.path) {
+        const params = new URLSearchParams();
+        params.append('editorLivePreview', 'true');
+        if (url) {
+            params.append('flImg', url);
+            // Leer posición y tamaño actuales
+            const flX = document.getElementById('flImgX');
+            const flY = document.getElementById('flImgY');
+            const flS = document.getElementById('flImgS');
+            if (flX && flX.value) params.append('flX', flX.value);
+            if (flY && flY.value) params.append('flY', flY.value);
+            if (flS && flS.value) params.append('flS', flS.value);
+        }
+        // Inyectar textos personalizados
+        if (activeTemplateInfo.editableTexts) {
+            activeTemplateInfo.editableTexts.forEach(field => {
+                const el = document.getElementById(`dyn_${field.id}`);
+                if (el && el.value.trim()) params.append(`txt_${field.id}`, el.value.trim());
+            });
+        }
+        iframe.src = activeTemplateInfo.path + '?' + params.toString();
+    }
+
     // Actualizar el fondo del canvas según la plantilla activa
     if (activeTemplateInfo) {
         const canvas = document.getElementById('photoPositionCanvas');
-        if (canvas) {
-            canvas.style.backgroundColor = activeTemplateInfo.color || '#0a0a20';
-        }
+        if (canvas) canvas.style.backgroundColor = activeTemplateInfo.color || '#0a0a20';
         const label = document.getElementById('canvasTemplateName');
         if (label) label.innerText = '📱 ' + (activeTemplateInfo.name || 'Previsualización');
     }
@@ -532,7 +555,7 @@ window.updatePhotoPreview = updatePhotoPreview;
 // Resize del elemento arrastrable según slider
 // -------------------------------------------------------
 function resizeDraggablePhoto(value) {
-    const el = document.getElementById('dragPhotoEl');
+    const el = document.getElementById('draggablePhoto');   // ID corregido
     const canvas = document.getElementById('photoPositionCanvas');
     const label = document.getElementById('flImgSLabel');
     if (!el || !canvas) return;
@@ -557,7 +580,7 @@ window.resizeDraggablePhoto = resizeDraggablePhoto;
 // -------------------------------------------------------
 function initPhotoDragEditor() {
     const canvas   = document.getElementById('photoPositionCanvas');
-    const dragEl   = document.getElementById('dragPhotoEl');
+    const dragEl   = document.getElementById('draggablePhoto');   // ID correcto del HTML
     const inpX     = document.getElementById('flImgX');
     const inpY     = document.getElementById('flImgY');
     const posDisp  = document.getElementById('flPosDisplay');
