@@ -155,6 +155,7 @@ if (btnPreviewCustom) {
                 params.append('flS', document.getElementById('flImgS').value);
                 params.append('flX', document.getElementById('flImgX').value);
                 params.append('flY', document.getElementById('flImgY').value);
+                params.append('flT', document.getElementById('flImgT') ? document.getElementById('flImgT').value : '0');
             }
         }
 
@@ -242,6 +243,7 @@ if (btnNext) {
                 dataForm.flS   = document.getElementById('flImgS').value;
                 dataForm.flX   = document.getElementById('flImgX').value;
                 dataForm.flY   = document.getElementById('flImgY').value;
+                dataForm.flT   = document.getElementById('flImgT') ? document.getElementById('flImgT').value : '0';
             } else {
                 dataForm.flImg = null;
             }
@@ -566,9 +568,27 @@ function initPhotoDragEditor() {
 
     // Colorear el canvas según la plantilla activa
     if (activeTemplateInfo) {
-        canvas.style.backgroundColor = activeTemplateInfo.color || '#0a0a20';
+        canvas.style.backgroundColor = '#000'; // El iframe ya tiene el color o fondo de la plantilla
         const label = document.getElementById('canvasTemplateName');
         if (label) label.innerText = '📱 ' + (activeTemplateInfo.name || 'Vista Previa');
+
+        // Renderizar el Iframe en vivo con los Textos Base si los hay
+        const iframe = document.getElementById('livePreviewIframe');
+        if (iframe && activeTemplateInfo.path) {
+            let finalPath = activeTemplateInfo.path;
+            let params = new URLSearchParams();
+            if (activeTemplateInfo.editableTexts) {
+                activeTemplateInfo.editableTexts.forEach(field => {
+                    const el = document.getElementById(`dyn_${field.id}`);
+                    if (el && el.value.trim()) params.append(`txt_${field.id}`, el.value.trim());
+                });
+            }
+            const dateVal = document.getElementById('inpDate') ? document.getElementById('inpDate').value : '';
+            if (dateVal) params.append('fecha', dateVal);
+            
+            const qs = params.toString();
+            iframe.src = qs ? finalPath + '?' + qs : finalPath;
+        }
     }
 
     let isDraggingPhoto = false;
