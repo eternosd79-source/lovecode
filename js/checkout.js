@@ -516,22 +516,13 @@ function updatePhotoPreview() {
         placeholder.style.display = 'flex';
     }
 
-    // Actualizar iframe en vivo con la foto inyectada
+    // Actualizar iframe en vivo — mostrar SOLO la plantilla limpia (sin la foto encima)
+    // La foto pequeña arrastrable representa la posición, no se inyecta al iframe aquí
     const iframe = document.getElementById('livePreviewIframe');
-    if (iframe && activeTemplateInfo && activeTemplateInfo.path) {
+    if (iframe && activeTemplateInfo && activeTemplateInfo.path && !iframe.src.includes(activeTemplateInfo.path)) {
         const params = new URLSearchParams();
         params.append('editorLivePreview', 'true');
-        if (url) {
-            params.append('flImg', url);
-            // Leer posición y tamaño actuales
-            const flX = document.getElementById('flImgX');
-            const flY = document.getElementById('flImgY');
-            const flS = document.getElementById('flImgS');
-            if (flX && flX.value) params.append('flX', flX.value);
-            if (flY && flY.value) params.append('flY', flY.value);
-            if (flS && flS.value) params.append('flS', flS.value);
-        }
-        // Inyectar textos personalizados
+        // Inyectar textos personalizados para que la plantilla se vea con el contenido real
         if (activeTemplateInfo.editableTexts) {
             activeTemplateInfo.editableTexts.forEach(field => {
                 const el = document.getElementById(`dyn_${field.id}`);
