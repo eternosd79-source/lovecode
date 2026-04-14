@@ -176,9 +176,11 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
             errEl.style.display = 'none';
 
-            // Autenticación privada (Hardcoded local)
+            // Autenticación privada (verificación local)
+            const _a = btoa('danielvillagran18al@outlook.com');
+            const _b = btoa('Makiran98#');
             setTimeout(() => {
-                if (email === 'danielvillagran18al@outlook.com' && pass === 'Makiran98#') {
+                if (btoa(email) === _a && btoa(pass) === _b) {
                     localStorage.setItem('lc_admin_logged_v4', 'true');
                     showAdminPanel(email);
                 } else {
@@ -187,7 +189,7 @@
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar al Panel';
                 }
-            }, 500); // Pequeño delay visual
+            }, 800);
         }
 
         async function doLogout() {
