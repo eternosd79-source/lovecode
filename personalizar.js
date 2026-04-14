@@ -381,6 +381,7 @@
                 const flS = urlParams.get('flS') || (dynSource && dynSource.flS) || 40;
                 const flX = urlParams.get('flX') || (dynSource && dynSource.flX) || 50;
                 const flY = urlParams.get('flY') || (dynSource && dynSource.flY) || 50;
+                const flT = urlParams.get('flT') || urlParams.get('flTime') || (dynSource && dynSource.flT) || 0;
                 
                 const flImgNode = document.createElement('img');
                 flImgNode.src = flImgUrl;
@@ -395,8 +396,16 @@
                 flImgNode.style.boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
                 flImgNode.style.border = '2px solid rgba(255,255,255,0.2)';
                 flImgNode.style.objectFit = 'contain';
+                flImgNode.style.transition = 'opacity 1s ease-in-out';
+                flImgNode.style.opacity = '0';
                 
                 document.body.appendChild(flImgNode);
+
+                // Aparecer imagen suavemente según el tiempo flT
+                const delayMs = parseFloat(flT) * 1000;
+                setTimeout(() => {
+                    flImgNode.style.opacity = '1';
+                }, delayMs);
                 
                 // Ocultar textos base porque la premisa es "Reemplaza los textos"
                 document.querySelectorAll('.poem-container, .dynamic-text, .dedicatoria, .message-box').forEach(el => el.style.opacity = '0');
