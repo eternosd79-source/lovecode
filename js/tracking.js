@@ -2,9 +2,6 @@
 // CORAZÓNCÓDIGO — TRACKING DE PEDIDOS (Mis Pedidos)
 // El cliente ingresa su ID de orden para ver el estado
 // y recibir el link de su regalo o el botón de descarga ZIP.
-//
-// ✅ FIX: El número de WhatsApp usa CONFIG.whatsappNumber
-//    (ya no está hardcodeado como 00000000000)
 // ============================================================
 
 const btnTrackOrder    = document.getElementById('btnTrackOrder');
@@ -27,13 +24,11 @@ function openQRModal(linkStr) {
             </div>
         `;
         document.body.appendChild(qrOverlay);
-        
-        // Add download function to window if it doesn't exist
+
         window.downloadPaidQR = function() {
             const container = document.getElementById('trackingQRBox');
             if (!container) return;
             const canvas = container.querySelector('canvas');
-            
             let rawCanvas = canvas;
             if (!rawCanvas) {
                 const img = container.querySelector('img');
@@ -43,14 +38,13 @@ function openQRModal(linkStr) {
                 rawCanvas.height = img.height || 200;
                 rawCanvas.getContext('2d').drawImage(img, 0, 0);
             }
-            
             if (typeof generateAndDownloadBeautifulQR === 'function') {
                 const orderTitle = document.querySelector('.card-title')?.innerText || 'Regalo Experiencia';
                 generateAndDownloadBeautifulQR(rawCanvas, orderTitle, '', true);
             } else {
                 const link = document.createElement('a');
                 link.href = rawCanvas.toDataURL('image/png');
-                link.download = 'LoveCode-QR-Premium.png';
+                link.download = 'LoveCode-QR.png';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -97,6 +91,73 @@ if (btnTrackOrder) {
     });
 }
 
+// ──────────────────────────────────────────────────────────────
+// BANNER: Tiempo restante del plan (visible al usuario)
+// ──────────────────────────────────────────────────────────────
+function buildExpirationBanner(order) {
+    if (order.status === 'expired') {
+        const waRenewal = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(
+            `Hola CorazónCódigo! Mi plan expiró (ID: ${order.id.substring(0,8).toUpperCase()}). ¿Cómo puedo renovarlo?`
+        )}`;
+        return `
+            <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+                <p style="color:#ef4444;font-weight:700;margin:0 0 8px;"><i class="fa-solid fa-hourglass-end"></i> Tu plan ha expirado</p>
+                <p style="color:var(--color-dim);font-size:0.82rem;margin:0 0 12px;">El período de acceso de tu regalo ya venció. Contáctanos para renovarlo.</p>
+                <a href="${waRenewal}" target="_blank" class="btn-whatsapp" style="display:inline-flex;text-decoration:none;padding:8px 16px;font-size:0.85rem;">
+                    <i class="fa-brands fa-whatsapp"></i> Renovar mi Plan
+                </a>
+            </div>`;
+    }
+
+    if (!order.expires_at || order.status !== 'paid') return '';
+
+    const now    = new Date();
+    const exp    = new Date(order.expires_at);
+    const diffMs = exp - now;
+    const diffH  = Math.floor(diffMs / 3_600_000);
+    const diffD  = Math.floor(diffH / 24);
+
+    const planHours = (function(p) {
+        if (!p) return 336;
+        if (p.includes('$0') || /demo|gratis/i.test(p))           return 24;
+        if (p.includes('$3') || /b.?sico/i.test(p))               return 336;
+        if (p.includes('$4.50') || /hub|suscripci/i.test(p))      return 1800;
+        if (p.includes('$5') || /fotograf|personalizado/i.test(p)) return 1800;
+        if (p.includes('$7') || /ultra/i.test(p))                  return 4320;
+        return 336;
+    })(order.plan_name);
+
+    const pct       = Math.max(0, Math.min(100, Math.round((diffH / planHours) * 100)));
+    const barColor  = pct > 30 ? '#10b981' : pct > 10 ? '#f59e0b' : '#ef4444';
+    const bannerBg  = pct > 30 ? 'rgba(16,185,129,0.07)' : pct > 10 ? 'rgba(245,158,11,0.07)' : 'rgba(239,68,68,0.08)';
+    const bannerBdr = pct > 30 ? 'rgba(16,185,129,0.2)'  : pct > 10 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.3)';
+
+    const timeLabel = diffMs <= 0  ? '⌛ Vencido (procesando...)' :
+                      diffH < 1    ? '¡Menos de 1 hora restante!' :
+                      diffH < 24   ? `${diffH} hora${diffH !== 1 ? 's' : ''} restantes` :
+                                     `${diffD} día${diffD !== 1 ? 's' : ''} restantes`;
+
+    const expDate = exp.toLocaleDateString('es-EC', { day:'numeric', month:'long', year:'numeric' });
+    const expTime = exp.toLocaleTimeString('es-EC', { hour:'2-digit', minute:'2-digit' });
+
+    return `
+        <div style="background:${bannerBg};border:1px solid ${bannerBdr};border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+                <span style="color:${barColor};font-weight:700;font-size:0.9rem;">
+                    <i class="fa-solid fa-clock"></i> ${timeLabel}
+                </span>
+                <span style="font-size:0.75rem;color:var(--color-dim);">Expira: ${expDate} a las ${expTime}</span>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden;">
+                <div style="height:100%;width:${pct}%;background:${barColor};border-radius:6px;transition:width 1s;"></div>
+            </div>
+            <p style="font-size:0.75rem;color:var(--color-dim);margin:6px 0 0;text-align:right;">${pct}% del plan activo</p>
+        </div>`;
+}
+
+// ──────────────────────────────────────────────────────────────
+// RENDER PRINCIPAL: Estado de la orden
+// ──────────────────────────────────────────────────────────────
 function renderOrderStatus(order) {
     const displayId = order.id.substring(0, 8).toUpperCase();
 
@@ -106,13 +167,13 @@ function renderOrderStatus(order) {
         fullLink += `${separator}orderId=${order.id}`;
     }
 
-    // WhatsApp para enviar comprobante (número real desde CONFIG)
     const waComprobante = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(
         `Hola CorazónCódigo! Te envío el comprobante de pago de mi pedido #${displayId}. ¡Gracias!`
     )}`;
 
-    const isPaid = order.status === 'paid';
-    const isHub  = order.plan_name && order.plan_name.includes('$4.50');
+    const isPaid    = order.status === 'paid';
+    const isHub     = order.plan_name && order.plan_name.includes('$4.50');
+    const isExpired = order.status === 'expired';
 
     let statusHTML = ``;
 
@@ -133,33 +194,45 @@ function renderOrderStatus(order) {
                         y en minutos activaremos tu regalo.
                     </p>
                     <a href="${waComprobante}" target="_blank" class="btn-whatsapp" style="display:inline-flex; width:100%; justify-content:center; text-decoration:none; margin-top:10px;">
-                        <i class="fa-brands fa-whatsapp"></i> Enviar Comprobante Activo
+                        <i class="fa-brands fa-whatsapp"></i> Enviar Comprobante
                     </a>
                 </div>
             </div>`;
+
+    } else if (isExpired) {
+        statusHTML = `
+            <div class="product-card" style="margin:0 auto;max-width:400px;text-align:left;animation:floatUp 0.5s ease-out backwards;">
+                <div class="card-content" style="padding:24px;">
+                    <h3 style="margin:0 0 6px;font-size:1.2rem;">${order.template_name || 'Regalo Experiencia'}</h3>
+                    <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:18px;">Orden #${displayId}</p>
+                    ${buildExpirationBanner(order)}
+                </div>
+            </div>`;
+
     } else {
-        // Tarjeta VIP Profesional para pagos realizados
+        // Tarjeta VIP para pedidos pagados y activos
         statusHTML = `
             <div class="product-card" style="margin: 0 auto; max-width: 400px; text-align: left; animation: floatUp 0.6s ease-out backwards;">
                 <div class="card-image" id="tracking-card-img" style="position:relative; height: 180px; overflow: hidden; border-radius: 12px 12px 0 0;">
                     <span class="badge" style="background:#10b981; color:#fff; font-weight:bold; position:absolute; top:10px; left:10px; z-index:10;"><i class="fa-solid fa-check"></i> Activo</span>
                 </div>
                 <div class="card-content" style="padding: 20px;">
-                    <h3 class="card-title" style="margin:0 0 10px; font-size:1.3rem;">${order.template_name || 'Regalo Experiencia'}</h3>
-                    <p class="card-desc" style="font-size:0.9rem; margin-bottom:15px;">¡Gracias por tu compra! Tu regalo digital está vivo y operando. Listo para ser enviado.</p>
-                    
+                    <h3 class="card-title" style="margin:0 0 6px; font-size:1.2rem;">${order.template_name || 'Regalo Experiencia'}</h3>
+                    <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:14px;">Orden: #${displayId} · ${(order.plan_name || '').split('(')[0].trim()}</p>
+
+                    ${buildExpirationBanner(order)}
+
                     ${order.plan_name && order.plan_name.includes('$7') ? `
-                        <button class="btn-primary" onclick="window.open('${order.zip_url || '#'}')" style="width:100%; justify-content:center; margin-bottom:15px;">
+                        <button class="btn-primary" onclick="window.open('${order.zip_url || '#'}')" style="width:100%; justify-content:center; margin-bottom:14px;">
                             <i class="fa-solid fa-file-zipper"></i> Descargar Código Fuente (.zip)
                         </button>
                     ` : `
-                        <div class="final-link-box" style="margin-bottom: 15px; border-color:var(--accent-cyan);">
+                        <div class="final-link-box" style="margin-bottom: 14px; border-color:var(--accent-cyan);">
                             <input type="text" readonly value="${fullLink}" id="finalLink" style="font-size:0.8rem;">
                             <button onclick="copyLink()" title="Copiar"><i class="fa-solid fa-copy"></i></button>
                         </div>
-
-                        <div class="card-actions" style="display:flex; gap:10px; margin-bottom: 15px;">
-                            <button class="btn-primary" onclick="window.open('${fullLink}','_blank')" style="flex:1; justify-content:center; text-decoration:none;">
+                        <div class="card-actions" style="display:flex; gap:10px; margin-bottom: 12px;">
+                            <button class="btn-primary" onclick="window.open('${fullLink}','_blank')" style="flex:1; justify-content:center;">
                                 <i class="fa-solid fa-eye"></i> Abrir Link
                             </button>
                             <button class="btn-secondary" onclick="openQRModal('${fullLink}')" style="width:50px; padding:0; justify-content:center; flex-shrink:0;" title="Ver Código QR">
@@ -177,30 +250,23 @@ function renderOrderStatus(order) {
     orderStatusResult.innerHTML = statusHTML;
 
     // Pintar canvas thumbnail
-    if (order.status === 'paid' && order.template_id) {
+    if (isPaid && order.template_id) {
         setTimeout(() => {
             const container = document.getElementById('tracking-card-img');
             if (container && typeof generateThumb === 'function') {
                 const cv = generateThumb(order.template_id);
                 if (cv) {
-                    cv.style.width = '100%';
-                    cv.style.height = '100%';
-                    cv.style.objectFit = 'cover';
-                    cv.style.position = 'absolute';
-                    cv.style.top = '0';
-                    cv.style.left = '0';
+                    cv.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
                     container.appendChild(cv);
                 }
             }
         }, 100);
     }
 
-    // Si es Membresía Hub y está pagado → mostrar dashboard de afiliado
+    // Dashboard afiliado si es Membresía Hub activa
     if (isPaid && isHub && typeof renderAffiliateDashboard === 'function') {
         renderAffiliateDashboard(order.id).then(dashboardHTML => {
-            if (dashboardHTML) {
-                orderStatusResult.insertAdjacentHTML('beforeend', dashboardHTML);
-            }
+            if (dashboardHTML) orderStatusResult.insertAdjacentHTML('beforeend', dashboardHTML);
         });
     }
 }

@@ -311,6 +311,19 @@ if (btnTabMundo) {
 }
 
 // -------------------------------------------------------
+// Helper: duración de plan en horas (usado localmente para display)
+// -------------------------------------------------------
+function getPlanDurationHours(planName) {
+    if (!planName) return 336;
+    if (planName.includes('$0') || /demo|gratis/i.test(planName)) return 24;
+    if (planName.includes('$3') || /básico|basico/i.test(planName))  return 336;
+    if (planName.includes('$4.50') || /hub|membresía/i.test(planName)) return 1800;
+    if (planName.includes('$5') || /fotografías|personalizado/i.test(planName)) return 1800;
+    if (planName.includes('$7') || /ultra/i.test(planName)) return 4320;
+    return 336;
+}
+
+// -------------------------------------------------------
 // Generar Pedido → Supabase + WhatsApp
 // -------------------------------------------------------
 const btnFinishOrder = document.getElementById('btnFinishOrder');
@@ -331,13 +344,11 @@ if (btnFinishOrder) {
         if (db) {
             try {
                 let templateUUID = null;
-                // Buscar el UUID de la plantilla en templates (tolerante a fallos — tabla puede no existir)
                 try {
                     const { data: tData, error: tErr } = await db.from('templates')
                         .select('id').eq('slug', activeTemplateInfo.id).maybeSingle();
                     if (tData && !tErr) templateUUID = tData.id;
                 } catch(tEx) {
-                    // La tabla templates no existe aún — continuar sin templateUUID
                     console.warn('[Checkout] Tabla templates no encontrada, continuando sin FK:', tEx.message);
                 }
 
@@ -348,7 +359,6 @@ if (btnFinishOrder) {
                         if (el) dynamicTexts[field.id] = el.value.trim();
                     });
                 }
-                
                 if (dataForm.flImg) {
                     dynamicTexts['flImg'] = dataForm.flImg;
                     dynamicTexts['flS']   = dataForm.flS;
@@ -359,21 +369,26 @@ if (btnFinishOrder) {
                 const photosInput = document.getElementById('inpPhotos') ? document.getElementById('inpPhotos').value : "";
                 const photoArray  = photosInput.split(/[\n, ]+/).filter(link => link.trim().startsWith('http'));
 
+                // Guardamos plan_duration_hours como referencia informativa.
+                // El campo expires_at real lo calcula el trigger de Supabase al aprobar.
+                const planHours = getPlanDurationHours(dataForm.plan);
+
                 const orderData = {
-                    customer_name:  dataForm.destino || "Cliente Web",
-                    target_name:    dataForm.destino || "N/A",
-                    plan_name:      dataForm.plan,
-                    price:          price,
-                    template_id:    templateUUID,
-                    template_name:  activeTemplateInfo.name,
-                    custom_date:    dataForm.date     || "",
-                    custom_message: dataForm.message  || "",
-                    photo_urls:     [], // Se omite el paso de fotos anticuado
-                    music_url:      dataForm.musicUrl || "",
-                    music_start:    parseInt(dataForm.musicStart)    || 0,
-                    music_duration: parseInt(dataForm.musicDuration) || 30,
-                    dynamic_texts:  dynamicTexts,
-                    status: 'pending'
+                    customer_name:   dataForm.destino || "Cliente Web",
+                    target_name:     dataForm.destino || "N/A",
+                    plan_name:       dataForm.plan,
+                    price:           price,
+                    template_id:     templateUUID,
+                    template_name:   activeTemplateInfo.name,
+                    custom_date:     dataForm.date     || "",
+                    custom_message:  dataForm.message  || "",
+                    photo_urls:      [],
+                    music_url:       dataForm.musicUrl || "",
+                    music_start:     parseInt(dataForm.musicStart)    || 0,
+                    music_duration:  parseInt(dataForm.musicDuration) || 30,
+                    dynamic_texts:   dynamicTexts,
+                    status:          'pending'
+                    // expires_at: lo establece el trigger en Supabase al cambiar status → 'paid'
                 };
 
                 const { data: insertData, error: insertError } = await db.from('orders').insert([orderData]).select();
@@ -387,7 +402,6 @@ if (btnFinishOrder) {
             }
         }
 
-        // Modo contingencia: pedido igual aunque falle la DB
         processFinalOrder({ id: tempId, customer_name: dataForm.destino || "Cliente", plan_name: dataForm.plan }, true);
     });
 }

@@ -4,383 +4,565 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | CorazónCódigo</title>
+    <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { padding: 40px; padding-bottom: 400px; } /* Añadimos espacio al fondo */
+        body { padding: 40px; padding-bottom: 400px; background: var(--bg-dark); }
+
+        /* ── Tabla admin ── */
         .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--bg-card); border-radius: 12px; overflow-x: auto; display: block; }
-        .admin-table th, .admin-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap; }
-        
+        .admin-table th, .admin-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap; font-size: 0.88rem; }
+        .admin-table th { background: rgba(0,0,0,0.4); color: var(--accent-cyan); font-weight: 700; letter-spacing: .5px; }
+        .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* ── Pills de estado ── */
+        .status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+        .status-pill.pending  { background: rgba(251,191,36,0.12);  color: #fbbf24; }
+        .status-pill.paid     { background: rgba(16,185,129,0.12);  color: #10b981; }
+        .status-pill.expired  { background: rgba(239,68,68,0.12);   color: #ef4444; }
+        .status-pill.cancelled{ background: rgba(107,114,128,0.12); color: #9ca3af; }
+
+        /* ── Chip de tiempo ── */
+        .time-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; padding: 3px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); color: var(--color-dim); margin-top: 4px; }
+        .time-chip.urgent   { color: #f59e0b; border-color: rgba(245,158,11,0.3); }
+        .time-chip.critical { color: #ef4444; border-color: rgba(239,68,68,0.3); }
+        .time-chip.ok       { color: #10b981; border-color: rgba(16,185,129,0.3); }
+
+        /* ── Stat cards ── */
+        .stat-card { background: var(--bg-card); padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center; min-width: 100px; }
+        .stat-card span  { display: block; font-size: 1.6rem; font-weight: 800; color: var(--accent-cyan); }
+        .stat-card label { font-size: 0.72rem; color: var(--color-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; display: block; }
+        .stat-expired span { color: #ef4444; }
+
+        /* ── Botones acción ── */
+        .btn-approve { background: linear-gradient(135deg,#10b981,#059669); color: #fff; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: opacity .2s; }
+        .btn-approve:hover { opacity: .85; }
+        .btn-approve:disabled { opacity: .4; cursor: not-allowed; }
+        .btn-revoke  { background: rgba(239,68,68,.15); color: #ef4444; border: 1px solid rgba(239,68,68,.3); padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: opacity .2s; }
+        .btn-revoke:hover { opacity: .8; }
+
+        /* ── Promo generator ── */
+        #promoTemplateSelect { background-color: #fff !important; color: #000 !important; border: 2px solid var(--accent-cyan); height: 45px; font-weight: bold; }
+        #promoTemplateSelect option { background-color: #fff !important; color: #000 !important; }
+
+        /* ── Search bar ── */
+        .admin-search { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 9px 14px; color: #fff; width: 220px; font-size: 0.9rem; }
+        .admin-search::placeholder { color: var(--color-dim); }
+
+        /* ── Filtros tab ── */
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-tab  { padding: 5px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--color-dim); cursor: pointer; font-size: 0.8rem; transition: all .2s; }
+        .filter-tab.active { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); font-weight: 700; }
+
+        /* ── Progress bar tiempo ── */
+        .time-bar-wrap { height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px; margin-top: 5px; width: 90px; display: inline-block; }
+        .time-bar-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+
         @media (max-width: 768px) {
-            body { padding: 15px; }
+            body { padding: 12px; }
             .stat-card { padding: 10px; flex: 1; }
-            .stat-card span { font-size: 1.1rem; }
-            h1 { font-size: 1.5rem; }
-            .admin-table td, .admin-table th { padding: 10px; font-size: 0.85rem; }
-        }
-        .admin-table th { background: rgba(0,0,0,0.3); color: var(--accent-cyan); }
-        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
-        .status-pill.pending { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
-        .status-pill.paid { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .btn-approve { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-        
-        .stat-card { background: var(--bg-card); padding: 15px 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        .stat-card span { display: block; font-size: 1.5rem; font-weight: 800; color: var(--accent-cyan); }
-        .stat-card label { font-size: 0.75rem; color: var(--color-dim); text-transform: uppercase; letter-spacing: 1px; }
-        #promoTemplateSelect { 
-            background-color: white !important; 
-            color: black !important; 
-            border: 2px solid var(--accent-cyan);
-            height: 45px;
-            font-weight: bold;
-        }
-        #promoTemplateSelect option {
-            background-color: white !important;
-            color: black !important;
-            padding: 10px;
+            h1 { font-size: 1.4rem; }
+            .admin-table td, .admin-table th { padding: 10px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-    <!-- ✅ LOGIN SEGURO — Autenticación vía Supabase Auth (no contraseña en cliente) -->
-    <div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-dark); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:0;">
-        <div style="text-align:center; margin-bottom:30px;">
-            <i class="fa-solid fa-shield-halved" style="font-size:2.5rem; color:var(--accent-purple); margin-bottom:15px; display:block;"></i>
+
+    <!-- ════════════════════════════════════════════════════
+         LOGIN OVERLAY — Supabase Auth Real
+    ════════════════════════════════════════════════════ -->
+    <div id="loginOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-dark);z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div style="text-align:center;margin-bottom:30px;">
+            <i class="fa-solid fa-shield-halved" style="font-size:2.8rem;color:var(--accent-purple);margin-bottom:15px;display:block;"></i>
             <h2 class="neon-purple" style="margin:0 0 8px;">Acceso Restringido</h2>
-            <p style="color:var(--color-dim); font-size:0.9rem;">Panel de administración CorazónCódigo</p>
+            <p style="color:var(--color-dim);font-size:0.9rem;">Panel de administración CorazónCódigo</p>
         </div>
-        <input type="email" id="adminEmail" placeholder="Email de administrador..." class="form-input" style="max-width:320px; text-align:center; margin-bottom:12px;">
-        <input type="password" id="adminPass" placeholder="Contraseña..." class="form-input" style="max-width:320px; text-align:center; margin-bottom:20px;">
-        <button class="btn-primary" id="btnLogin" style="max-width:320px; width:100%;">
+        <input type="email" id="adminEmail" placeholder="Email de administrador..." class="form-input" style="max-width:320px;width:90%;text-align:center;margin-bottom:12px;">
+        <input type="password" id="adminPass" placeholder="Contraseña..." class="form-input" style="max-width:320px;width:90%;text-align:center;margin-bottom:20px;">
+        <button class="btn-primary" id="btnLogin" style="max-width:320px;width:90%;">
             <i class="fa-solid fa-right-to-bracket"></i> Entrar al Panel
         </button>
-        <p id="loginError" style="color:#ff5e7e; font-size:0.85rem; margin-top:15px; display:none;"></p>
-        <p style="color:var(--color-dim); font-size:0.75rem; margin-top:30px; text-align:center; max-width:320px; line-height:1.5;">
-            <i class="fa-solid fa-circle-info"></i> Autenticación segura — Sin datos sensibles en el código fuente.
+        <p id="loginError" style="color:#ff5e7e;font-size:0.85rem;margin-top:15px;display:none;max-width:320px;text-align:center;"></p>
+        <p style="color:var(--color-dim);font-size:0.75rem;margin-top:30px;text-align:center;max-width:320px;line-height:1.6;">
+            <i class="fa-solid fa-lock"></i> Autenticación segura vía Supabase Auth.<br>Sin datos sensibles en el código fuente.
         </p>
     </div>
 
+    <!-- ════════════════════════════════════════════════════
+         CONTENIDO ADMIN (oculto hasta login)
+    ════════════════════════════════════════════════════ -->
     <div id="adminContent" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap:wrap; gap:15px;">
+
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;flex-wrap:wrap;gap:15px;">
             <div>
-                <h1>Panel de Control <span class="neon-purple">CorazónCódigo</span></h1>
-                <p id="adminUserLabel" style="color:var(--color-dim); font-size:0.85rem;">Cargando...</p>
+                <h1 style="margin:0 0 4px;">Panel <span class="neon-purple">CorazónCódigo</span></h1>
+                <p id="adminUserLabel" style="color:var(--color-dim);font-size:0.85rem;margin:0;">Cargando...</p>
             </div>
-            <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
                 <div class="stat-card">
-                    <span id="statTotal">0</span>
-                    <label>Órdenes Totales</label>
+                    <span id="statTotal">0</span><label>Total</label>
                 </div>
                 <div class="stat-card">
-                    <span id="statPending" style="color:#fbbf24;">0</span>
-                    <label>Pendientes</label>
+                    <span id="statPending" style="color:#fbbf24;">0</span><label>Pendientes</label>
                 </div>
-                <button onclick="doLogout()" class="btn-secondary" style="padding:8px 16px; font-size:0.8rem; border-color:#ff5e7e; color:#ff5e7e;">
-                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                <div class="stat-card">
+                    <span id="statPaid" style="color:#10b981;">0</span><label>Activos</label>
+                </div>
+                <div class="stat-card stat-expired">
+                    <span id="statExpired">0</span><label>Expirados</label>
+                </div>
+                <button onclick="doLogout()" class="btn-secondary" style="padding:8px 16px;font-size:0.8rem;border-color:#ff5e7e;color:#ff5e7e;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
                 </button>
             </div>
         </div>
 
-        <!-- GUÍA DE MANTENIMIENTO -->
-        <div style="margin-bottom:30px; background:rgba(0,0,0,0.3); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
-            <h2 class="neon-cyan" style="font-size:1.1rem; margin-bottom:15px;"><i class="fa-solid fa-life-ring"></i> Guía de Mantenimiento</h2>
-            <div style="font-size: 0.85rem; color: #ccc; line-height: 1.6;">
-                <p style="margin-bottom:10px;"><strong>🎵 Gestión de Música:</strong> Para añadir nuevas canciones, sube el archivo .mp4 o .mp3 a la carpeta <code>/</code> y asegúrate de agregarlo a la lista <code>musicFiles</code> en <code>app.js</code>.</p>
-                <p style="margin-bottom:10px;"><strong>📸 Fotos de Usuarios:</strong> El sistema soporta links directos de Google Drive (enlace compartido), Imgur o cualquier servidor de imágenes.</p>
-                <p><strong>✅ Aprobación de Pedidos:</strong> Cuando un cliente envíe el comprobante, busca su ID en la lista de abajo y cambia el estado a <code>PAID</code> para activar su regalo.</p>
+        <!-- Guía rápida -->
+        <div style="margin-bottom:28px;background:rgba(0,0,0,0.25);padding:18px 22px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);">
+            <h3 class="neon-cyan" style="font-size:1rem;margin:0 0 12px;"><i class="fa-solid fa-life-ring"></i> Guía de Operación</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;font-size:0.84rem;color:#ccc;line-height:1.6;">
+                <p>✅ <strong>Aprobar pedido:</strong> Cuando el cliente envíe el comprobante por WhatsApp, busca su ID y presiona <em>"Aprobar"</em>. Esto activa el plan y comienza a correr el tiempo.</p>
+                <p>⏱ <strong>Expiración automática:</strong> Supabase revisa cada hora si algún plan venció. Demo: 24h · Básico: 2 sem · $4.50/$5: 2.5 meses · Ultra: 6 meses.</p>
+                <p>🔁 <strong>Revocar:</strong> Puedes devolver un pedido a "pendiente" si el pago fue rechazado.</p>
             </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 style="font-size:1.2rem; margin:0;"><i class="fa-solid fa-list-check"></i> Órdenes Recientes</h2>
-            <button onclick="loadOrders()" class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+        <!-- Barra de herramientas: filtros + búsqueda -->
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <h2 style="font-size:1.1rem;margin:0;"><i class="fa-solid fa-list-check"></i> Órdenes</h2>
+                <div class="filter-tabs" id="filterTabs">
+                    <button class="filter-tab active" data-filter="all">Todas</button>
+                    <button class="filter-tab" data-filter="pending">⏳ Pendientes</button>
+                    <button class="filter-tab" data-filter="paid">✅ Activos</button>
+                    <button class="filter-tab" data-filter="expired">❌ Expirados</button>
+                </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <input type="text" id="adminSearch" class="admin-search" placeholder="🔍 Buscar por ID o cliente...">
+                <button onclick="loadOrders()" class="btn-primary" style="padding:8px 14px;font-size:0.85rem;white-space:nowrap;">
+                    <i class="fa-solid fa-rotate"></i> Actualizar
+                </button>
+            </div>
         </div>
 
-        <table class="admin-table" style="margin-top:0;">
-            <thead>
-                <tr>
-                    <th>ID Orden</th>
-                    <th>Cliente</th>
-                    <th>Plantilla</th>
-                    <th>Plan</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody id="adminOrderList">
-                <!-- Carga desde Supabase -->
-            </tbody>
-        </table>
+        <!-- Tabla de órdenes -->
+        <div style="overflow-x:auto;border-radius:12px;border:1px solid rgba(255,255,255,0.06);">
+            <table class="admin-table" style="margin-top:0;">
+                <thead>
+                    <tr>
+                        <th>ID Orden</th>
+                        <th>Cliente</th>
+                        <th>Plantilla</th>
+                        <th>Plan</th>
+                        <th>Estado</th>
+                        <th>Tiempo Plan</th>
+                        <th>Registrado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="adminOrderList">
+                    <tr><td colspan="8" style="text-align:center;color:var(--color-dim);padding:30px;">Cargando órdenes...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
-        <!-- NUEVA SECCIÓN: GENERADOR DE PROMOCIÓN -->
-        <div style="margin-top:50px; background:rgba(0,0,0,0.3); padding:30px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+        <!-- ── Generador de Promoción ── -->
+        <div style="margin-top:50px;background:rgba(0,0,0,0.25);padding:28px;border-radius:16px;border:1px solid rgba(255,255,255,0.05);">
             <h2 class="neon-cyan"><i class="fa-solid fa-bullhorn"></i> Generador de Promoción</h2>
-            <p>Genera links directos y códigos QR para promocionar tus códigos gratuitos.</p>
-            
-            <div style="display:flex; gap:20px; margin-top:20px; flex-wrap:wrap;">
-                <div style="flex:1; min-width:300px;">
-                    <label style="display:block; margin-bottom:10px; color:var(--color-dim);">Selecciona el Código:</label>
-                    <select id="promoTemplateSelect" class="form-input" style="margin-bottom:20px;">
-                        <!-- Se llena con JS -->
-                    </select>
-                    <label style="display:block; margin-bottom:10px; color:var(--color-dim);">Para quién (opcional):</label>
-                    <input type="text" id="promoTargetName" placeholder="Ej: Dani" class="form-input" style="margin-bottom:20px;">
-                    <button class="btn-primary" onclick="generatePromo()" style="width:100%;"><i class="fa-solid fa-qrcode"></i> Generar Material Promo</button>
+            <p style="color:var(--color-dim);margin-bottom:20px;">Genera links directos y QR para promocionar tus experiencias gratuitas.</p>
+            <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:280px;">
+                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Selecciona el Código:</label>
+                    <select id="promoTemplateSelect" class="form-input" style="margin-bottom:16px;"></select>
+                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Para quién (opcional):</label>
+                    <input type="text" id="promoTargetName" placeholder="Ej: Dani" class="form-input" style="margin-bottom:16px;">
+                    <button class="btn-primary" onclick="generatePromo()" style="width:100%;">
+                        <i class="fa-solid fa-qrcode"></i> Generar Material
+                    </button>
                 </div>
-                
-                <div id="promoResult" style="flex:1; min-width:300px; background:rgba(255,255,255,0.02); padding:20px; border-radius:12px; display:none; text-align:center;">
+                <div id="promoResult" style="flex:1;min-width:280px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;display:none;text-align:center;">
                     <h4 id="promoTitle" style="margin-bottom:15px;"></h4>
-                    <div id="qrcode" style="background:white; padding:15px; display:inline-block; border-radius:8px; margin-bottom:15px;"></div>
-                    <div style="margin-bottom: 15px;">
-                        <button class="btn-secondary" onclick="downloadQR()" style="width:100%; border-color:#10b981; color:#10b981;"><i class="fa-solid fa-download"></i> Descargar Imagen QR</button>
-                    </div>
+                    <div id="qrcode" style="background:#fff;padding:15px;display:inline-block;border-radius:8px;margin-bottom:15px;"></div>
+                    <button class="btn-secondary" onclick="downloadQR()" style="width:100%;border-color:#10b981;color:#10b981;margin-bottom:12px;">
+                        <i class="fa-solid fa-download"></i> Descargar QR
+                    </button>
                     <div class="final-link-box">
-                        <input type="text" id="promoLink" readonly class="form-input">
+                        <input type="text" id="promoLink" readonly class="form-input" style="font-size:0.8rem;">
                         <button onclick="copyPromoLink()"><i class="fa-solid fa-copy"></i></button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div><!-- /adminContent -->
 
+    <!-- ════════════════════════════════════════════════ SCRIPTS ════ -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script>
-        // ✅ AUTENTICACIÓN SEGURA — Supabase Auth (sin contraseñas en código fuente)
-        // INSTRUCCIONES PRIMER USO:
-        // 1. Ve a tu Dashboard de Supabase → Authentication → Users
-        // 2. Crea un usuario con tu email y una contraseña segura.
-        // 3. Ese email y contraseña serán los únicos que pueden acceder aquí.
-
-        function initAuth() {
-            // Verificar si ya hay sesión activa vía localStorage para mantenerla simple y privada
-            const isLogged = localStorage.getItem('lc_admin_logged_v4');
-            if (isLogged === 'true') {
-                showAdminPanel('danielvillagran18al@outlook.com');
-            }
-        }
-
-        async function doLogin() {
-            const email = document.getElementById('adminEmail').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
-            const errEl = document.getElementById('loginError');
-            const btn = document.getElementById('btnLogin');
-
-            if (!email || !pass) {
-                errEl.innerText = 'Completa el email y la contraseña.';
-                errEl.style.display = 'block';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
-            errEl.style.display = 'none';
-
-            // Autenticación privada (verificación local)
-            const _a = btoa('danielvillagran18al@outlook.com');
-            const _b = btoa('Makiran98#');
-            setTimeout(() => {
-                if (btoa(email) === _a && btoa(pass) === _b) {
-                    localStorage.setItem('lc_admin_logged_v4', 'true');
-                    showAdminPanel(email);
-                } else {
-                    errEl.innerText = 'Credenciales incorrectas. Acceso denegado.';
-                    errEl.style.display = 'block';
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar al Panel';
-                }
-            }, 800);
-        }
-
-        async function doLogout() {
-            localStorage.removeItem('lc_admin_logged_v4');
-            document.getElementById('adminContent').style.display = 'none';
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('adminEmail').value = '';
-            document.getElementById('adminPass').value = '';
-        }
-
-        function showAdminPanel(userEmail) {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('adminContent').style.display = 'block';
-            const labelEl = document.getElementById('adminUserLabel');
-            if (labelEl) labelEl.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Sesión activa: <strong>${userEmail}</strong>`;
-            if (typeof initPromoGenerator === 'function') initPromoGenerator();
-            if (typeof loadOrders === 'function') loadOrders();
-        }
-
-        // Eventos al cargar la página
-        window.addEventListener('DOMContentLoaded', () => {
-            // Inicializar auth luego de que los scripts carguen
-            setTimeout(initAuth, 300);
-
-            const btnLogin = document.getElementById('btnLogin');
-            if (btnLogin) btnLogin.addEventListener('click', doLogin);
-
-            // Enter en contraseña dispara login
-            const passInput = document.getElementById('adminPass');
-            if (passInput) passInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLogin(); });
-
-            const emailInput = document.getElementById('adminEmail');
-            if (emailInput) emailInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') passInput && passInput.focus(); });
-        });
-    </script>
-    <!-- Carga módulos necesarios: configuración global y catálogo de 31 experiencias -->
     <script src="js/config.js"></script>
     <script src="js/catalog.js"></script>
+
     <script>
-        // --- LÓGICA DE DATOS Y SUPABASE ---
-        
-        function initPromoGenerator() {
-            const select = document.getElementById('promoTemplateSelect');
-            if (!select) return;
+    // ============================================================
+    // SUPABASE AUTH — Login real (credenciales en Supabase Auth, 
+    // NO en código fuente)
+    // ============================================================
+    let adminSupabase = null;
 
-            // Usa catalogData del módulo catalog.js (no necesita lista harcodeada)
-            if (typeof catalogData === 'undefined' || catalogData.length === 0) {
-                console.warn('catalogData no disponible todavía, reintentando...');
-                setTimeout(initPromoGenerator, 500);
-                return;
-            }
-
-            let optionsHTML = '<option value="" disabled selected>-- SELECCIONA UNO DE LOS 31 CÓDIGOS --</option>';
-            optionsHTML += catalogData
-                .map(item => `<option value="${item.id}" style="color:black !important; background:white !important;">${item.name.toUpperCase()}</option>`)
-                .join('');
-            select.innerHTML = optionsHTML;
-        }
-
-        function generatePromo() {
-            const tid = document.getElementById('promoTemplateSelect').value;
-            const item = (typeof catalogData !== 'undefined') ? catalogData.find(x => x.id === tid) : null;
-            if (!item) { alert('Por favor selecciona un código de la lista.'); return; }
-
-            const promoResult = document.getElementById('promoResult');
-            const promoTitle = document.getElementById('promoTitle');
-            const promoLink = document.getElementById('promoLink');
-            const targetName = document.getElementById('promoTargetName').value.trim();
-            
-            let fullLink = window.location.origin + "/" + item.id + "/index.html";
-            if (targetName) {
-                fullLink += "?para=" + encodeURIComponent(targetName);
-            }
-            
-            promoTitle.innerText = "Material para: " + item.name + (targetName ? " (Para " + targetName + ")" : "");
-            promoLink.value = fullLink;
-            promoResult.style.display = 'block';
-            
-            const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = "";
-            new QRCode(qrContainer, {
-                text: fullLink,
-                width: 150,
-                height: 150,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-        }
-
-        function copyPromoLink() {
-            const text = document.getElementById("promoLink").value;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('Link de promoción copiado!');
-                }).catch(() => {
-                    // Fallback para contextos sin permisos de portapapeles
-                    const el = document.getElementById('promoLink');
-                    el.select();
-                    document.execCommand('copy');
-                    alert('Link de promoción copiado!');
-                });
-            } else {
-                const el = document.getElementById('promoLink');
-                el.select();
-                document.execCommand('copy');
-                alert('Link de promoción copiado!');
-            }
-        }
-
-        function downloadQR() {
-            const qrImg = document.querySelector("#qrcode img");
-            if (!qrImg) {
-                // Si es un canvas en lugar de una imagen
-                const qrCanvas = document.querySelector("#qrcode canvas");
-                if (qrCanvas) {
-                    const link = document.createElement("a");
-                    link.download = "QR_CorazónCódigo_" + document.getElementById('promoTemplateSelect').value + ".png";
-                    link.href = qrCanvas.toDataURL("image/png");
-                    link.click();
-                    return;
-                }
-                alert("Primero genera un código QR");
-                return;
-            }
-            
-            const link = document.createElement("a");
-            link.download = "QR_CorazónCódigo_" + document.getElementById('promoTemplateSelect').value + ".png";
-            link.href = qrImg.src;
-            link.click();
-        }
-
-        // Supabase Admin Client (usa las variables de js/config.js)
-        let supabaseClient = null;
+    function initAdminSupabase() {
         try {
             const lib = (typeof supabase !== 'undefined' && supabase.createClient) ? supabase : null;
-            if (lib) supabaseClient = lib.createClient(supabaseUrl, supabaseKey);
+            if (lib) {
+                adminSupabase = lib.createClient(supabaseUrl, supabaseKey);
+            }
         } catch (e) {
-            console.error("Error inicializando Supabase Admin:", e);
+            console.error('Error inicializando Supabase Admin:', e);
         }
+    }
 
-        async function loadOrders() {
-            if (!supabaseClient) return;
-            try {
-                const { data, error } = await supabaseClient
-                    .from('orders')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-                
-                document.getElementById('statTotal').innerText = data.length;
-                document.getElementById('statPending').innerText = data.filter(o => o.status === 'pending').length;
-
-                const tbody = document.getElementById('adminOrderList');
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay pedidos aún.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = data.map(order => `
-                    <tr>
-                        <td>#${order.id.substring(0,8)}</td>
-                        <td>${order.customer_name || 'N/A'}</td>
-                        <td>${order.template_id || 'N/A'}</td>
-                        <td>${order.plan_name}</td>
-                        <td><span class="status-pill ${order.status}">${order.status}</span></td>
-                        <td>
-                            ${order.status === 'pending' ? `<button class="btn-approve" onclick="approveOrder('${order.id}')">Aprobar Pago</button>` : '---'}
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (err) {
-                console.error("Error cargando órdenes:", err);
+    async function checkExistingSession() {
+        if (!adminSupabase) return;
+        try {
+            const { data: { session } } = await adminSupabase.auth.getSession();
+            if (session && session.user) {
+                showAdminPanel(session.user.email);
             }
+        } catch (e) {
+            console.warn('No hay sesión previa.');
+        }
+    }
+
+    async function doLogin() {
+        const email  = document.getElementById('adminEmail').value.trim();
+        const pass   = document.getElementById('adminPass').value.trim();
+        const errEl  = document.getElementById('loginError');
+        const btn    = document.getElementById('btnLogin');
+
+        if (!email || !pass) {
+            errEl.innerText = 'Completa el email y la contraseña.';
+            errEl.style.display = 'block';
+            return;
         }
 
-        async function approveOrder(id) {
-            if (!supabaseClient) return;
-            const { error } = await supabaseClient
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+        errEl.style.display = 'none';
+
+        try {
+            if (!adminSupabase) throw new Error('Supabase no inicializado.');
+
+            const { data, error } = await adminSupabase.auth.signInWithPassword({ email, password: pass });
+
+            if (error) throw error;
+
+            showAdminPanel(data.user.email);
+
+        } catch (err) {
+            const msg = err.message || 'Credenciales incorrectas.';
+            errEl.innerText = msg.includes('Invalid') ? 'Email o contraseña incorrectos. Acceso denegado.' : msg;
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar al Panel';
+        }
+    }
+
+    async function doLogout() {
+        if (adminSupabase) await adminSupabase.auth.signOut();
+        document.getElementById('adminContent').style.display = 'none';
+        document.getElementById('loginOverlay').style.display = 'flex';
+        document.getElementById('adminEmail').value = '';
+        document.getElementById('adminPass').value = '';
+    }
+
+    function showAdminPanel(userEmail) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminContent').style.display  = 'block';
+        const lbl = document.getElementById('adminUserLabel');
+        if (lbl) lbl.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Sesión activa: <strong>${userEmail}</strong>`;
+        loadOrders();
+        if (typeof initPromoGenerator === 'function') initPromoGenerator();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initAdminSupabase();
+        checkExistingSession();
+
+        document.getElementById('btnLogin').addEventListener('click', doLogin);
+        document.getElementById('adminPass').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+        document.getElementById('adminEmail').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('adminPass').focus(); });
+
+        // Filtros de estado
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.filter;
+                renderTable();
+            });
+        });
+
+        // Búsqueda en tiempo real
+        document.getElementById('adminSearch').addEventListener('input', () => {
+            renderTable();
+        });
+    });
+
+    // ============================================================
+    // LÓGICA DE ÓRDENES
+    // ============================================================
+    let allOrders    = [];
+    let currentFilter = 'all';
+
+    const PLAN_DURATIONS = {
+        demo:   { hours: 24,   label: '24 horas',   color: '#9ca3af' },
+        basic:  { hours: 336,  label: '2 semanas',  color: '#60a5fa' },
+        hub:    { hours: 1800, label: '2.5 meses',  color: '#a78bfa' },
+        photo:  { hours: 1800, label: '2.5 meses',  color: '#f472b6' },
+        ultra:  { hours: 4320, label: '6 meses',    color: '#34d399' },
+    };
+
+    function getPlanInfo(planName = '') {
+        if (!planName) return PLAN_DURATIONS.basic;
+        if (planName.includes('$0') || planName.toLowerCase().includes('demo') || planName.toLowerCase().includes('gratis')) return PLAN_DURATIONS.demo;
+        if (planName.includes('$3') || planName.toLowerCase().includes('básico') || planName.toLowerCase().includes('basico')) return PLAN_DURATIONS.basic;
+        if (planName.includes('$4.50') || planName.toLowerCase().includes('hub') || planName.toLowerCase().includes('suscripción')) return PLAN_DURATIONS.hub;
+        if (planName.includes('$5') || planName.toLowerCase().includes('fotografías') || planName.toLowerCase().includes('personalizado')) return PLAN_DURATIONS.photo;
+        if (planName.includes('$7') || planName.toLowerCase().includes('ultra')) return PLAN_DURATIONS.ultra;
+        return PLAN_DURATIONS.basic;
+    }
+
+    function buildTimeChip(order) {
+        if (order.status === 'pending') return '<span class="time-chip">⏳ Sin pagar</span>';
+        if (order.status === 'expired' || order.status === 'cancelled') return '<span class="time-chip critical">❌ Plan vencido</span>';
+
+        if (!order.expires_at) {
+            const info = getPlanInfo(order.plan_name);
+            return `<span class="time-chip">${info.label}</span>`;
+        }
+
+        const now      = new Date();
+        const exp      = new Date(order.expires_at);
+        const diffMs   = exp - now;
+        const diffH    = Math.floor(diffMs / 3_600_000);
+        const diffD    = Math.floor(diffH / 24);
+
+        // Barra de progreso visual
+        const info     = getPlanInfo(order.plan_name);
+        const totalH   = info.hours;
+        const pct      = Math.max(0, Math.min(100, Math.round((diffH / totalH) * 100)));
+        const barColor = pct > 30 ? '#10b981' : pct > 10 ? '#f59e0b' : '#ef4444';
+        const chipClass = pct > 30 ? 'ok' : pct > 10 ? 'urgent' : 'critical';
+
+        let label = '';
+        if (diffMs <= 0) {
+            label = '⌛ Expirado';
+        } else if (diffH < 24) {
+            label = `${diffH}h restantes`;
+        } else {
+            label = `${diffD} días restantes`;
+        }
+
+        return `
+            <span class="time-chip ${chipClass}">${label}</span>
+            <div class="time-bar-wrap">
+                <div class="time-bar-fill" style="width:${pct}%;background:${barColor};"></div>
+            </div>`;
+    }
+
+    async function loadOrders() {
+        if (!adminSupabase) {
+            // Fallback al cliente global si existe
+            if (window.db) adminSupabase = window.db;
+            else { console.warn('Supabase no disponible'); return; }
+        }
+
+        const tbody = document.getElementById('adminOrderList');
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--color-dim);"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</td></tr>';
+
+        try {
+            const { data, error } = await adminSupabase
                 .from('orders')
-                .update({ status: 'paid' })
-                .eq('id', id);
-            
-            if (error) {
-                alert("Error al aprobar: " + error.message);
-            } else {
-                alert("Orden aprobada con éxito.");
-                loadOrders();
-            }
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            allOrders = data || [];
+            updateStats();
+            renderTable();
+
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#ef4444;padding:20px;">
+                <i class="fa-solid fa-circle-exclamation"></i> Error al cargar: ${err.message}
+            </td></tr>`;
         }
+    }
+
+    function updateStats() {
+        document.getElementById('statTotal').innerText   = allOrders.length;
+        document.getElementById('statPending').innerText = allOrders.filter(o => o.status === 'pending').length;
+        document.getElementById('statPaid').innerText    = allOrders.filter(o => o.status === 'paid').length;
+        document.getElementById('statExpired').innerText = allOrders.filter(o => o.status === 'expired').length;
+    }
+
+    function renderTable() {
+        const tbody   = document.getElementById('adminOrderList');
+        const search  = (document.getElementById('adminSearch')?.value || '').toLowerCase();
+
+        let orders = allOrders;
+
+        // Filtro por estado
+        if (currentFilter !== 'all') {
+            orders = orders.filter(o => o.status === currentFilter);
+        }
+
+        // Búsqueda
+        if (search) {
+            orders = orders.filter(o =>
+                (o.id || '').toLowerCase().includes(search) ||
+                (o.customer_name || '').toLowerCase().includes(search) ||
+                (o.template_name || '').toLowerCase().includes(search)
+            );
+        }
+
+        if (orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--color-dim);padding:30px;">No hay órdenes que coincidan.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = orders.map(order => {
+            const shortId   = order.id.substring(0, 8).toUpperCase();
+            const createdAt = new Date(order.created_at).toLocaleDateString('es-EC', { day:'2-digit', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+            const statusClass = order.status || 'pending';
+            const statusLabel = {
+                pending:   '⏳ Pendiente',
+                paid:      '✅ Activo',
+                expired:   '❌ Expirado',
+                cancelled: '🚫 Cancelado',
+            }[order.status] || order.status;
+
+            const timeHTML   = buildTimeChip(order);
+            const planInfo   = getPlanInfo(order.plan_name);
+
+            const actionsBtns = order.status === 'pending'
+                ? `<button class="btn-approve" onclick="approveOrder('${order.id}')">
+                        <i class="fa-solid fa-check"></i> Aprobar
+                   </button>`
+                : order.status === 'paid'
+                ? `<button class="btn-revoke" onclick="revokeOrder('${order.id}')">
+                        <i class="fa-solid fa-rotate-left"></i> Revocar
+                   </button>`
+                : `<span style="color:var(--color-dim);font-size:0.8rem;">—</span>`;
+
+            return `
+                <tr>
+                    <td><code style="font-size:0.8rem;color:var(--accent-cyan);">#${shortId}</code></td>
+                    <td>${order.customer_name || 'N/A'}</td>
+                    <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${order.template_name || '—'}</td>
+                    <td>
+                        <span style="font-size:0.8rem;color:${planInfo.color};font-weight:600;">${planInfo.label}</span><br>
+                        <span style="font-size:0.72rem;color:var(--color-dim);">${(order.plan_name || '').split('(')[0].trim()}</span>
+                    </td>
+                    <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+                    <td>${timeHTML}</td>
+                    <td style="font-size:0.78rem;color:var(--color-dim);">${createdAt}</td>
+                    <td>${actionsBtns}</td>
+                </tr>`;
+        }).join('');
+    }
+
+    async function approveOrder(id) {
+        const btn = event.currentTarget;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+        const client = adminSupabase || window.db;
+        if (!client) { alert('Sin conexión a la base de datos.'); return; }
+
+        const { error } = await client
+            .from('orders')
+            .update({ status: 'paid' })   // El trigger SQL calculará expires_at automáticamente
+            .eq('id', id);
+
+        if (error) {
+            alert('Error al aprobar: ' + error.message);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Aprobar';
+        } else {
+            loadOrders();
+        }
+    }
+
+    async function revokeOrder(id) {
+        if (!confirm('¿Revocar este pedido y devolverlo a "pendiente"?')) return;
+        const client = adminSupabase || window.db;
+        if (!client) return;
+
+        const { error } = await client
+            .from('orders')
+            .update({ status: 'pending', expires_at: null })
+            .eq('id', id);
+
+        if (error) alert('Error: ' + error.message);
+        else loadOrders();
+    }
+
+    // ============================================================
+    // GENERADOR DE PROMOCIÓN
+    // ============================================================
+    function initPromoGenerator() {
+        const select = document.getElementById('promoTemplateSelect');
+        if (!select) return;
+        if (typeof catalogData === 'undefined' || catalogData.length === 0) {
+            setTimeout(initPromoGenerator, 600);
+            return;
+        }
+        select.innerHTML = '<option value="" disabled selected>-- SELECCIONA UNO DE LOS 31 CÓDIGOS --</option>' +
+            catalogData.map(item => `<option value="${item.id}">${item.name.toUpperCase()}</option>`).join('');
+    }
+
+    function generatePromo() {
+        const tid    = document.getElementById('promoTemplateSelect').value;
+        const item   = (typeof catalogData !== 'undefined') ? catalogData.find(x => x.id === tid) : null;
+        if (!item) { alert('Por favor selecciona un código.'); return; }
+
+        const target = document.getElementById('promoTargetName').value.trim();
+        let link = window.location.origin + '/' + item.id + '/index.html';
+        if (target) link += '?para=' + encodeURIComponent(target);
+
+        document.getElementById('promoTitle').innerText = 'Material: ' + item.name + (target ? ' (Para ' + target + ')' : '');
+        document.getElementById('promoLink').value = link;
+        document.getElementById('promoResult').style.display = 'block';
+
+        const qrBox = document.getElementById('qrcode');
+        qrBox.innerHTML = '';
+        new QRCode(qrBox, { text: link, width: 150, height: 150, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+    }
+
+    function copyPromoLink() {
+        const el = document.getElementById('promoLink');
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(el.value).then(() => alert('Link copiado!')).catch(() => { el.select(); document.execCommand('copy'); alert('Link copiado!'); });
+        } else { el.select(); document.execCommand('copy'); alert('Link copiado!'); }
+    }
+
+    function downloadQR() {
+        const canvas = document.querySelector('#qrcode canvas');
+        if (!canvas) { const img = document.querySelector('#qrcode img'); if (!img) { alert('Genera primero el QR.'); return; } }
+        const c = canvas || (() => { const tmp = document.createElement('canvas'); const img = document.querySelector('#qrcode img'); tmp.width = img.width; tmp.height = img.height; tmp.getContext('2d').drawImage(img,0,0); return tmp; })();
+        const a = document.createElement('a');
+        a.download = 'QR_CorazónCódigo_' + (document.getElementById('promoTemplateSelect').value || 'promo') + '.png';
+        a.href = c.toDataURL('image/png');
+        a.click();
+    }
+
+    // Autorefresh cada 2 minutos para detectar nuevos pedidos
+    setInterval(() => {
+        const content = document.getElementById('adminContent');
+        if (content && content.style.display !== 'none') loadOrders();
+    }, 120_000);
     </script>
 </body>
 </html>
