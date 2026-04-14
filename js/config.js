@@ -35,6 +35,7 @@ try {
         : (typeof supabasejs !== 'undefined' ? supabasejs : null);
     if (lib) {
         db = lib.createClient(supabaseUrl, supabaseKey);
+        window.db = db; // Exportar explícitamente a window
         console.log("Supabase conectado correctamente.");
     }
 } catch (e) {
