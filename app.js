@@ -612,7 +612,7 @@ function renderCatalog(filter = 'all') {
                     <button class="btn-secondary btn-preview" data-id="${item.id}" style="width:100%; border-color: rgba(6,182,212,0.5); color:#06b6d4;"><i class="fa-solid fa-eye"></i> Ver Vista Previa</button>
                     ${isGratis ? `
                         <div style="display:flex; gap:10px;">
-                            <a href="${item.path}" class="btn-comprar" style="text-decoration:none; flex:1; display:flex; align-items:center; justify-content:center; background:#10b981; border:none; color:white; border-radius:8px; font-weight:600; font-size:0.85rem;"><i class="fa-solid fa-download" style="margin-right:5px;"></i> Usar Link</a>
+                            <button class="btn-copiar-link btn-comprar" data-path="${item.path}" data-name="${item.name}" style="flex:1; display:flex; align-items:center; justify-content:center; background:#10b981; border:none; color:white; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer;"><i class="fa-solid fa-copy" style="margin-right:5px;"></i> Copiar Link</button>
                             <button class="btn-qr-direct" data-id="${item.id}" data-name="${item.name}" style="background:white; color:black; border:none; padding:10px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-qrcode"></i></button>
                         </div>
                     ` : `
@@ -990,6 +990,17 @@ function attachCatalogListeners() {
             let sId = e.target.closest('button').getAttribute('data-id');
             activeTemplateInfo = catalogData.find(x => x.id === sId);
             if (typeof openCheckoutWizard === 'function') openCheckoutWizard(sName);
+        });
+    });
+
+    // Listeners de Copiar Link Gratis
+    document.querySelectorAll('.btn-copiar-link').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const path = e.currentTarget.getAttribute('data-path');
+            const name = e.currentTarget.getAttribute('data-name');
+            if (typeof copiarLinkGratis === 'function') copiarLinkGratis(path, name);
         });
     });
 

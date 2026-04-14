@@ -558,7 +558,7 @@ function renderCatalog(filter = 'all') {
                     <button class="btn-secondary btn-preview" data-id="${item.id}" style="width:100%; border-color: rgba(6,182,212,0.5); color:#06b6d4;"><i class="fa-solid fa-eye"></i> Ver Vista Previa</button>
                     ${isGratis ? `
                         <div style="display:flex; gap:10px;">
-                            <a href="${item.path}" class="btn-comprar" style="text-decoration:none; flex:1; display:flex; align-items:center; justify-content:center; background:#10b981; border:none; color:white; border-radius:8px; font-weight:600; font-size:0.85rem;"><i class="fa-solid fa-download" style="margin-right:5px;"></i> Usar Link</a>
+                            <button class="btn-copiar-link btn-comprar" data-path="${item.path}" data-name="${item.name}" style="flex:1; display:flex; align-items:center; justify-content:center; background:#10b981; border:none; color:white; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer;"><i class="fa-solid fa-copy" style="margin-right:5px;"></i> Copiar Link</button>
                             <button class="btn-qr-direct" data-id="${item.id}" data-name="${item.name}" style="background:white; color:black; border:none; padding:10px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-qrcode"></i></button>
                         </div>
                     ` : `
@@ -570,6 +570,70 @@ function renderCatalog(filter = 'all') {
         `;
     });
 
+
     catalogGrid.innerHTML = gridHTML;
     attachCatalogListeners();
+}
+
+// ============================================================
+// FUNCIÓN GLOBAL: Copiar link al portapapeles + Toast WhatsApp
+// ============================================================
+function copiarLinkGratis(path, name) {
+    const baseUrl = window.location.origin;
+    const cleanPath = path.replace(/^\.\//, '').replace(/^\.\.\//, '');
+    const fullUrl = baseUrl + '/' + cleanPath;
+
+    const doToast = () => showCopyToast('✅ ¡Link copiado!\n' + name);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullUrl).then(doToast).catch(() => {
+            fallbackCopy(fullUrl);
+            doToast();
+        });
+    } else {
+        fallbackCopy(fullUrl);
+        doToast();
+    }
+}
+
+function fallbackCopy(text) {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.style.cssText = 'position:fixed;top:-9999px;left:-9999px;';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+}
+
+function showCopyToast(msg) {
+    const old = document.getElementById('copyToast');
+    if (old) old.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'copyToast';
+    toast.style.cssText = [
+        'position:fixed', 'bottom:30px', 'left:50%',
+        'transform:translateX(-50%) translateY(20px)',
+        'background:linear-gradient(135deg,#10b981,#059669)',
+        'color:#fff', 'padding:14px 28px', 'border-radius:50px',
+        'font-weight:700', 'font-size:0.95rem',
+        'box-shadow:0 8px 32px rgba(16,185,129,0.5)',
+        'z-index:99999', 'text-align:center', 'white-space:pre-line',
+        'line-height:1.5', 'opacity:0',
+        'transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1)',
+        'pointer-events:none'
+    ].join(';');
+    toast.innerHTML = `<i class="fa-solid fa-check-circle" style="margin-right:8px;"></i>${msg}<br><small style="opacity:0.8;font-weight:400;">📋 Pégalo directo en WhatsApp 💬</small>`;
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(20px)';
+        setTimeout(() => toast.remove(), 400);
+    }, 3500);
 }
