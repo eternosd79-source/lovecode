@@ -586,6 +586,9 @@ function initPhotoDragEditor() {
             const dateVal = document.getElementById('inpDate') ? document.getElementById('inpDate').value : '';
             if (dateVal) params.append('fecha', dateVal);
             
+            // Indicar a personalizar.js que es un entorno de editor en vivo (para auto-start visual)
+            params.append('editorLivePreview', 'true');
+            
             const qs = params.toString();
             iframe.src = qs ? finalPath + '?' + qs : finalPath;
         }
@@ -678,3 +681,132 @@ function initPhotoDragEditor() {
     updateCoords();
 }
 window.initPhotoDragEditor = initPhotoDragEditor;
+
+// -------------------------------------------------------
+// Lógica de Subida de Archivos (Drag & Drop desde PC / Click)
+// -------------------------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('inpLocalPhoto');
+    const dragEl = document.getElementById('draggablePhoto');
+    const dragDropOverlay = document.getElementById('dragDropOverlay');
+    const canvas = document.getElementById('photoPositionCanvas');
+    const dragPhotoIcon = document.getElementById('dragPhotoIcon');
+    const dragPhotoText = document.getElementById('dragPhotoText');
+
+    if (!fileInput || !dragEl || !canvas) return;
+
+    // Doble clic en la caja flotante para seleccionar archivo en cualquier momento
+    dragEl.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+    });
+
+    // Si la caja no tiene imagen, incluso un clic sencillo permite abrir el input
+    dragEl.addEventListener('click', (e) => {
+        const placeholderVisible = document.getElementById('dragPhotoPlaceholder').style.display !== 'none';
+        if (placeholderVisible) {
+            fileInput.click();
+        }
+    });
+
+    // Eventos visuales de drag over THE ENTIRE CANVAS
+    canvas.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.types.includes('Files')) {
+            dragDropOverlay.style.display = 'flex';
+            canvas.style.borderColor = 'var(--accent-fuchsia)';
+        }
+    });
+
+    canvas.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dragDropOverlay.style.display = 'none';
+        canvas.style.borderColor = 'rgba(6,182,212,0.5)';
+    });
+
+    canvas.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragDropOverlay.style.display = 'none';
+        canvas.style.borderColor = 'rgba(6,182,212,0.5)';
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleFileUpload(e.dataTransfer.files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleFileUpload(e.target.files[0]);
+        }
+    });
+
+    async function handleFileUpload(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Por favor, selecciona una imagen válida de tipo PNG, JPG, GIF...');
+            return;
+        }
+
+        // Límite local de seguridad: 5MB
+        if (file.size > 5 * 1024 * 1024) {
+            alert('La imagen es demasiado pesada. El límite es de 5MB por favor.');
+            return;
+        }
+
+        // Guardar estado original
+        const originalIcon = dragPhotoIcon.className;
+        const originalText = dragPhotoText.innerHTML;
+
+        dragPhotoIcon.className = "fa-solid fa-spinner fa-spin";
+        dragPhotoText.innerHTML = "Subiendo...<br><span style='font-size:0.55rem;'>Por favor espera</span>";
+        
+        try {
+            if (!window.db) throw new Error("Base de datos Supabase no iniciada.");
+
+            const ext = file.name.split('.').pop() || 'png';
+            const fileName = `custom_photo_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
+
+            // Subir usando el SDK asíncrono
+            const { data, error } = await window.db.storage
+                .from('user_uploads')
+                .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+            if (error) throw error;
+
+            // Obtener link público
+            const { data: pubData } = window.db.storage
+                .from('user_uploads')
+                .getPublicUrl(fileName);
+
+            const fileUrl = pubData.publicUrl;
+
+            // Rellenar input e invocar la vista visual
+            const urlInput = document.getElementById('flImgUrl');
+            if (urlInput) {
+                urlInput.value = fileUrl;
+                if (typeof window.updatePhotoPreview === 'function') {
+                    window.updatePhotoPreview();
+                }
+            }
+
+            // Éxito
+            dragPhotoIcon.className = "fa-solid fa-check";
+            dragPhotoText.innerHTML = "Lista<br><span style='font-size:0.55rem;opacity:0.8;'>Doble clic para cambiar</span>";
+
+            // Se devolverá a ocultar placeholder cuando `updatePhotoPreview` ejecute,
+            // si la imagen se procesa bien. 
+            setTimeout(() => {
+                dragPhotoIcon.className = originalIcon;
+            }, 3000);
+
+        } catch (err) {
+            console.error(err);
+            alert("Error al subir la imagen a Supabase (Revisa si el bucket existe): " + err.message);
+            dragPhotoIcon.className = "fa-solid fa-triangle-exclamation";
+            dragPhotoText.innerHTML = "Fallo subida<br><span style='font-size:0.55rem;'>Reintenta</span>";
+            setTimeout(() => {
+                dragPhotoIcon.className = originalIcon;
+                dragPhotoText.innerHTML = originalText;
+            }, 3000);
+        }
+    }
+});

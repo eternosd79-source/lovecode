@@ -415,17 +415,29 @@
             console.error("Error en personalización:", err);
         } finally {
             setTimeout(() => {
+                const isLivePreview = urlParams.get('editorLivePreview') === 'true';
                 const startOverlay = document.getElementById('corazoncodigo-start-overlay');
-                if (startOverlay) {
-                    startOverlay.style.display = 'flex';
-                    startOverlay.addEventListener('click', () => {
-                        startOverlay.style.opacity = '0';
-                        setTimeout(() => {
-                            if (startOverlay.parentNode) startOverlay.parentNode.removeChild(startOverlay);
-                        }, 600);
-                    });
+                
+                if (isLivePreview) {
+                    // Modo editor: ocultar todo de inmediato y simular clic para arrancar el CSS
+                    if (startOverlay) startOverlay.style.display = 'none';
+                    removeLoader();
+                    // Simular clic en body para iniciar cualquier animación nativa sin afectar audio (se recomienda silenciar si se puede)
+                    if (typeof audio !== 'undefined' && audio) audio.muted = true;
+                    setTimeout(() => document.body.click(), 100);
+                } else {
+                    // Flujo normal de regalo web
+                    if (startOverlay) {
+                        startOverlay.style.display = 'flex';
+                        startOverlay.addEventListener('click', () => {
+                            startOverlay.style.opacity = '0';
+                            setTimeout(() => {
+                                if (startOverlay.parentNode) startOverlay.parentNode.removeChild(startOverlay);
+                            }, 600);
+                        });
+                    }
+                    removeLoader();
                 }
-                removeLoader();
             }, 600);
         }
     }

@@ -42,41 +42,41 @@ try {
 }
 
 // ============================================================
-// BIBLIOTECA DE MÚSICA (30 canciones locales + opción custom)
-// Las músicas se reproducen en streaming dentro de cada
-// experiencia — no se ofrecen para descarga.
+// BIBLIOTECA DE MÚSICA (30 canciones migradas a Supabase Storage)
 // ============================================================
+const S3_MUSIC_URL = 'https://qmnbcmioylgmcbzqrjiv.supabase.co/storage/v1/object/public/music_library/';
+
 const musicLibrary = [
-    { name: "506",                          path: "506.mp4" },
-    { name: "ADMV",                         path: "ADMV.mp4" },
-    { name: "Acuérdate de mi",              path: "Acuerdate de mi.mp4" },
-    { name: "Aprender a quererte",          path: "Aprender a quererte.mp4" },
-    { name: "Así te pedí",                  path: "Asi te pedi.mp4" },
-    { name: "Canción Bonita",               path: "Cancion Bonita.mp4" },
-    { name: "Casa en el Aire",              path: "Casa en el Aire.mp4" },
-    { name: "Chica Ideal",                  path: "Chica Ideal.mp4" },
-    { name: "Confieso",                     path: "Confieso.mp4" },
-    { name: "Cuando nadie ve",              path: "Cuando nadie ve.mp4" },
-    { name: "Destino",                      path: "Destino.mp4" },
-    { name: "Fantasía",                     path: "Fantasia.mp4" },
-    { name: "Hoy es un buen día",           path: "Hoy es un buen dia.mp4" },
-    { name: "Locuras mías",                 path: "Locuras mias.mp4" },
-    { name: "Mar y Bosque",                 path: "Mar y Bosque.mp4" },
-    { name: "Mon Amour",                    path: "Mon Amour.mp4" },
-    { name: "No se va",                     path: "No se va.mp4" },
-    { name: "No te cambiaría",              path: "No te cambiaria.mp4" },
-    { name: "Pero te conocí",               path: "Pero te conoci.mp4" },
-    { name: "Persona Favorita",             path: "Persona Favorita.mp4" },
-    { name: "Poeta",                        path: "Poeta.mp4" },
-    { name: "Princesa",                     path: "Princesa.mp4" },
-    { name: "Promesa",                      path: "Promesa.mp4" },
-    { name: "Rizos",                        path: "Rizos.mp4" },
-    { name: "Sirena",                       path: "Sirena.mp4" },
-    { name: "Te Amo",                       path: "Te Amo.mp4" },
-    { name: "Te voy amar",                  path: "Te voy amar.mp4" },
-    { name: "The Reason",                   path: "The Reason.mp4" },
-    { name: "The first time",               path: "The first time.mp4" },
-    { name: "Vine a buscarte",              path: "Vine a buscarte.mp4" },
+    { name: "506",                          path: S3_MUSIC_URL + "506.mp4" },
+    { name: "ADMV",                         path: S3_MUSIC_URL + "ADMV.mp4" },
+    { name: "Acuérdate de mi",              path: S3_MUSIC_URL + "Acuerdate de mi.mp4" },
+    { name: "Aprender a quererte",          path: S3_MUSIC_URL + "Aprender a quererte.mp4" },
+    { name: "Así te pedí",                  path: S3_MUSIC_URL + "Asi te pedi.mp4" },
+    { name: "Canción Bonita",               path: S3_MUSIC_URL + "Cancion Bonita.mp4" },
+    { name: "Casa en el Aire",              path: S3_MUSIC_URL + "Casa en el Aire.mp4" },
+    { name: "Chica Ideal",                  path: S3_MUSIC_URL + "Chica Ideal.mp4" },
+    { name: "Confieso",                     path: S3_MUSIC_URL + "Confieso.mp4" },
+    { name: "Cuando nadie ve",              path: S3_MUSIC_URL + "Cuando nadie ve.mp4" },
+    { name: "Destino",                      path: S3_MUSIC_URL + "Destino.mp4" },
+    { name: "Fantasía",                     path: S3_MUSIC_URL + "Fantasia.mp4" },
+    { name: "Hoy es un buen día",           path: S3_MUSIC_URL + "Hoy es un buen dia.mp4" },
+    { name: "Locuras mías",                 path: S3_MUSIC_URL + "Locuras mias.mp4" },
+    { name: "Mar y Bosque",                 path: S3_MUSIC_URL + "Mar y Bosque.mp4" },
+    { name: "Mon Amour",                    path: S3_MUSIC_URL + "Mon amour.mp4" },
+    { name: "No se va",                     path: S3_MUSIC_URL + "No se va.mp4" },
+    { name: "No te cambiaría",              path: S3_MUSIC_URL + "No te cambiaria.mp4" },
+    { name: "Pero te conocí",               path: S3_MUSIC_URL + "Pero te conoci.mp4" },
+    { name: "Persona Favorita",             path: S3_MUSIC_URL + "Persona Favorita.mp4" },
+    { name: "Poeta",                        path: S3_MUSIC_URL + "Poeta.mp4" },
+    { name: "Princesa",                     path: S3_MUSIC_URL + "Princesa.mp4" },
+    { name: "Promesa",                      path: S3_MUSIC_URL + "Promesa.mp4" },
+    { name: "Rizos",                        path: S3_MUSIC_URL + "Rizos.mp4" },
+    { name: "Sirena",                       path: S3_MUSIC_URL + "Sirena.mp4" },
+    { name: "Te Amo",                       path: S3_MUSIC_URL + "Te Amo.mp4" },
+    { name: "Te voy amar",                  path: S3_MUSIC_URL + "Te voy amar.mp4" },
+    { name: "The Reason",                   path: S3_MUSIC_URL + "The Reason.mp4" },
+    { name: "The first time",               path: S3_MUSIC_URL + "The first time.mp4" },
+    { name: "Vine a buscarte",              path: S3_MUSIC_URL + "Vine a buscarte.mp4" },
     { name: "Personalizada (Pegar link propio)", path: "custom" }
 ];
 

@@ -383,6 +383,9 @@
                                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(6,182,212,0.3); border-radius:12px; padding:12px;">
                                     <p style="font-size:0.82rem; color:var(--accent-cyan); margin-bottom:10px; font-weight:600;"><i class="fa-solid fa-arrows-up-down-left-right"></i> Arrastra la foto para posicionarla:</p>
                                     
+                                    <!-- input oculto para subida de imagen local -->
+                                    <input type="file" id="inpLocalPhoto" accept="image/*" style="display:none">
+                                    
                                     <!-- Canvas de previsualización (Iframe En Vivo) -->
                                     <div id="photoPositionCanvas" style="
                                         position: relative;
@@ -395,6 +398,7 @@
                                         border: 2px dashed rgba(6,182,212,0.5);
                                         user-select: none;
                                         -webkit-user-select: none;
+                                        transition: border-color 0.3s, background-color 0.3s;
                                     ">
                                         <!-- IFRAME en vivo de la plantilla -->
                                         <iframe id="livePreviewIframe" src="" style="
@@ -411,6 +415,9 @@
                                         
                                         <!-- Etiqueta de plantilla -->
                                         <div id="canvasTemplateName" style="position:absolute;top:8px;left:8px;font-size:0.7rem;color:rgba(255,255,255,0.7);font-family:monospace;background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:4px;z-index:3;">📱 Editor Live</div>
+                                        
+                                        <!-- Overlay de Drag state (oculto por defecto) -->
+                                        <div id="dragDropOverlay" style="position:absolute;inset:0;background:rgba(6,182,212,0.3);z-index:9;display:none;align-items:center;justify-content:center;font-weight:bold;color:#fff;backdrop-filter:blur(2px);pointer-events:none;font-size:1.1rem;"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:8px;"></i> Suelta la imagen aquí</div>
                                         
                                         <!-- Foto arrastrable -->
                                         <div id="draggablePhoto" style="
@@ -433,10 +440,10 @@
                                             overflow: hidden;
                                             z-index: 10;
                                         ">
-                                            <img id="dragPhotoImg" src="" alt="" style="width:100%;height:100%;object-fit:contain;display:none;border-radius:10px;">
-                                            <div id="dragPhotoPlaceholder" style="text-align:center;">
-                                                <i class="fa-solid fa-image" style="font-size:1.5rem;color:rgba(255,255,255,0.8);"></i>
-                                                <div style="font-size:0.65rem;color:rgba(255,255,255,0.7);margin-top:4px;">Tu foto</div>
+                                            <img id="dragPhotoImg" src="" alt="" style="width:100%;height:100%;object-fit:contain;display:none;border-radius:10px;pointer-events:none;">
+                                            <div id="dragPhotoPlaceholder" style="text-align:center;pointer-events:none;">
+                                                <i id="dragPhotoIcon" class="fa-solid fa-image" style="font-size:1.5rem;color:rgba(255,255,255,0.8);"></i>
+                                                <div id="dragPhotoText" style="font-size:0.60rem;color:rgba(255,255,255,0.7);margin-top:4px;line-height:1.2;">Tu foto<br><span style="font-size:0.55rem;opacity:0.7;">Click o Arrastra</span></div>
                                             </div>
                                         </div>
                                         
@@ -806,17 +813,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <!-- Módulos CorazónCódigo (orden crítico) -->
-    <script src="js/config.js?v=4"></script>
-    <script src="js/catalog.js?v=4"></script>
-    <script src="js/thumbnails.js?v=4"></script>
-    <script src="js/audio-editor.js?v=4"></script>
-    <script src="js/preview.js?v=4"></script>
-    <script src="js/checkout.js?v=4"></script>
-    <script src="js/tracking.js?v=4"></script>
-    <script src="js/affiliates.js?v=4"></script>
-    <script src="js/video-resumen.js?v=4"></script>
-    <script src="js/three-preview.js?v=4"></script>
-    <script src="js/ui.js?v=4"></script>
-    <script src="js/main.js?v=4"></script>
+    <script src="js/config.js?v=6"></script>
+    <script src="js/catalog.js?v=6"></script>
+    <script src="js/thumbnails.js?v=6"></script>
+    <script src="js/audio-editor.js?v=6"></script>
+    <script src="js/preview.js?v=6"></script>
+    <script src="js/checkout.js?v=6"></script>
+    <script src="js/tracking.js?v=6"></script>
+    <script src="js/affiliates.js?v=6"></script>
+    <script src="js/video-resumen.js?v=6"></script>
+    <script src="js/three-preview.js?v=6"></script>
+    <script src="js/ui.js?v=6"></script>
+    <script src="js/main.js?v=6"></script>
 </body>
 </html>
