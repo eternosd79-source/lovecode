@@ -329,8 +329,15 @@ if (btnFinishOrder) {
         if (db) {
             try {
                 let templateUUID = null;
-                const { data: tData } = await db.from('templates').select('id').eq('slug', activeTemplateInfo.id).single();
-                if (tData) templateUUID = tData.id;
+                // Buscar el UUID de la plantilla en templates (tolerante a fallos — tabla puede no existir)
+                try {
+                    const { data: tData, error: tErr } = await db.from('templates')
+                        .select('id').eq('slug', activeTemplateInfo.id).maybeSingle();
+                    if (tData && !tErr) templateUUID = tData.id;
+                } catch(tEx) {
+                    // La tabla templates no existe aún — continuar sin templateUUID
+                    console.warn('[Checkout] Tabla templates no encontrada, continuando sin FK:', tEx.message);
+                }
 
                 const dynamicTexts = {};
                 if (activeTemplateInfo.editableTexts) {
@@ -384,7 +391,14 @@ if (btnFinishOrder) {
 }
 
 function processFinalOrder(order, isOffline = false) {
-    const displayId    = isOffline ? order.id : order.id.substring(0, 8).toUpperCase();
+    // Fix: manejar correctamente UUIDs (online) vs tempIds como "LC-XXXXXX" (offline)
+    let displayId;
+    if (isOffline) {
+        displayId = order.id; // "LC-XXXXXX" ya está en formato legible
+    } else {
+        // UUID de Supabase: tomar primeros 8 chars en mayúscula
+        displayId = (order.id || '').substring(0, 8).toUpperCase();
+    }
     const successModal = document.getElementById('successModal');
     const displayOrderId = document.getElementById('displayOrderId');
     const btnGoToWA    = document.getElementById('btnGoToWA');
@@ -449,16 +463,18 @@ function processFinalOrder(order, isOffline = false) {
 }
 
 // -------------------------------------------------------
-// Toggle de Foto Flotante
+// Editor Visual Drag & Drop de Foto Flotante
 // -------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-    const chkFloat = document.getElementById('chkUseFloatImg');
+    const chkFloat    = document.getElementById('chkUseFloatImg');
     const floatControls = document.getElementById('floatImgControls');
+
     if (chkFloat && floatControls) {
         chkFloat.addEventListener('change', (e) => {
             const container = document.getElementById('dynamicTextContainer');
             if (e.target.checked) {
                 floatControls.style.display = 'block';
+                initPhotoDragEditor();
                 if (container) {
                     container.style.opacity = '0.3';
                     container.style.pointerEvents = 'none';
@@ -473,3 +489,172 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// -------------------------------------------------------
+// Actualizar preview de foto al pegar URL
+// -------------------------------------------------------
+function updatePhotoPreview() {
+    const urlInput = document.getElementById('flImgUrl');
+    if (!urlInput) return;
+    const url = urlInput.value.trim();
+    const img = document.getElementById('dragPhotoImg');
+    const placeholder = document.getElementById('dragPhotoPlaceholder');
+    if (!img || !placeholder) return;
+
+    if (url && (url.startsWith('http') || url.startsWith('data:'))) {
+        img.src = url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        img.onerror = () => {
+            img.style.display = 'none';
+            placeholder.style.display = 'flex';
+        };
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'flex';
+    }
+
+    // Actualizar el fondo del canvas según la plantilla activa
+    if (activeTemplateInfo) {
+        const canvas = document.getElementById('photoPositionCanvas');
+        if (canvas) {
+            canvas.style.backgroundColor = activeTemplateInfo.color || '#0a0a20';
+        }
+        const label = document.getElementById('canvasTemplateName');
+        if (label) label.innerText = '📱 ' + (activeTemplateInfo.name || 'Previsualización');
+    }
+}
+window.updatePhotoPreview = updatePhotoPreview;
+
+// -------------------------------------------------------
+// Resize del elemento arrastrable según slider
+// -------------------------------------------------------
+function resizeDraggablePhoto(value) {
+    const el = document.getElementById('dragPhotoEl');
+    const canvas = document.getElementById('photoPositionCanvas');
+    const label = document.getElementById('flImgSLabel');
+    if (!el || !canvas) return;
+
+    const canvasW = canvas.offsetWidth;
+    const canvasH = canvas.offsetHeight;
+    const sizeValue = parseInt(value);
+    // Convertir el % de tamaño a píxeles relativos al canvas
+    const sizePx = Math.round((sizeValue / 100) * Math.min(canvasW, canvasH));
+    el.style.width  = sizePx + 'px';
+    el.style.height = sizePx + 'px';
+    if (label) label.innerText = value + '%';
+
+    // Actualizar el valor oculto
+    const inp = document.getElementById('flImgS');
+    if (inp) inp.value = value;
+}
+window.resizeDraggablePhoto = resizeDraggablePhoto;
+
+// -------------------------------------------------------
+// Inicializar el editor drag-and-drop del canvas
+// -------------------------------------------------------
+function initPhotoDragEditor() {
+    const canvas   = document.getElementById('photoPositionCanvas');
+    const dragEl   = document.getElementById('dragPhotoEl');
+    const inpX     = document.getElementById('flImgX');
+    const inpY     = document.getElementById('flImgY');
+    const posDisp  = document.getElementById('flPosDisplay');
+
+    if (!canvas || !dragEl) return;
+    if (dragEl._dragInitialized) return; // Evitar doble init
+    dragEl._dragInitialized = true;
+
+    // Colorear el canvas según la plantilla activa
+    if (activeTemplateInfo) {
+        canvas.style.backgroundColor = activeTemplateInfo.color || '#0a0a20';
+        const label = document.getElementById('canvasTemplateName');
+        if (label) label.innerText = '📱 ' + (activeTemplateInfo.name || 'Vista Previa');
+    }
+
+    let isDraggingPhoto = false;
+    let offsetX = 0, offsetY = 0;
+
+    function getPercent() {
+        const rect   = canvas.getBoundingClientRect();
+        const elRect = dragEl.getBoundingClientRect();
+        const xPct = Math.round(((elRect.left + elRect.width  / 2 - rect.left) / rect.width)  * 100);
+        const yPct = Math.round(((elRect.top  + elRect.height / 2 - rect.top)  / rect.height) * 100);
+        return { x: Math.max(0, Math.min(100, xPct)), y: Math.max(0, Math.min(100, yPct)) };
+    }
+
+    function updateCoords() {
+        const { x, y } = getPercent();
+        if (inpX) inpX.value = x;
+        if (inpY) inpY.value = y;
+        if (posDisp) {
+            const quadrant = x < 33 ? 'Izquierda' : x > 66 ? 'Derecha' : 'Centro';
+            const vQuadrant = y < 33 ? 'Arriba' : y > 66 ? 'Abajo' : 'Medio';
+            posDisp.innerText = `${quadrant}-${vQuadrant} (${x}%, ${y}%)`;
+        }
+    }
+
+    function onMouseDown(e) {
+        e.preventDefault();
+        isDraggingPhoto = true;
+        const rect = dragEl.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        offsetX = clientX - rect.left - rect.width  / 2;
+        offsetY = clientY - rect.top  - rect.height / 2;
+        dragEl.style.cursor   = 'grabbing';
+        dragEl.style.boxShadow = '0 8px 40px rgba(6,182,212,0.6)';
+        dragEl.style.borderColor = 'rgba(6,182,212,0.9)';
+    }
+
+    function onMouseMove(e) {
+        if (!isDraggingPhoto) return;
+        const canvasRect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const halfW = dragEl.offsetWidth  / 2;
+        const halfH = dragEl.offsetHeight / 2;
+
+        let newX = clientX - canvasRect.left - offsetX - halfW;
+        let newY = clientY - canvasRect.top  - offsetY - halfH;
+
+        // Contener dentro del canvas
+        newX = Math.max(-halfW, Math.min(canvasRect.width  - halfW, newX));
+        newY = Math.max(-halfH, Math.min(canvasRect.height - halfH, newY));
+
+        dragEl.style.left      = (newX + halfW) + 'px';
+        dragEl.style.top       = (newY + halfH) + 'px';
+        dragEl.style.transform = 'translate(-50%, -50%)';
+        updateCoords();
+    }
+
+    function onMouseUp() {
+        if (!isDraggingPhoto) return;
+        isDraggingPhoto = false;
+        dragEl.style.cursor    = 'grab';
+        dragEl.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+        dragEl.style.borderColor = 'rgba(255,255,255,0.5)';
+    }
+
+    // Click en el canvas para reposicionar directamente
+    canvas.addEventListener('click', (e) => {
+        if (isDraggingPhoto) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        dragEl.style.left  = x + 'px';
+        dragEl.style.top   = y + 'px';
+        dragEl.style.transform = 'translate(-50%, -50%)';
+        updateCoords();
+    });
+
+    dragEl.addEventListener('mousedown',  onMouseDown);
+    dragEl.addEventListener('touchstart', onMouseDown, { passive: false });
+    window.addEventListener('mousemove',  onMouseMove);
+    window.addEventListener('touchmove',  onMouseMove, { passive: false });
+    window.addEventListener('mouseup',    onMouseUp);
+    window.addEventListener('touchend',   onMouseUp);
+
+    // Trigger inicial para actualizar valores
+    updateCoords();
+}
+window.initPhotoDragEditor = initPhotoDragEditor;

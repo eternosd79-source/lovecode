@@ -96,9 +96,15 @@ function initProMusicEditor() {
             editorSongName.innerText = selMusic.options[selMusic.selectedIndex].text;
             const lastLeft  = selectionRange.style.left  || "0%";
             const lastWidth = selectionRange.style.width || "30%";
-            // Solución anti-Python: Forzar carga del MP3 a la RAM (Blob) para permitir búsqueda de tiempo exacta sin headers 206
-            fetch(val)
-                .then(response => response.blob())
+            
+            const absoluteUrl = new URL(val, window.location.origin).href;
+            audio.crossOrigin = "anonymous";
+            
+            fetch(absoluteUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.blob();
+                })
                 .then(blob => {
                     audio.src = URL.createObjectURL(blob);
                     audio.load();
@@ -110,8 +116,8 @@ function initProMusicEditor() {
                     };
                 })
                 .catch(err => {
-                    // Fallback
-                    audio.src = val;
+                    console.error('Blob load failed, falling back to direct src:', err);
+                    audio.src = absoluteUrl;
                     audio.load();
                     generateWaveform();
                     audio.onloadedmetadata = () => {

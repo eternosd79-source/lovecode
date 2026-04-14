@@ -232,6 +232,27 @@ body {
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 40px;
+    /* Mobile: scroll horizontal si hay muchos botones */
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(192, 38, 211, 0.3) transparent;
+}
+.category-filters::-webkit-scrollbar {
+    height: 4px;
+}
+.category-filters::-webkit-scrollbar-thumb {
+    background: rgba(192, 38, 211, 0.3);
+    border-radius: 4px;
+}
+@media screen and (max-width: 768px) {
+    .category-filters {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        padding-left: 5%;
+        padding-right: 5%;
+    }
 }
 .filter-btn {
     background: transparent;
@@ -242,6 +263,9 @@ body {
     cursor: pointer;
     font-family: var(--font-ui);
     transition: all 0.3s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.88rem;
 }
 .filter-btn:hover { background: rgba(255,255,255,0.05); color: white; }
 .filter-btn.active {

@@ -33,8 +33,16 @@ CREATE TABLE IF NOT EXISTS orders (
     music_duration  INTEGER DEFAULT 30,
     dynamic_texts   JSONB,
     status          TEXT DEFAULT 'pending', -- 'pending', 'paid', 'cancelled'
+    final_link      TEXT,    -- Link de la experiencia ya personalizada
+    zip_url         TEXT,    -- URL del zip para el plan $7 (código fuente)
+    music_slice     JSONB,   -- { start: X, duration: Y } formato alternativo
     created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Agregar columnas si ya existe la tabla (re-ejecutable sin errores)
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS final_link   TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS zip_url      TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS music_slice  JSONB;
 
 -- ============================================================
 -- TABLA: affiliates (miembros de la Membresía Hub)
