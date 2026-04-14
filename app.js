@@ -998,9 +998,42 @@ function attachCatalogListeners() {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const path = e.currentTarget.getAttribute('data-path');
-            const name = e.currentTarget.getAttribute('data-name');
-            if (typeof copiarLinkGratis === 'function') copiarLinkGratis(path, name);
+
+            const rawPath = e.currentTarget.getAttribute('data-path') || '';
+            const name    = e.currentTarget.getAttribute('data-name') || '';
+
+            // Construir URL absoluta (producción o local)
+            const cleanPath = rawPath.replace(/^\.\.\//, '').replace(/^\.\//, '');
+            const fullUrl   = window.location.origin + '/' + cleanPath;
+
+            // Copiar al portapapeles
+            const doToast = () => {
+                // Remover toast anterior
+                const old = document.getElementById('_copyToast');
+                if (old) old.remove();
+
+                const t = document.createElement('div');
+                t.id = '_copyToast';
+                t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:0.95rem;box-shadow:0 8px 32px rgba(16,185,129,0.5);z-index:99999;text-align:center;white-space:pre-line;line-height:1.5;opacity:0;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;';
+                t.innerHTML = '<i class="fa-solid fa-check-circle" style="margin-right:8px;"></i>✅ ¡Link copiado!<br><small style="opacity:0.8;font-weight:400;">📋 Listo para pegar en WhatsApp 💬</small>';
+                document.body.appendChild(t);
+                requestAnimationFrame(() => { t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
+                setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; setTimeout(()=>t.remove(), 400); }, 3500);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fullUrl).then(doToast).catch(() => {
+                    const el = document.createElement('textarea');
+                    el.value = fullUrl; el.style.cssText='position:fixed;top:-9999px;';
+                    document.body.appendChild(el); el.select(); document.execCommand('copy');
+                    document.body.removeChild(el); doToast();
+                });
+            } else {
+                const el = document.createElement('textarea');
+                el.value = fullUrl; el.style.cssText='position:fixed;top:-9999px;';
+                document.body.appendChild(el); el.select(); document.execCommand('copy');
+                document.body.removeChild(el); doToast();
+            }
         });
     });
 
