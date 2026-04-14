@@ -579,13 +579,18 @@
                                 </div>
                             </div>
                             <div class="payment-content" id="payMundo" style="display:none;">
-                                <p class="step-desc" style="padding:10px 15px 5px;">Paga directamente con PayPal de forma 100% segura:</p>
-                                <div class="paypal-wrapper">
-                                    <div id="paypal-button-container"></div>
-                                    <p class="paypal-note"><i class="fa-solid fa-lock"></i> Pago seguro procesado por PayPal. Tu regalo se activa automáticamente.</p>
+                                <p class="step-desc" style="padding:10px 15px 5px; text-align: center;">Paga rápido desde cualquier país con Tarjeta de Crédito/Débito vía <strong>PayPhone</strong>:</p>
+                                <div class="qr-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 10px;">
+                                    <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-primary" style="text-decoration:none; width: 100%; display: flex; justify-content: center; background: #FF5A00; color: white;">
+                                        <i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i> Pagar con PayPhone (Visa/Mastercard)
+                                    </a>
+                                    <p style="font-size: 0.85rem; color: var(--color-dim); margin: 0;">o escanea con tu celular este código:</p>
+                                    <div class="qr-box" style="margin-bottom: 0;">
+                                        <span>PayPhone Internacional</span>
+                                        <img src="PayPhone.jpeg" alt="QR PayPhone" style="max-width: 150px; border-radius: 8px;">
+                                    </div>
+                                    <p class="paypal-note" style="margin-top: 10px;"><i class="fa-solid fa-lock"></i> Pagos 100% seguros sin necesidad de crear cuenta.</p>
                                 </div>
-                                <div class="paypal-divider">o también puedes</div>
-                                <p class="step-desc" style="text-align:center;">Pagar vía <strong>Zelle/Venmo</strong> enviando screenshot a WhatsApp</p>
                             </div>
 
                             <button class="btn-whatsapp" id="btnFinishOrder" style="margin-top:10px"><i class="fa-brands fa-whatsapp"></i> Generar Pedido a WP</button>
@@ -778,21 +783,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <!-- Three.js para 3D Preview -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- PayPal SDK (se carga dinámicamente según precio en checkout) -->
-    <script id="paypal-sdk" defer></script>
-    <!-- Vercel Analytics: activar desde el panel de Vercel si se necesita -->
 
     <!-- Módulos CorazónCódigo (orden crítico) -->
-    <script src="js/config.js?v=3"></script>
-    <script src="js/catalog.js?v=3"></script>
-    <script src="js/thumbnails.js?v=3"></script>
-    <script src="js/audio-editor.js?v=3"></script>
-    <script src="js/preview.js?v=3"></script>
-    <script src="js/checkout.js?v=3"></script>
-    <script src="js/tracking.js?v=3"></script>
-    <script src="js/affiliates.js?v=3"></script>
-    <script src="js/paypal.js?v=3"></script>
-    <script src="js/video-resumen.js?v=3"></script>
+    <script src="js/config.js?v=4"></script>
+    <script src="js/catalog.js?v=4"></script>
+    <script src="js/thumbnails.js?v=4"></script>
+    <script src="js/audio-editor.js?v=4"></script>
+    <script src="js/preview.js?v=4"></script>
+    <script src="js/checkout.js?v=4"></script>
+    <script src="js/tracking.js?v=4"></script>
+    <script src="js/affiliates.js?v=4"></script>
+    <script src="js/video-resumen.js?v=4"></script>
     <script src="js/three-preview.js?v=3"></script>
     <script src="js/ui.js?v=3"></script>
     <script src="js/main.js?v=3"></script>
