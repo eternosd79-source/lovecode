@@ -618,17 +618,26 @@
         </div>
     </section>
 
+    <!-- MODAL CUSTOM PROMPT (Preguntar Nombre) -->
+    <div class="modal-overlay" id="namePromptModal" style="z-index: 10001;">
+        <div class="wizard-container" style="max-width: 400px; text-align: center; padding: 40px;">
+            <button class="btn-close" id="btnCloseNamePrompt"><i class="fa-solid fa-times"></i></button>
+            <h3 class="neon-pink" style="margin-bottom: 20px;">¿Para quién es?</h3>
+            <p style="font-size: 0.9rem; color: var(--color-dim); margin-bottom: 20px;">Añade un nombre para personalizar en el código (opcional).</p>
+            <input type="text" id="inpNamePrompt" class="form-input" placeholder="Ej: Para Mateo" style="margin-bottom: 20px; text-align: center;">
+            <button class="btn-primary" id="btnSubmitNamePrompt" style="width: 100%;">Generar <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+        </div>
+    </div>
+
     <!-- MODAL QR PARA CÓDIGOS GRATIS -->
-    <div class="modal-overlay" id="qrModal" style="z-index: 10001;">
+    <div class="modal-overlay" id="qrModal" style="z-index: 10002;">
         <div class="wizard-container" style="max-width: 400px; text-align: center; padding: 40px;">
             <button class="btn-close" id="btnCloseQR"><i class="fa-solid fa-times"></i></button>
             <h3 class="neon-cyan" id="qrModalTitle">Escanear Código</h3>
             <p style="font-size: 0.9rem; color: var(--color-dim); margin-bottom: 20px;">Escanea este código con tu celular para ver el regalo al instante.</p>
             <div id="qrContainer" style="background: white; padding: 20px; display: inline-block; border-radius: 12px; margin-bottom: 20px;"></div>
-            <div class="final-link-box">
-                <input type="text" id="qrDirectLink" readonly class="form-input">
-                <button onclick="copyQRLink()"><i class="fa-solid fa-copy"></i></button>
-            </div>
+            
+            <button class="btn-primary" onclick="downloadQRCode()" style="width: 100%;"><i class="fa-solid fa-download"></i> Descargar QR</button>
         </div>
     </div>
 

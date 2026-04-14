@@ -98,7 +98,12 @@ function initProMusicEditor() {
             const lastWidth = selectionRange.style.width || "30%";
             
             const absoluteUrl = new URL(val, window.location.origin).href;
-            audio.crossOrigin = "anonymous";
+            const isCrossDomain = new URL(absoluteUrl).origin !== window.location.origin;
+            if (isCrossDomain) {
+                audio.crossOrigin = "anonymous";
+            } else {
+                audio.removeAttribute("crossOrigin");
+            }
             
             fetch(absoluteUrl)
                 .then(response => {

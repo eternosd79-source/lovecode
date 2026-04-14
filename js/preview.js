@@ -14,11 +14,17 @@ const qrModal       = document.getElementById('qrModal');
 const btnCloseQR    = document.getElementById('btnCloseQR');
 const qrContainer   = document.getElementById('qrContainer');
 const qrModalTitle  = document.getElementById('qrModalTitle');
-const qrDirectLink  = document.getElementById('qrDirectLink');
+
+// Name Prompt Modal (Custom)
+const namePromptModal = document.getElementById('namePromptModal');
+const btnCloseNamePrompt = document.getElementById('btnCloseNamePrompt');
+const inpNamePrompt = document.getElementById('inpNamePrompt');
+const btnSubmitNamePrompt = document.getElementById('btnSubmitNamePrompt');
+
+let pendingQRAction = null; // Guardar id/name si se pausó para pedir nombre
 
 // -------------------------------------------------------
 // Asignar listeners a las tarjetas del catálogo
-// (se llama después de cada renderCatalog)
 // -------------------------------------------------------
 function attachCatalogListeners() {
     // Vista Previa
@@ -62,8 +68,34 @@ function attachCatalogListeners() {
         btn.addEventListener('click', (e) => {
             let sId   = e.currentTarget.getAttribute('data-id');
             let sName = e.currentTarget.getAttribute('data-name');
-            showFreeQR(sId, sName);
+            // Abrir modal elegante pidiendo nombre, en lugar de alert()
+            pendingQRAction = { id: sId, name: sName };
+            if (inpNamePrompt) inpNamePrompt.value = '';
+            if (namePromptModal) namePromptModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         });
+    });
+}
+
+// -------------------------------------------------------
+// Lógica Botones del Name Prompt Modal
+// -------------------------------------------------------
+if (btnCloseNamePrompt) {
+    btnCloseNamePrompt.addEventListener('click', () => {
+        if (namePromptModal) namePromptModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        pendingQRAction = null;
+    });
+}
+
+if (btnSubmitNamePrompt) {
+    btnSubmitNamePrompt.addEventListener('click', () => {
+        if (namePromptModal) namePromptModal.classList.remove('active');
+        if (pendingQRAction) {
+            const targetName = inpNamePrompt.value.trim();
+            generateQR(pendingQRAction.id, pendingQRAction.name, targetName);
+            pendingQRAction = null;
+        }
     });
 }
 
@@ -87,18 +119,10 @@ if (btnPreviewToBuy) {
         const isFree = activePreviewModel && activePreviewModel.badge.includes('Gratis');
 
         if (isFree) {
+            // "y en el resto las personas al presionar el link le genere el link directamente"
             if (previewModal) previewModal.classList.remove('active');
-            const targetName = prompt("¿Para quién es este regalo? (Ej: Dani)\nDeja vacío para usar el link estándar.");
-            const customMsg  = prompt("¿Quieres añadir un mensaje o inspiración personalizada?\n(Aparecerá en la animación)");
-
+            
             let finalPath = activePreviewModel.path;
-            let params = new URLSearchParams();
-            if (targetName) params.append('para', targetName);
-            if (customMsg)  params.append('msg', customMsg);
-
-            const queryString = params.toString();
-            if (queryString) finalPath += (finalPath.includes('?') ? '&' : '?') + queryString;
-
             window.open(window.SITE_BASE_URL + finalPath.replace('./', ''), '_blank');
             document.body.style.overflow = 'auto';
         } else {
@@ -114,15 +138,13 @@ if (btnPreviewToBuy) {
 }
 
 // -------------------------------------------------------
-// Modal QR para códigos gratuitos
+// Modal QR para códigos gratuitos/generados
 // -------------------------------------------------------
-function showFreeQR(id, name) {
-    const targetName = prompt("¿Para quién es este QR? (Opcional)");
+function generateQR(id, name, targetName) {
     let fullLink = window.SITE_BASE_URL + id + "/index.html";
     if (targetName) fullLink += "?para=" + encodeURIComponent(targetName);
 
-    qrModalTitle.innerText = "QR: " + name + (targetName ? " para " + targetName : "");
-    qrDirectLink.value = fullLink;
+    qrModalTitle.innerText = "QR: " + name + (targetName ? " (" + targetName + ")" : "");
     qrContainer.innerHTML = "";
     new QRCode(qrContainer, {
         text: fullLink, width: 200, height: 200,
@@ -140,15 +162,30 @@ if (btnCloseQR) {
     });
 }
 
-function copyQRLink() {
-    const text = qrDirectLink.value;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text)
-            .then(() => alert('Link copiado!'))
-            .catch(() => { qrDirectLink.select(); document.execCommand('copy'); alert('Link copiado!'); });
-    } else {
-        qrDirectLink.select();
-        document.execCommand('copy');
-        alert('Link copiado!');
+// -------------------------------------------------------
+// Descargar el código QR generado
+// -------------------------------------------------------
+function downloadQRCode() {
+    if (!qrContainer) return;
+    const canvas = qrContainer.querySelector('canvas');
+    if (!canvas) {
+        // En caso de que qrcode.js haya renderizado una imagen directamente
+        const img = qrContainer.querySelector('img');
+        if (img) {
+            const link = document.createElement("a");
+            link.href = img.src;
+            link.download = "LoveCode-QR.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        return;
     }
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "LoveCode-QR.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
+window.downloadQRCode = downloadQRCode;

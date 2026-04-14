@@ -18,14 +18,29 @@ function openQRModal(linkStr) {
         qrOverlay.id = 'qrOverlay';
         qrOverlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99999; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease;';
         qrOverlay.innerHTML = `
-            <div style="background:var(--bg-card); padding:30px; border-radius:15px; border:1px solid rgba(255,255,255,0.1); text-align:center; position:relative;">
+            <div style="background:var(--bg-card); padding:40px; border-radius:15px; border:1px solid rgba(255,255,255,0.1); text-align:center; position:relative; max-width:400px; width:90%;">
                 <button onclick="document.getElementById('qrOverlay').style.opacity='0'; setTimeout(()=>document.getElementById('qrOverlay').style.pointerEvents='none',300)" style="position:absolute; top:10px; right:15px; background:transparent; border:none; color:white; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-                <h3 style="margin-top:0; color:var(--accent-fuchsia);">Código QR</h3>
-                <p style="font-size:0.9rem; color:var(--color-dim); margin-bottom:20px;">Escanea para ver el regalo.</p>
-                <div id="trackingQRBox" style="background:white; padding:15px; border-radius:8px; display:inline-block;"></div>
+                <h3 class="neon-cyan" style="margin-top:0;">Código QR</h3>
+                <p style="font-size:0.9rem; color:var(--color-dim); margin-bottom:20px;">Escanea este código con tu celular para ver el regalo.</p>
+                <div id="trackingQRBox" style="background:white; padding:20px; border-radius:12px; display:inline-block; margin-bottom: 20px;"></div>
+                <button class="btn-primary" onclick="downloadPaidQR()" style="width: 100%;"><i class="fa-solid fa-download"></i> Descargar QR</button>
             </div>
         `;
         document.body.appendChild(qrOverlay);
+        
+        // Add download function to window if it doesn't exist
+        window.downloadPaidQR = function() {
+            const container = document.getElementById('trackingQRBox');
+            if (!container) return;
+            const canvas = container.querySelector('canvas');
+            if (!canvas) return;
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/png");
+            link.download = "LoveCode-QR-Premium.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
     }
     document.getElementById('trackingQRBox').innerHTML = '';
     new QRCode(document.getElementById('trackingQRBox'), { text: linkStr, width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff" });
