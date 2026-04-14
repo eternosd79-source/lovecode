@@ -993,47 +993,81 @@ function attachCatalogListeners() {
         });
     });
 
-    // Listeners de Copiar Link Gratis
+    // ── Listener: Copiar Link Gratis ──────────────────────────
     document.querySelectorAll('.btn-copiar-link').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
 
-            const rawPath = e.currentTarget.getAttribute('data-path') || '';
-            const name    = e.currentTarget.getAttribute('data-name') || '';
-
-            // Construir URL absoluta (producción o local)
+            const rawPath = this.getAttribute('data-path') || '';
+            const name    = this.getAttribute('data-name') || '';
             const cleanPath = rawPath.replace(/^\.\.\//, '').replace(/^\.\//, '');
             const fullUrl   = window.location.origin + '/' + cleanPath;
 
-            // Copiar al portapapeles
-            const doToast = () => {
-                // Remover toast anterior
-                const old = document.getElementById('_copyToast');
-                if (old) old.remove();
+            // Eliminar popup anterior si existe
+            const oldPop = document.getElementById('_linkSharePop');
+            if (oldPop) { oldPop.remove(); return; }
 
-                const t = document.createElement('div');
-                t.id = '_copyToast';
-                t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:0.95rem;box-shadow:0 8px 32px rgba(16,185,129,0.5);z-index:99999;text-align:center;white-space:pre-line;line-height:1.5;opacity:0;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;';
-                t.innerHTML = '<i class="fa-solid fa-check-circle" style="margin-right:8px;"></i>✅ ¡Link copiado!<br><small style="opacity:0.8;font-weight:400;">📋 Listo para pegar en WhatsApp 💬</small>';
-                document.body.appendChild(t);
-                requestAnimationFrame(() => { t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
-                setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; setTimeout(()=>t.remove(), 400); }, 3500);
-            };
+            // Crear popup con el link
+            const pop = document.createElement('div');
+            pop.id = '_linkSharePop';
+            pop.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#111;border:2px solid #10b981;border-radius:16px;padding:20px 22px;z-index:99999;width:min(380px,90vw);box-shadow:0 12px 40px rgba(0,0,0,0.7);animation:slideUp .3s ease;';
+            pop.innerHTML = `
+                <style>@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}</style>
+                <p style="margin:0 0 10px;color:#10b981;font-weight:700;font-size:0.9rem;">
+                    <i class="fa-solid fa-link"></i> Link de ${name}
+                </p>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input id="_linkShareInput" type="text" value="${fullUrl}" readonly
+                        style="flex:1;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.8rem;outline:none;cursor:pointer;"
+                        onclick="this.select();"
+                    >
+                    <button id="_btnCopyNow"
+                        style="background:#10b981;border:none;color:#fff;padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:0.85rem;">
+                        <i class="fa-solid fa-copy"></i> Copiar
+                    </button>
+                </div>
+                <p style="margin:10px 0 0;color:#777;font-size:0.75rem;text-align:center;">
+                    📋 Copia y pega directo en WhatsApp
+                </p>
+                <button onclick="document.getElementById('_linkSharePop').remove()"
+                    style="position:absolute;top:10px;right:12px;background:none;border:none;color:#555;cursor:pointer;font-size:1rem;">✕</button>
+            `;
+            document.body.appendChild(pop);
 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(fullUrl).then(doToast).catch(() => {
-                    const el = document.createElement('textarea');
-                    el.value = fullUrl; el.style.cssText='position:fixed;top:-9999px;';
-                    document.body.appendChild(el); el.select(); document.execCommand('copy');
-                    document.body.removeChild(el); doToast();
+            // Auto-seleccionar el input
+            const inp = document.getElementById('_linkShareInput');
+            setTimeout(() => { inp.focus(); inp.select(); }, 50);
+
+            // Botón Copiar dentro del popup
+            document.getElementById('_btnCopyNow').addEventListener('click', function() {
+                inp.select();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(fullUrl).then(() => {
+                        this.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                        this.style.background = '#059669';
+                        setTimeout(() => pop.remove(), 1500);
+                    }).catch(() => {
+                        document.execCommand('copy');
+                        this.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                        setTimeout(() => pop.remove(), 1500);
+                    });
+                } else {
+                    document.execCommand('copy');
+                    this.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                    setTimeout(() => pop.remove(), 1500);
+                }
+            });
+
+            // Cerrar al click fuera
+            setTimeout(() => {
+                document.addEventListener('click', function closePop(ev) {
+                    if (!pop.contains(ev.target)) {
+                        pop.remove();
+                        document.removeEventListener('click', closePop);
+                    }
                 });
-            } else {
-                const el = document.createElement('textarea');
-                el.value = fullUrl; el.style.cssText='position:fixed;top:-9999px;';
-                document.body.appendChild(el); el.select(); document.execCommand('copy');
-                document.body.removeChild(el); doToast();
-            }
+            }, 200);
         });
     });
 
