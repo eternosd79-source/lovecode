@@ -216,7 +216,7 @@ if (btnNext) {
             if (dataForm.plan.includes("$3") || dataForm.plan.includes("$0")) {
                 if (grpMusic)       grpMusic.style.display  = "none";
                 if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye modificaciones de música.";
-            } else if (dataForm.plan.includes("$4")) {
+            } else if (dataForm.plan.includes("$4.50") || dataForm.plan.includes("$5")) {
                 if (grpMusic)       grpMusic.style.display  = "none";
                 if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye opciones de música. Solo puedes editar el texto o foto en el paso anterior.";
             } else {
