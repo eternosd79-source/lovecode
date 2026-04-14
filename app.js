@@ -993,81 +993,113 @@ function attachCatalogListeners() {
         });
     });
 
-    // ── Listener: Copiar Link Gratis ──────────────────────────
+    // ── Listener: Copiar Link Gratis — Modal Centrado ─────────
     document.querySelectorAll('.btn-copiar-link').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
 
-            const rawPath = this.getAttribute('data-path') || '';
-            const name    = this.getAttribute('data-name') || '';
+            const rawPath   = this.getAttribute('data-path') || '';
+            const name      = this.getAttribute('data-name') || '';
             const cleanPath = rawPath.replace(/^\.\.\//, '').replace(/^\.\//, '');
             const fullUrl   = window.location.origin + '/' + cleanPath;
 
-            // Eliminar popup anterior si existe
-            const oldPop = document.getElementById('_linkSharePop');
-            if (oldPop) { oldPop.remove(); return; }
+            // Cerrar modal si ya existe
+            const existing = document.getElementById('_modalLinkShare');
+            if (existing) existing.remove();
 
-            // Crear popup con el link
-            const pop = document.createElement('div');
-            pop.id = '_linkSharePop';
-            pop.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#111;border:2px solid #10b981;border-radius:16px;padding:20px 22px;z-index:99999;width:min(380px,90vw);box-shadow:0 12px 40px rgba(0,0,0,0.7);animation:slideUp .3s ease;';
-            pop.innerHTML = `
-                <style>@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}</style>
-                <p style="margin:0 0 10px;color:#10b981;font-weight:700;font-size:0.9rem;">
-                    <i class="fa-solid fa-link"></i> Link de ${name}
-                </p>
-                <div style="display:flex;gap:8px;align-items:center;">
-                    <input id="_linkShareInput" type="text" value="${fullUrl}" readonly
-                        style="flex:1;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.8rem;outline:none;cursor:pointer;"
-                        onclick="this.select();"
-                    >
-                    <button id="_btnCopyNow"
-                        style="background:#10b981;border:none;color:#fff;padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:0.85rem;">
-                        <i class="fa-solid fa-copy"></i> Copiar
-                    </button>
+            // ── OVERLAY ───────────────────────────────────────────
+            const overlay = document.createElement('div');
+            overlay.id = '_modalLinkShare';
+            overlay.style.cssText = [
+                'position:fixed', 'inset:0', 'z-index:100000',
+                'background:rgba(0,0,0,0.75)', 'backdrop-filter:blur(4px)',
+                'display:flex', 'align-items:center', 'justify-content:center',
+                'padding:20px', 'animation:_fadeIn .25s ease'
+            ].join(';');
+
+            // ── MODAL ─────────────────────────────────────────────
+            overlay.innerHTML = `
+                <style>
+                    @keyframes _fadeIn  { from{opacity:0} to{opacity:1} }
+                    @keyframes _slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+                    #_modalCard { animation: _slideUp .3s cubic-bezier(.34,1.56,.64,1); }
+                    #_btnCopyLink:hover { opacity:.88; }
+                    #_btnWA:hover { opacity:.88; }
+                </style>
+                <div id="_modalCard" style="
+                    background:#0f0f0f;
+                    border:2px solid #10b981;
+                    border-radius:20px;
+                    padding:32px 28px 28px;
+                    width:min(460px,100%);
+                    box-shadow:0 24px 60px rgba(0,0,0,0.8);
+                    position:relative;
+                    text-align:center;
+                ">
+                    <!-- Cierre -->
+                    <button id="_modalClose" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#666;font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
+
+                    <!-- Icono + título -->
+                    <div style="width:60px;height:60px;background:rgba(16,185,129,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                        <i class="fa-solid fa-link" style="font-size:1.5rem;color:#10b981;"></i>
+                    </div>
+                    <h3 style="margin:0 0 4px;color:#fff;font-size:1.1rem;">Tu link gratuito está listo</h3>
+                    <p style="margin:0 0 20px;color:#666;font-size:0.85rem;">${name}</p>
+
+                    <!-- Input con el link -->
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;">
+                        <input id="_linkShareInput" type="text" value="${fullUrl}" readonly
+                            style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:11px 14px;color:#ccc;font-size:0.8rem;outline:none;cursor:pointer;text-overflow:ellipsis;"
+                            onclick="this.select();"
+                        >
+                        <button id="_btnCopyLink"
+                            style="background:#10b981;border:none;color:#fff;padding:11px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;transition:opacity .2s;">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+
+                    <!-- Botón WhatsApp -->
+                    <a id="_btnWA" href="https://wa.me/?text=${encodeURIComponent('Mira este regalo digital que tengo para ti 💌 ' + fullUrl)}" target="_blank"
+                        style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;text-decoration:none;padding:12px;border-radius:10px;font-weight:700;font-size:0.9rem;transition:opacity .2s;margin-bottom:10px;">
+                        <i class="fa-brands fa-whatsapp" style="font-size:1.2rem;"></i> Enviar por WhatsApp
+                    </a>
+
+                    <p style="color:#444;font-size:0.72rem;margin:0;">
+                        Toca el link para seleccionarlo • Se cierra al copiar
+                    </p>
                 </div>
-                <p style="margin:10px 0 0;color:#777;font-size:0.75rem;text-align:center;">
-                    📋 Copia y pega directo en WhatsApp
-                </p>
-                <button onclick="document.getElementById('_linkSharePop').remove()"
-                    style="position:absolute;top:10px;right:12px;background:none;border:none;color:#555;cursor:pointer;font-size:1rem;">✕</button>
             `;
-            document.body.appendChild(pop);
+
+            document.body.appendChild(overlay);
 
             // Auto-seleccionar el input
             const inp = document.getElementById('_linkShareInput');
-            setTimeout(() => { inp.focus(); inp.select(); }, 50);
+            setTimeout(() => { inp.focus(); inp.select(); }, 60);
 
-            // Botón Copiar dentro del popup
-            document.getElementById('_btnCopyNow').addEventListener('click', function() {
+            // ── Botón COPIAR ───────────────────────────────────────
+            document.getElementById('_btnCopyLink').addEventListener('click', function() {
                 inp.select();
+                const btn = this;
+                const copy = () => {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                    btn.style.background = '#059669';
+                    setTimeout(() => overlay.remove(), 1800);
+                };
                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(fullUrl).then(() => {
-                        this.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
-                        this.style.background = '#059669';
-                        setTimeout(() => pop.remove(), 1500);
-                    }).catch(() => {
-                        document.execCommand('copy');
-                        this.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
-                        setTimeout(() => pop.remove(), 1500);
+                    navigator.clipboard.writeText(fullUrl).then(copy).catch(() => {
+                        document.execCommand('copy'); copy();
                     });
                 } else {
-                    document.execCommand('copy');
-                    this.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
-                    setTimeout(() => pop.remove(), 1500);
+                    document.execCommand('copy'); copy();
                 }
             });
 
-            // Cerrar al click fuera
-            setTimeout(() => {
-                document.addEventListener('click', function closePop(ev) {
-                    if (!pop.contains(ev.target)) {
-                        pop.remove();
-                        document.removeEventListener('click', closePop);
-                    }
-                });
-            }, 200);
+            // ── Cerrar modal ───────────────────────────────────────
+            document.getElementById('_modalClose').addEventListener('click', () => overlay.remove());
+            overlay.addEventListener('click', (ev) => {
+                if (ev.target === overlay) overlay.remove();
+            });
         });
     });
 
