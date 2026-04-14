@@ -558,7 +558,7 @@ function renderCatalog(filter = 'all') {
                     <button class="btn-secondary btn-preview" data-id="${item.id}" style="width:100%; border-color: rgba(6,182,212,0.5); color:#06b6d4;"><i class="fa-solid fa-eye"></i> Ver Vista Previa</button>
                     ${isGratis ? `
                         <div style="display:flex; gap:10px;">
-                            <button class="btn-copiar-link btn-comprar" data-path="${item.path}" data-name="${item.name}" style="flex:1; display:flex; align-items:center; justify-content:center; background:#10b981; border:none; color:white; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer;"><i class="fa-solid fa-copy" style="margin-right:5px;"></i> Copiar Link</button>
+                            <button class="btn-copiar-link" data-path="${item.path}" data-name="${item.name}" style="flex:1; display:flex; align-items:center; justify-content:center; background:#10b981; border:none; color:white; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer; padding:10px;"><i class="fa-solid fa-copy" style="margin-right:5px;"></i> Copiar Link</button>
                             <button class="btn-qr-direct" data-id="${item.id}" data-name="${item.name}" style="background:white; color:black; border:none; padding:10px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-qrcode"></i></button>
                         </div>
                     ` : `
