@@ -168,24 +168,26 @@ if (btnCloseQR) {
 function downloadQRCode() {
     if (!qrContainer) return;
     const canvas = qrContainer.querySelector('canvas');
-    if (!canvas) {
-        // En caso de que qrcode.js haya renderizado una imagen directamente
+    let rawCanvas = canvas;
+    if (!rawCanvas) {
         const img = qrContainer.querySelector('img');
-        if (img) {
-            const link = document.createElement("a");
-            link.href = img.src;
-            link.download = "LoveCode-QR.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        return;
+        if (!img) return;
+        rawCanvas = document.createElement('canvas');
+        rawCanvas.width = img.width || 200;
+        rawCanvas.height = img.height || 200;
+        rawCanvas.getContext('2d').drawImage(img, 0, 0);
     }
-    const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/png");
-    link.download = "LoveCode-QR.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    
+    if (typeof generateAndDownloadBeautifulQR === 'function') {
+        const title = pendingQRAction ? pendingQRAction.name : (activePreviewModel ? activePreviewModel.name : 'Gratis');
+        generateAndDownloadBeautifulQR(rawCanvas, title, document.getElementById('inpNamePrompt')?.value || '', false);
+    } else {
+        const link = document.createElement('a');
+        link.href = rawCanvas.toDataURL('image/png');
+        link.download = 'LoveCode-QR.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 window.downloadQRCode = downloadQRCode;

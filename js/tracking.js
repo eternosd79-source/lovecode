@@ -33,13 +33,28 @@ function openQRModal(linkStr) {
             const container = document.getElementById('trackingQRBox');
             if (!container) return;
             const canvas = container.querySelector('canvas');
-            if (!canvas) return;
-            const link = document.createElement("a");
-            link.href = canvas.toDataURL("image/png");
-            link.download = "LoveCode-QR-Premium.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            
+            let rawCanvas = canvas;
+            if (!rawCanvas) {
+                const img = container.querySelector('img');
+                if (!img) return;
+                rawCanvas = document.createElement('canvas');
+                rawCanvas.width = img.width || 200;
+                rawCanvas.height = img.height || 200;
+                rawCanvas.getContext('2d').drawImage(img, 0, 0);
+            }
+            
+            if (typeof generateAndDownloadBeautifulQR === 'function') {
+                const orderTitle = document.querySelector('.card-title')?.innerText || 'Regalo Experiencia';
+                generateAndDownloadBeautifulQR(rawCanvas, orderTitle, '', true);
+            } else {
+                const link = document.createElement('a');
+                link.href = rawCanvas.toDataURL('image/png');
+                link.download = 'LoveCode-QR-Premium.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         };
     }
     document.getElementById('trackingQRBox').innerHTML = '';

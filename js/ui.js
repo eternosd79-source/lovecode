@@ -265,3 +265,105 @@ function initUI() {
         });
     }, 2500);
 }
+
+// -------------------------------------------------------
+// GENERACIÓN DE QR CON DISEÑO COMPLETO (Póster/Tarjeta)
+// -------------------------------------------------------
+function generateAndDownloadBeautifulQR(rawCanvas, templateName, targetName, isPremium = false) {
+    if (!rawCanvas) return;
+
+    // Crear canvas HD
+    const width = 1080;
+    const height = 1500;
+    const poster = document.createElement('canvas');
+    poster.width = width;
+    poster.height = height;
+    const ctx = poster.getContext('2d');
+
+    // 1. Fondo (Gradiente oscuro romántico y tecnológico)
+    const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+    if (isPremium) {
+        bgGradient.addColorStop(0, '#0f172a'); // slate-900
+        bgGradient.addColorStop(1, '#06b6d4'); // cyber-cyan
+    } else {
+        bgGradient.addColorStop(0, '#1e1b4b'); // indigo-950
+        bgGradient.addColorStop(1, '#be185d'); // pink romantic
+    }
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, width, height);
+
+    // 2. Patrón sutil (puntos o rejilla cibernética simple de fondo)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    for(let i = 0; i < width; i += 40) {
+        for(let j = 0; j < height; j += 40) {
+            ctx.beginPath();
+            ctx.arc(i, j, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // 3. Título Superior (Logo Simulado)
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 80px "Rajdhani", sans-serif';
+    ctx.fillText('CorazónCódigo', width / 2, 180);
+    ctx.shadowBlur = 0;
+
+    // 4. Subtítulo (Nombre Platilla y Para)
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '50px "Outfit", sans-serif';
+    ctx.fillText('🎁 ' + (templateName || 'Un Regalo Especial Digital'), width / 2, 300);
+
+    if (targetName) {
+        ctx.fillStyle = isPremium ? '#67e8f9' : '#f9a8d4'; // Cyan o Rosado
+        ctx.font = 'italic bold 60px "Outfit", sans-serif';
+        ctx.fillText('Para: ' + targetName, width / 2, 380);
+    }
+
+    // 5. Contenedor Blanco del QR (Tarjeta de cristal/plástico)
+    const boxSize = 650;
+    const boxX = (width - boxSize) / 2;
+    const boxY = 480;
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 40;
+    ctx.beginPath();
+    ctx.roundRect(boxX, boxY, boxSize, boxSize, 40); // Bordes redondeados
+    ctx.fill();
+    ctx.shadowBlur = 0; // Reset sombra
+
+    // 6. Dibujar el QR source
+    ctx.drawImage(rawCanvas, boxX + 40, boxY + 40, boxSize - 80, boxSize - 80);
+
+    // 7. Instrucciones inferiores
+    const instrY = boxY + boxSize + 120;
+    
+    // Paso 1
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = 'bold 45px "Outfit", sans-serif';
+    ctx.fillText('1️⃣ Abre la cámara de tu celular', width / 2, instrY);
+    
+    // Paso 2
+    ctx.fillText('2️⃣ Escanea este código', width / 2, instrY + 80);
+    
+    // Paso 3
+    ctx.fillText('3️⃣ Descubre tu sorpresa animada', width / 2, instrY + 160);
+
+    // 8. Footer (URL)
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '35px "Outfit", sans-serif';
+    ctx.fillText('www.lovecode.me', width / 2, height - 80);
+
+    // Generar archivo
+    const link = document.createElement("a");
+    link.href = poster.toDataURL("image/png");
+    link.download = `LoveCode-QR-${templateName || 'Regalo'}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+window.generateAndDownloadBeautifulQR = generateAndDownloadBeautifulQR;
+
