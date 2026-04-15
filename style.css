@@ -1325,17 +1325,15 @@ body {
 }
 .footer-grid {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
-    gap: 50px;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 60px;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 5%;
+    align-items: start;
 }
-@media (max-width: 960px) {
-    .footer-grid { grid-template-columns: 1fr 1fr; gap: 35px; }
-}
-@media (max-width: 580px) {
-    .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+@media (max-width: 700px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 35px; }
 }
 
 .footer-brand .logo { margin-bottom: 16px; }
@@ -1406,49 +1404,6 @@ body {
 .footer-links a:hover { color: white; padding-left: 4px; }
 .footer-links a i { color: var(--accent-cyan); font-size: 0.75rem; width: 14px; }
 
-.footer-newsletter p {
-    color: var(--color-dim);
-    font-size: 0.88rem;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-.newsletter-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.newsletter-form input {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: white;
-    padding: 11px 15px;
-    border-radius: 8px;
-    font-family: var(--font-ui);
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
-.newsletter-form input:focus { border-color: var(--accent-purple); }
-.newsletter-form input::placeholder { color: rgba(255,255,255,0.3); }
-.newsletter-form button {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
-    color: white;
-    border: none;
-    padding: 11px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-.newsletter-form button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(192, 38, 211, 0.4);
-}
 
 .footer-bottom {
     margin-top: 50px;
