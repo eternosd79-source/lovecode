@@ -397,7 +397,7 @@
                 flImgNode.style.borderRadius = '15px';
                 flImgNode.style.boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
                 flImgNode.style.border = '2px solid rgba(255,255,255,0.2)';
-                flImgNode.style.objectFit = 'cover'; // Cover llena el cuadro y mantiene la estética del borde redondeado
+                flImgNode.style.objectFit = 'contain'; // Contener la imagen para mostrarla completa sin recortes
                 flImgNode.style.transition = 'opacity 1s ease-in-out';
                 flImgNode.style.opacity = '0';
                 
