@@ -1324,16 +1324,16 @@ body {
     padding-top: 70px;
 }
 .footer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    max-width: 860px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 5%;
-    align-items: start;
 }
 @media (max-width: 700px) {
-    .footer-grid { grid-template-columns: 1fr; gap: 35px; }
+    .footer-grid { flex-direction: column; gap: 35px; }
 }
 
 .footer-brand .logo { margin-bottom: 16px; }
