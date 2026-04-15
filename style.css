@@ -1325,9 +1325,9 @@ body {
 }
 .footer-grid {
     display: grid;
-    grid-template-columns: 1.8fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 60px;
-    max-width: 1200px;
+    max-width: 860px;
     margin: 0 auto;
     padding: 0 5%;
     align-items: start;
@@ -1341,7 +1341,6 @@ body {
     color: var(--color-dim);
     font-size: 0.9rem;
     line-height: 1.7;
-    max-width: 280px;
     margin-bottom: 20px;
 }
 .footer-socials {
