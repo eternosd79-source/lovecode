@@ -61,11 +61,112 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── 8. Analytics — Eventos Personalizados ───────────
     initAnalyticsEvents();
 
+
     // ─── 9. Verificar parámetro ?ref= para afiliados ─────
     // (Ya se captura automáticamente en affiliates.js al cargar)
 
+    // ─── 10. DELEGACIÓN GLOBAL — Botón "Copiar Link" (Gratis) ──
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-copiar-link');
+        if (!btn) return;
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        const rawPath   = btn.getAttribute('data-path') || '';
+        const name      = btn.getAttribute('data-name') || '';
+        const cleanPath = rawPath.replace(/^\.\.\//, '').replace(/^\.\//, '');
+        const fullUrl   = window.location.origin + '/' + cleanPath;
+
+        // Cerrar modal previo
+        const prev = document.getElementById('_modalLinkShare');
+        if (prev) prev.remove();
+
+        // Crear overlay
+        const overlay = document.createElement('div');
+        overlay.id = '_modalLinkShare';
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;';
+
+        overlay.innerHTML = `
+            <div style="
+                background:#0f0f0f;
+                border:2px solid #10b981;
+                border-radius:20px;
+                padding:32px 28px 28px;
+                width:min(460px,100%);
+                box-shadow:0 24px 60px rgba(0,0,0,0.9);
+                position:relative;
+                text-align:center;
+                animation:_su .3s cubic-bezier(.34,1.56,.64,1);
+            ">
+            <style>@keyframes _su{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}</style>
+
+            <!-- Cerrar -->
+            <button id="_mClose" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#666;font-size:1.4rem;cursor:pointer;">✕</button>
+
+            <!-- Ícono -->
+            <div style="width:64px;height:64px;background:rgba(16,185,129,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <i class="fa-solid fa-link" style="font-size:1.6rem;color:#10b981;"></i>
+            </div>
+
+            <h3 style="margin:0 0 4px;color:#fff;font-size:1.15rem;font-weight:700;">Tu link gratuito está listo 🎁</h3>
+            <p style="margin:0 0 22px;color:#666;font-size:0.85rem;">${name}</p>
+
+            <!-- Input + Copiar -->
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;">
+                <input id="_mInp" type="text" value="${fullUrl}" readonly
+                    style="flex:1;background:#181818;border:1px solid #2e2e2e;border-radius:10px;padding:11px 13px;color:#ccc;font-size:0.78rem;outline:none;cursor:pointer;text-overflow:ellipsis;"
+                    onclick="this.select();"
+                >
+                <button id="_mCopy"
+                    style="background:#10b981;border:none;color:#fff;padding:11px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;">
+                    <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+            </div>
+
+            <!-- WhatsApp -->
+            <a id="_mWA"
+                href="https://wa.me/?text=${encodeURIComponent('Mira este regalo digital 💌 ' + fullUrl)}"
+                target="_blank" rel="noopener"
+                style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;text-decoration:none;padding:13px;border-radius:10px;font-weight:700;font-size:0.9rem;margin-bottom:12px;">
+                <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i> Enviar por WhatsApp
+            </a>
+
+            <p style="color:#3a3a3a;font-size:0.72rem;margin:0;">Toca el link para seleccionarlo · Cierra al copiar</p>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Auto-seleccionar
+        const inp = document.getElementById('_mInp');
+        setTimeout(() => { inp.focus(); inp.select(); }, 60);
+
+        // Botón Copiar
+        document.getElementById('_mCopy').addEventListener('click', function() {
+            inp.select();
+            const b = this;
+            const done = () => {
+                b.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                b.style.background = '#059669';
+                setTimeout(() => overlay.remove(), 1800);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fullUrl).then(done).catch(() => { try { document.execCommand('copy'); } catch(ex){} done(); });
+            } else {
+                try { document.execCommand('copy'); } catch(ex) {}
+                done();
+            }
+        });
+
+        // Cerrar
+        document.getElementById('_mClose').addEventListener('click', () => overlay.remove());
+        overlay.addEventListener('click', ev => { if (ev.target === overlay) overlay.remove(); });
+    });
+
     // ─── LOG FINAL ────────────────────────────────────────
     console.log(`%c✅ ${catalogData?.length || 31} experiencias | ${musicLibrary?.length - 1 || 30} canciones`, 'color:#10b981;');
+
 });
 
 // ============================================================
