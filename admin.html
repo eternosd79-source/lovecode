@@ -446,15 +446,24 @@
             const timeHTML   = buildTimeChip(order);
             const planInfo   = getPlanInfo(order.plan_name);
 
-            const actionsBtns = order.status === 'pending'
-                ? `<button class="btn-approve" onclick="approveOrder(event, '${order.id}')">
+            const btnAprobar = `<button class="btn-approve" onclick="approveOrder(event, '${order.id}')" style="margin-bottom:4px;width:100%;">
                         <i class="fa-solid fa-check"></i> Aprobar
-                   </button>`
-                : order.status === 'paid'
-                ? `<button class="btn-revoke" onclick="revokeOrder('${order.id}')">
+                   </button>`;
+            const btnRevocar = `<button class="btn-revoke" onclick="revokeOrder('${order.id}')" style="margin-bottom:4px;width:100%;">
                         <i class="fa-solid fa-rotate-left"></i> Revocar
-                   </button>`
-                : `<span style="color:var(--color-dim);font-size:0.8rem;">—</span>`;
+                   </button>`;
+            const btnEliminar = `<button onclick="deleteOrder('${order.id}')" style="background:#ef4444;color:#fff;border:none;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.8rem;width:100%;transition:opacity .2s;">
+                        <i class="fa-solid fa-trash"></i> Borrar
+                   </button>`;
+
+            let actionsBtns = '';
+            if (order.status === 'pending') {
+                actionsBtns = btnAprobar + btnEliminar;
+            } else if (order.status === 'paid') {
+                actionsBtns = btnRevocar;
+            } else {
+                actionsBtns = btnEliminar;
+            }
 
             return `
                 <tr>
@@ -468,7 +477,7 @@
                     <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
                     <td>${timeHTML}</td>
                     <td style="font-size:0.78rem;color:var(--color-dim);">${createdAt}</td>
-                    <td>${actionsBtns}</td>
+                    <td style="display:flex;flex-direction:column;gap:5px;">${actionsBtns}</td>
                 </tr>`;
         }).join('');
     }
@@ -506,6 +515,20 @@
             .eq('id', id);
 
         if (error) alert('Error: ' + error.message);
+        else loadOrders();
+    }
+
+    async function deleteOrder(id) {
+        if (!confirm('🛑 ¿Estás seguro de ELIMINAR definitivamente este pedido? No se puede recuperar.')) return;
+        const client = adminSupabase || window.db;
+        if (!client) return;
+
+        const { error } = await client
+            .from('orders')
+            .delete()
+            .eq('id', id);
+
+        if (error) alert('Error al borrar: ' + error.message);
         else loadOrders();
     }
 
