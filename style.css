@@ -1341,6 +1341,7 @@ body {
     color: var(--color-dim);
     font-size: 0.9rem;
     line-height: 1.7;
+    max-width: 340px;
     margin-bottom: 20px;
 }
 .footer-socials {
@@ -1387,9 +1388,12 @@ body {
 }
 .footer-links {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 40px;
+}
+@media (max-width: 500px) {
+    .footer-links { grid-template-columns: 1fr; }
 }
 .footer-links a {
     color: rgba(255,255,255,0.6);
