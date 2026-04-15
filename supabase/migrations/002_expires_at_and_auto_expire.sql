@@ -168,29 +168,8 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ============================================================
--- 8. HABILITAR pg_cron (si no está habilitado)
---    NOTA: En el Dashboard de Supabase ir a:
---    Database > Extensions > Buscar "pg_cron" > Habilitar
+-- 8. POLÍTICA RLS: admins autenticados pueden actualizar status
 -- ============================================================
-
--- Ejecutar expire_old_orders cada hora
--- IMPORTANTE: Esto SOLO funciona si pg_cron está habilitado en tu proyecto Supabase
-SELECT cron.schedule(
-    'expire-lovecode-orders',           -- nombre del job (único)
-    '0 * * * *',                        -- cada hora en punto
-    'SELECT expire_old_orders();'
-);
-
--- Para verificar que el job fue creado:
--- SELECT * FROM cron.job;
-
--- ============================================================
--- 9. POLÍTICA RLS: Permitir que el trigger SECURITY DEFINER funcione
--- ============================================================
--- La función expire_old_orders() ya tiene SECURITY DEFINER,
--- lo que le permite saltarse el RLS para actualizaciones del cron.
-
--- Política adicional: admins autenticados pueden actualizar status
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -203,10 +182,32 @@ BEGIN
 END $$;
 
 -- ============================================================
--- VERIFICACIÓN FINAL
+-- ✅ VERIFICACIÓN — Ejecuta estas líneas para confirmar:
 -- ============================================================
--- Comprobar que todo quedó bien:
--- SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'orders' AND column_name IN ('expires_at', 'expired_notified');
--- SELECT * FROM cron.job WHERE jobname = 'expire-lovecode-orders';
--- SELECT get_plan_duration_hours('Básico ($3, 2 semanas)');  -- Debe retornar 336
--- SELECT get_plan_duration_hours('Ultra Premium ($7, 6 mes., Fotos/Música/Código)');  -- Debe retornar 4320
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'orders'
+  AND column_name IN ('expires_at', 'expired_notified');
+
+-- Prueba de duraciones:
+SELECT get_plan_duration_hours('Gratis ($0, Solo demo 24h)')                    AS demo_horas,   -- → 24
+       get_plan_duration_hours('Básico ($3, 2 semanas)')                        AS basico_horas, -- → 336
+       get_plan_duration_hours('Membresía Hub ($4.50, Comunidad+Fotos)')        AS hub_horas,    -- → 1800
+       get_plan_duration_hours('Ultra Premium ($7, 6 mes., Fotos/Música/Código)') AS ultra_horas; -- → 4320
+
+-- ============================================================
+-- ⏰ PASO SEPARADO — CRON JOB (leer instrucciones abajo)
+-- ============================================================
+-- ANTES de ejecutar esto debes:
+-- 1. Ir a Database > Extensions en tu dashboard Supabase
+-- 2. Buscar "pg_cron" y activarlo
+-- 3. Luego abrir un NUEVO query y pegar SOLO esto:
+--
+--    SELECT cron.schedule(
+--        'expire-lovecode-orders',
+--        '0 * * * *',
+--        'SELECT expire_old_orders();'
+--    );
+--
+-- Verificar: SELECT * FROM cron.job;
+-- ============================================================

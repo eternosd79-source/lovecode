@@ -246,10 +246,10 @@ body {
     background: rgba(192, 38, 211, 0.3);
     border-radius: 4px;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 990px) {
     .category-filters {
         justify-content: flex-start;
-        flex-wrap: nowrap;
+        flex-wrap: nowrap !important;
         padding-left: 5%;
         padding-right: 5%;
     }
@@ -1122,10 +1122,14 @@ body {
     transform: translateY(-10px);
     opacity: 0;
     transition: all 0.3s ease;
+    pointer-events: none;
+    visibility: hidden;
 }
 .mobile-menu.active {
     opacity: 1;
     transform: translateY(0);
+    pointer-events: auto;
+    visibility: visible;
 }
 .mobile-menu ul {
     list-style: none;
