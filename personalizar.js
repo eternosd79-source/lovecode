@@ -452,4 +452,34 @@
     } else {
         applyPersonalization();
     }
+    // -------------------------------------------------------
+    // 8. ESCUCHA DE MENSAJES (Sincronización de Tiempo Iframe / Scrub)
+    // -------------------------------------------------------
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'CORAZON_SCRUB_TIME') {
+            console.log("Scrubbing template a: " + e.data.timeSeconds + "s");
+            // Pausar y Adelantar animaciones CSS (Web Animations API)
+            // Esto buscará CUALQUIER animación CSS que se esté reproduciendo en pantalla y la adelantará
+            if (typeof document.getAnimations === 'function') {
+                document.getAnimations().forEach(anim => {
+                    const timeMs = e.data.timeSeconds * 1000;
+                    anim.currentTime = timeMs;
+                    anim.pause(); // Pausamos para que puedan ver exactamente el momento
+                });
+            }
+            
+            // Pausar y Adelantar media (Videos / Audios si la plantilla tiene)
+            document.querySelectorAll('video, audio').forEach(media => {
+                if (media.duration && !isNaN(media.duration)) {
+                    media.currentTime = Math.min(e.data.timeSeconds, media.duration);
+                    media.pause();
+                } else {
+                    // Si aún no carga pero sabemos a donde saltar
+                    media.currentTime = e.data.timeSeconds;
+                    media.pause();
+                }
+            });
+        }
+    });
+
 })();

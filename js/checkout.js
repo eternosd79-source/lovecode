@@ -581,6 +581,21 @@ function resizeDraggablePhoto(value) {
 window.resizeDraggablePhoto = resizeDraggablePhoto;
 
 // -------------------------------------------------------
+// Scrub (Adelantar) el tiempo en vivo en el Iframe
+// -------------------------------------------------------
+function scrubLivePreview(value) {
+    const label = document.getElementById('flImgTLabel');
+    if (label) label.innerText = value == 0 ? 'Inicio' : value + 's';
+    
+    // Obtener el Iframe en vivo y enviarle la señal con el tiempo en segundos
+    const iframe = document.getElementById('livePreviewIframe');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'CORAZON_SCRUB_TIME', timeSeconds: parseInt(value) }, '*');
+    }
+}
+window.scrubLivePreview = scrubLivePreview;
+
+// -------------------------------------------------------
 // Inicializar el editor drag-and-drop del canvas
 // -------------------------------------------------------
 function initPhotoDragEditor() {
