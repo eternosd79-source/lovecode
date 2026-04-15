@@ -251,15 +251,6 @@ function renderOrderStatus(order) {
                                 <i class="fa-solid fa-qrcode"></i>
                             </button>
                         </div>
-                        <button class="video-preview-btn" onclick="openVideoPreview({
-                            templateId: '${order.template_id || ''}',
-                            templateName: '${order.template_name || 'Regalo'}',
-                            customerName: '${order.target_name || ''}',
-                            planName: '${(order.plan_name || '').split('(')[0].trim()}',
-                            dateStr: '${order.custom_date || ''}'
-                        })" style="width:100%; justify-content:center;">
-                            <i class="fa-solid fa-image"></i> Generar Miniatura 3D
-                        </button>
                     `}
                 </div>
             </div>`;
