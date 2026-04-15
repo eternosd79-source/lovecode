@@ -388,14 +388,16 @@
                 flImgNode.style.position = 'fixed';
                 flImgNode.style.left = flX + '%';
                 flImgNode.style.top = flY + '%';
-                flImgNode.style.width = flS + '%';
+                // Usamos vmin para que el tamaño coincida EXACTAMENTE con la lógica del editor (Math.min(canvasW, canvasH))
+                flImgNode.style.width = flS + 'vmin';
+                flImgNode.style.height = flS + 'vmin';
                 flImgNode.style.transform = 'translate(-50%, -50%)';
                 flImgNode.style.zIndex = '999999';
                 flImgNode.style.pointerEvents = 'auto'; 
                 flImgNode.style.borderRadius = '15px';
                 flImgNode.style.boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
                 flImgNode.style.border = '2px solid rgba(255,255,255,0.2)';
-                flImgNode.style.objectFit = 'contain';
+                flImgNode.style.objectFit = 'cover'; // Cover llena el cuadro y mantiene la estética del borde redondeado
                 flImgNode.style.transition = 'opacity 1s ease-in-out';
                 flImgNode.style.opacity = '0';
                 
