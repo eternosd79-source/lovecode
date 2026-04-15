@@ -595,67 +595,86 @@
                         <div class="step4-right">
                             <div class="payment-content active" id="payEcuador">
                                 <style>
-                                    .bank-selector { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;}
-                                    .btn-bank { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ddd; padding: 12px 15px; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s; font-family: var(--font-ui); font-size:0.95rem;}
-                                    .btn-bank:hover { background: rgba(255,255,255,0.08); }
-                                    .btn-bank.active { background: rgba(6,182,212,0.15); border-color: #06b6d4; color: white;}
-                                    .bank-details { display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left; font-size: 0.8rem; color: #ccc; line-height: 1.5;}
-                                    .bank-text { flex: 2; }
-                                    .bank-text strong { color: white; font-size: 0.95rem; display: block; margin-bottom: 4px; color: var(--accent-fuchsia);}
-                                    @media(max-width:500px){ .bank-details{flex-direction:column; text-align:center;} }
+                                    .bank-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 5px;}
+                                    .btn-bank { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ddd; padding: 14px 20px; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.3s; font-family: var(--font-ui); font-size:1.05rem; display: flex; align-items: center; justify-content: space-between;}
+                                    .btn-bank:hover { background: rgba(6,182,212,0.15); border-color: #06b6d4; color: white;}
+                                    
+                                    .bank-modal-overlay {
+                                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                        background: rgba(0,0,0,0.85); z-index: 999999;
+                                        display: none; justify-content: center; align-items: center;
+                                        backdrop-filter: blur(5px);
+                                    }
+                                    .bank-modal-content {
+                                        background: #111116; border: 1px solid var(--accent-cyan);
+                                        padding: 30px; border-radius: 20px; min-width: 300px; max-width: 90%;
+                                        box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative;
+                                        text-align: center; color: white;
+                                    }
+                                    .bank-modal-close {
+                                        position: absolute; top: 10px; right: 20px; font-size: 28px;
+                                        color: #aaa; cursor: pointer; transition: 0.3s; line-height: 1;
+                                    }
+                                    .bank-modal-close:hover { color: white; }
+                                    .bank-text-modal { font-size: 0.95rem; line-height: 1.6; color: #ddd; text-align: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 15px;}
+                                    .bank-text-modal strong { color: var(--accent-fuchsia); font-size: 1.2rem; display: block; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;}
                                 </style>
-                                <p class="step-desc" style="margin-bottom:10px;text-align:center;">Selecciona tu banco para ver los datos de cuenta o el QR:</p>
+                                <p class="step-desc" style="margin-bottom:15px;text-align:center;">Toca tu banco preferido para ver los <b>datos de cuenta</b> o el <b>Código QR</b>:</p>
                                 
                                 <div class="bank-selector">
-                                    <button class="btn-bank active" onclick="showBank('pichincha', this)">🏦 Banco Pichincha</button>
-                                    <button class="btn-bank" onclick="showBank('loja', this)">🏦 Banco de Loja</button>
-                                    <button class="btn-bank" onclick="showBank('produbanco', this)">🏦 Produbanco</button>
+                                    <button class="btn-bank" onclick="showBankModal('pichincha')"><span>🏦 Banco Pichincha</span> <i class="fa-solid fa-chevron-right"></i></button>
+                                    <button class="btn-bank" onclick="showBankModal('loja')"><span>🏦 Banco de Loja</span> <i class="fa-solid fa-chevron-right"></i></button>
+                                    <button class="btn-bank" onclick="showBankModal('produbanco')"><span>🏦 Produbanco</span> <i class="fa-solid fa-chevron-right"></i></button>
                                 </div>
 
-                                <div class="bank-details" id="bank-pichincha">
-                                    <div class="qr-box" style="margin:0; max-width:120px;"><img src="qrPichincha.png" alt="QR Pichincha"></div>
-                                    <div class="bank-text">
-                                        <strong>Pichincha</strong>
-                                        Tipo: CUENTA Ahorros<br>
-                                        Número cuenta: 20005033691<br>
-                                        Nombre: DENNIS ALBERTO VILLAGRAN<br>
-                                        RUC/Identificacion: 1720384161<br>
-                                        Correo: dennisvillagran16pin@gmail.com<br>
-                                        Celular: 0990480389
-                                    </div>
-                                </div>
-
-                                <div class="bank-details" id="bank-loja" style="display:none;">
-                                    <div class="qr-box" style="margin:0; max-width:120px;"><img src="qrLoja.png" alt="QR Loja"></div>
-                                    <div class="bank-text">
-                                        <strong>Banco de Loja</strong>
-                                        Tipo: CUENTA Ahorros<br>
-                                        Número cuenta: 20005033691<br>
-                                        Nombre: DENNIS ALBERTO VILLAGRAN<br>
-                                        RUC/Identificacion: 1720384161<br>
-                                        Correo: dennisvillagran16pin@gmail.com<br>
-                                        Celular: 0990480389
-                                    </div>
-                                </div>
-
-                                <div class="bank-details" id="bank-produbanco" style="display:none;">
-                                    <div class="bank-text" style="text-align:center;">
-                                        <strong>Produbanco</strong>
-                                        Tipo: CUENTA Ahorros<br>
-                                        Número cuenta: 20005033691<br>
-                                        Nombre: DENNIS ALBERTO VILLAGRAN<br>
-                                        RUC/Identificacion: 1720384161<br>
-                                        Correo: dennisvillagran16pin@gmail.com<br>
-                                        Celular: 0990480389
+                                <div class="bank-modal-overlay" id="bankModalOverlay" onclick="closeBankModal(event)">
+                                    <div class="bank-modal-content">
+                                        <span class="bank-modal-close" onclick="closeBankModal()">&times;</span>
+                                        <h3 id="bankModalTitle" style="margin-top:0; color:white;">Datos del Banco</h3>
+                                        <div id="bankModalQr" class="qr-box" style="margin: 15px auto; max-width: 150px; display:none; background:white; padding:10px; border-radius:12px;">
+                                            <img id="bankModalImg" src="" alt="QR Banco" style="width:100%; border-radius:8px;">
+                                        </div>
+                                        <div id="bankModalText">
+                                            <!-- Text injected via JS -->
+                                        </div>
+                                        <button class="btn-primary" style="margin-top:20px; width:100%;" onclick="closeBankModal()">Entendido</button>
                                     </div>
                                 </div>
 
                                 <script>
-                                    function showBank(bankId, btn) {
-                                        document.querySelectorAll('.bank-details').forEach(el => el.style.display = 'none');
-                                        document.querySelectorAll('.btn-bank').forEach(el => el.classList.remove('active'));
-                                        document.getElementById('bank-' + bankId).style.display = 'flex';
-                                        btn.classList.add('active');
+                                    const bankDataInfo = {
+                                        pichincha: {
+                                            title: "Banco Pichincha", qr: "qrPichincha.png",
+                                            text: `<strong>Pichincha</strong>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificacion: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389`
+                                        },
+                                        loja: {
+                                            title: "Banco de Loja", qr: "qrLoja.png",
+                                            text: `<strong>Banco de Loja</strong>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificacion: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389`
+                                        },
+                                        produbanco: {
+                                            title: "Produbanco", qr: null,
+                                            text: `<strong>Produbanco</strong>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificacion: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389`
+                                        }
+                                    };
+
+                                    function showBankModal(bankId) {
+                                        const data = bankDataInfo[bankId];
+                                        document.getElementById('bankModalTitle').innerText = data.title;
+                                        const qrContainer = document.getElementById('bankModalQr');
+                                        if(data.qr) {
+                                            document.getElementById('bankModalImg').src = data.qr;
+                                            qrContainer.style.display = 'block';
+                                        } else {
+                                            qrContainer.style.display = 'none';
+                                        }
+                                        document.getElementById('bankModalText').innerHTML = \`<div class="bank-text-modal">\${data.text}</div>\`;
+                                        document.getElementById('bankModalOverlay').style.display = 'flex';
+                                    }
+
+                                    function closeBankModal(e) {
+                                        if (!e || e.target.id === 'bankModalOverlay' || e.target.tagName === 'BUTTON' || e.target.classList.contains('bank-modal-close')) {
+                                            document.getElementById('bankModalOverlay').style.display = 'none';
+                                        }
                                     }
                                 </script>
                             </div>
