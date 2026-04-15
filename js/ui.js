@@ -250,6 +250,72 @@ window.handleNewsletter = handleNewsletter;
 // -------------------------------------------------------
 // INICIALIZACIÓN PRINCIPAL (llamado desde main.js)
 // -------------------------------------------------------
+// -------------------------------------------------------
+// CATEGORY FILTER — TOUCH SWIPE HORIZONTAL (Móvil)
+// El body tiene overflow-x:hidden que bloquea el scroll nativo,
+// así que manejamos el arrastre manualmente con touch events.
+// -------------------------------------------------------
+function initCategorySwipe() {
+    const el = document.getElementById('catFilters');
+    if (!el) return;
+
+    let startX = 0;
+    let scrollStart = 0;
+    let isDragging = false;
+
+    el.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        scrollStart = el.scrollLeft;
+        isDragging = true;
+    }, { passive: true });
+
+    el.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const dx = startX - e.touches[0].clientX;
+        el.scrollLeft = scrollStart + dx;
+    }, { passive: true });
+
+    el.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
+}
+
+// -------------------------------------------------------
+// ADMIN — ACCESO SECRETO (5 toques en el logo corazón)
+// Toca el ❤️ del logo en el navbar 5 veces rápido para abrir admin
+// -------------------------------------------------------
+function initAdminSecretTap() {
+    // El ícono fa-heart dentro del .logo del navbar
+    const logoIcon = document.querySelector('.navbar .logo i.fa-heart');
+    if (!logoIcon) return;
+
+    let tapCount = 0;
+    let tapTimer = null;
+
+    const handler = () => {
+        tapCount++;
+        clearTimeout(tapTimer);
+
+        if (tapCount >= 5) {
+            tapCount = 0;
+            window.location.href = 'admin.html';
+            return;
+        }
+
+        // Resetear si pasan más de 2 segundos sin otro toque
+        tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
+    };
+
+    // Escuchar tanto click (escritorio) como touchend (móvil)
+    logoIcon.addEventListener('click', handler);
+    logoIcon.addEventListener('touchend', (e) => {
+        e.preventDefault(); // Evita el doble-disparo click+touch
+        handler();
+    });
+
+    // Hacer el área tocable más grande en móvil
+    logoIcon.style.padding = '10px';
+    logoIcon.style.cursor = 'pointer';
+}
+
 function initUI() {
     initSplash();
     initHamburger();
@@ -257,6 +323,8 @@ function initUI() {
     initScrollTop();
     initStatsCounter();
     initCard3DTilt();
+    initCategorySwipe();
+    initAdminSecretTap();
 
     // Fallback de seguridad: si algún .reveal no se activa en 2.5s, forzar visible
     setTimeout(() => {
