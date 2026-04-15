@@ -594,17 +594,70 @@
 
                         <div class="step4-right">
                             <div class="payment-content active" id="payEcuador">
-                                <p class="step-desc" style="margin-bottom:10px;">Escanea y envía foto del comprobante:</p>
-                                <div class="qr-container">
-                                    <div class="qr-box">
-                                        <span>Banco Pichincha</span>
-                                        <img src="qrPichincha.png" alt="QR Banco Pichincha">
-                                    </div>
-                                    <div class="qr-box">
-                                        <span>Banco de Loja</span>
-                                        <img src="qrLoja.png" alt="QR Banco de Loja">
+                                <style>
+                                    .bank-selector { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;}
+                                    .btn-bank { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ddd; padding: 12px 15px; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s; font-family: var(--font-ui); font-size:0.95rem;}
+                                    .btn-bank:hover { background: rgba(255,255,255,0.08); }
+                                    .btn-bank.active { background: rgba(6,182,212,0.15); border-color: #06b6d4; color: white;}
+                                    .bank-details { display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left; font-size: 0.8rem; color: #ccc; line-height: 1.5;}
+                                    .bank-text { flex: 2; }
+                                    .bank-text strong { color: white; font-size: 0.95rem; display: block; margin-bottom: 4px; color: var(--accent-fuchsia);}
+                                    @media(max-width:500px){ .bank-details{flex-direction:column; text-align:center;} }
+                                </style>
+                                <p class="step-desc" style="margin-bottom:10px;text-align:center;">Selecciona tu banco para ver los datos de cuenta o el QR:</p>
+                                
+                                <div class="bank-selector">
+                                    <button class="btn-bank active" onclick="showBank('pichincha', this)">🏦 Banco Pichincha</button>
+                                    <button class="btn-bank" onclick="showBank('loja', this)">🏦 Banco de Loja</button>
+                                    <button class="btn-bank" onclick="showBank('produbanco', this)">🏦 Produbanco</button>
+                                </div>
+
+                                <div class="bank-details" id="bank-pichincha">
+                                    <div class="qr-box" style="margin:0; max-width:120px;"><img src="qrPichincha.png" alt="QR Pichincha"></div>
+                                    <div class="bank-text">
+                                        <strong>Pichincha</strong>
+                                        Tipo: CUENTA Ahorros<br>
+                                        Número cuenta: 20005033691<br>
+                                        Nombre: DENNIS ALBERTO VILLAGRAN<br>
+                                        RUC/Identificacion: 1720384161<br>
+                                        Correo: dennisvillagran16pin@gmail.com<br>
+                                        Celular: 0990480389
                                     </div>
                                 </div>
+
+                                <div class="bank-details" id="bank-loja" style="display:none;">
+                                    <div class="qr-box" style="margin:0; max-width:120px;"><img src="qrLoja.png" alt="QR Loja"></div>
+                                    <div class="bank-text">
+                                        <strong>Banco de Loja</strong>
+                                        Tipo: CUENTA Ahorros<br>
+                                        Número cuenta: 20005033691<br>
+                                        Nombre: DENNIS ALBERTO VILLAGRAN<br>
+                                        RUC/Identificacion: 1720384161<br>
+                                        Correo: dennisvillagran16pin@gmail.com<br>
+                                        Celular: 0990480389
+                                    </div>
+                                </div>
+
+                                <div class="bank-details" id="bank-produbanco" style="display:none;">
+                                    <div class="bank-text" style="text-align:center;">
+                                        <strong>Produbanco</strong>
+                                        Tipo: CUENTA Ahorros<br>
+                                        Número cuenta: 20005033691<br>
+                                        Nombre: DENNIS ALBERTO VILLAGRAN<br>
+                                        RUC/Identificacion: 1720384161<br>
+                                        Correo: dennisvillagran16pin@gmail.com<br>
+                                        Celular: 0990480389
+                                    </div>
+                                </div>
+
+                                <script>
+                                    function showBank(bankId, btn) {
+                                        document.querySelectorAll('.bank-details').forEach(el => el.style.display = 'none');
+                                        document.querySelectorAll('.btn-bank').forEach(el => el.classList.remove('active'));
+                                        document.getElementById('bank-' + bankId).style.display = 'flex';
+                                        btn.classList.add('active');
+                                    }
+                                </script>
                             </div>
                             <div class="payment-content" id="payMundo" style="display:none;">
                                 <p class="step-desc" style="padding:10px 15px 5px; text-align: center;">Paga rápido desde cualquier país con Tarjeta de Crédito/Débito vía <strong>PayPhone</strong>:</p>
