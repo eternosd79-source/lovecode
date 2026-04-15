@@ -124,22 +124,34 @@ function generateVideoPreview(params = {}) {
 /**
  * Abre el modal de video-resumen con los datos de la orden actual
  */
-function openVideoPreview() {
+function openVideoPreview(trackedData = null) {
     const modal   = document.getElementById('videoModal');
     if (!modal) return;
 
-    // Tomar datos del formulario activo
-    const templateName = document.getElementById('lblSelectedTemplate')?.textContent || 'CorazónCódigo';
-    const templateId   = typeof activeTemplateInfo !== 'undefined' ? activeTemplateInfo?.id : '';
-    const selectedPlan = document.querySelector('input[name="planType"]:checked');
-    const destino      = document.getElementById('inpDestino')?.value || '';
-    const dateVal      = document.getElementById('inpDate')?.value || '';
+    let templateName, templateId, selectedPlan, destino, dateVal;
+
+    if (trackedData) {
+        // Usar datos pasados explícitamente desde el tracker
+        templateName = trackedData.templateName || 'Regalo';
+        templateId   = trackedData.templateId || '';
+        selectedPlan = trackedData.planName || 'Básico';
+        destino      = trackedData.customerName || '';
+        dateVal      = trackedData.dateStr || '';
+    } else {
+        // Usar datos del formulario activo (cuando se está creando)
+        templateName = document.getElementById('lblSelectedTemplate')?.textContent || 'CorazónCódigo';
+        templateId   = typeof activeTemplateInfo !== 'undefined' ? activeTemplateInfo?.id : '';
+        const sp = document.querySelector('input[name="planType"]:checked');
+        selectedPlan = sp ? sp.value : 'Básico';
+        destino      = document.getElementById('inpDestino')?.value || '';
+        dateVal      = document.getElementById('inpDate')?.value || '';
+    }
 
     generateVideoPreview({
         templateId:   templateId,
         templateName: templateName,
         customerName: destino,
-        planName:     selectedPlan?.value || '',
+        planName:     selectedPlan,
         dateStr:      dateVal
     });
 
