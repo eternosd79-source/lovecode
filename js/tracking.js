@@ -63,10 +63,9 @@ if (btnTrackOrder) {
         if (!id) return alert("Por favor ingresa un ID válido.");
         if (!db)  return alert("Error de conexión con la base de datos. Intenta de nuevo.");
 
-        const { data: order, error } = await db
-            .from('orders')
-            .or(`id.eq.${id},id.ilike.${id}%`)
-            .single();
+        // Usamos la nueva función RPC para evitar errores 400 (UUID type error en PostgREST)
+        const { data: orderData, error } = await db.rpc('search_order_by_id', { search_term: id });
+        const order = orderData && orderData.length > 0 ? orderData[0] : null;
 
         if (orderStatusResult) {
             orderStatusResult.style.display = 'block';
