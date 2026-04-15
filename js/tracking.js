@@ -161,6 +161,19 @@ function renderOrderStatus(order) {
     const displayId = order.id.substring(0, 8).toUpperCase();
 
     let fullLink = order.final_link || "";
+    // Reconstruir el link en caso de que no se haya guardado
+    if (!fullLink && order.template_name && typeof catalogData !== 'undefined') {
+        const tpl = catalogData.find(c => c.name === order.template_name);
+        if (tpl && tpl.path) {
+            let p = tpl.path.replace('./', '');
+            if (window.SITE_BASE_URL) {
+                fullLink = window.SITE_BASE_URL + p;
+            } else {
+                fullLink = window.location.origin + window.location.pathname.replace('index.html','') + p;
+            }
+        }
+    }
+
     if (fullLink) {
         const separator = fullLink.includes('?') ? '&' : '?';
         fullLink += `${separator}orderId=${order.id}`;
@@ -239,7 +252,7 @@ function renderOrderStatus(order) {
                             </button>
                         </div>
                         <button class="video-preview-btn" onclick="openVideoPreview()" style="width:100%; justify-content:center;">
-                            <i class="fa-solid fa-film"></i> Generar Video-Miniatura
+                            <i class="fa-solid fa-image"></i> Generar Miniatura 3D
                         </button>
                     `}
                 </div>
