@@ -447,7 +447,7 @@
             const planInfo   = getPlanInfo(order.plan_name);
 
             const actionsBtns = order.status === 'pending'
-                ? `<button class="btn-approve" onclick="approveOrder('${order.id}')">
+                ? `<button class="btn-approve" onclick="approveOrder(event, '${order.id}')">
                         <i class="fa-solid fa-check"></i> Aprobar
                    </button>`
                 : order.status === 'paid'
@@ -473,8 +473,8 @@
         }).join('');
     }
 
-    async function approveOrder(id) {
-        const btn = event.currentTarget;
+    async function approveOrder(e, id) {
+        const btn = e.currentTarget || e.target;
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 

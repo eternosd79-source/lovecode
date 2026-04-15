@@ -676,7 +676,11 @@
 
     <!-- MODAL DE ÉXITO (CONFIRMACIÓN DE PEDIDO) -->
     <div class="modal-overlay" id="successModal" style="z-index: 10002;">
-        <div class="wizard-container" style="max-width: 450px; text-align: center; padding: 40px;">
+        <div class="wizard-container" style="max-width: 450px; text-align: center; padding: 40px; position:relative;">
+            
+            <!-- NUEVO BTN CERRAR PARA SUCCESS MODAL -->
+            <button class="btn-close" onclick="document.getElementById('successModal').classList.remove('active')"><i class="fa-solid fa-times"></i></button>
+
             <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px;">
                 <i class="fa-solid fa-check"></i>
             </div>
@@ -684,17 +688,20 @@
             <p style="color: var(--color-dim); font-size: 0.9rem; margin-bottom: 25px;">Tu orden ha sido registrada correctamente. Copia tu ID de seguimiento:</p>
             
             <!-- 3D Gift Box Container -->
-            <div id="threeContainer" style="width: 100%; height: 180px; margin: -20px 0 10px 0; overflow: visible;"></div>
+            <div id="threeContainer" style="width: 100%; height: 160px; margin: -20px 0 10px 0; overflow: visible;"></div>
 
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed var(--accent-cyan); margin-bottom: 30px;">
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed var(--accent-cyan); margin-bottom: 25px;">
                 <span id="displayOrderId" style="font-family: var(--font-code); font-size: 1.4rem; font-weight: bold; color: white; letter-spacing: 2px;">-------</span>
             </div>
 
-            <p style="font-size: 0.85rem; margin-bottom: 20px;">Haz clic abajo para ir a WhatsApp y finalizar tu compra enviando el comprobante.</p>
+            <p style="font-size: 0.85rem; margin-bottom: 25px;">Haz clic abajo para ir a WhatsApp y finalizar tu compra enviando el comprobante.</p>
             
-            <button class="btn-whatsapp" id="btnGoToWA" style="width: 100%; justify-content: center; font-size: 1rem; padding: 15px;">
-                <i class="fa-brands fa-whatsapp"></i> Ir a WhatsApp Ahora
-            </button>
+            <!-- SPACING WRAPPER PARA EL BOTÓN O BOTONES -->
+            <div id="successButtonsContainer" style="display:flex; flex-direction:column; gap:15px; padding-top: 10px;">
+                <button class="btn-whatsapp" id="btnGoToWA" style="width: 100%; justify-content: center; font-size: 1rem; padding: 15px;">
+                    <i class="fa-brands fa-whatsapp"></i> Ir a WhatsApp Ahora
+                </button>
+            </div>
         </div>
     </div>
 

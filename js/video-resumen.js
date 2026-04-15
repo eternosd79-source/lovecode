@@ -198,11 +198,18 @@ function initVideoResumen() {
             previewBtn.className = 'video-preview-btn';
             previewBtn.innerHTML = '<i class="fa-solid fa-film"></i> Ver Vista Previa de tu Regalo';
             previewBtn.onclick = openVideoPreview;
-            const container = successModal.querySelector('.wizard-container');
-            if (container) {
-                const waBtn = container.querySelector('#btnGoToWA');
-                if (waBtn) container.insertBefore(previewBtn, waBtn);
-                else container.appendChild(previewBtn);
+            
+            // Insertar dentro del nuevo contenedor de botones si existe, sino arriba del boton de WA
+            const btnContainer = successModal.querySelector('#successButtonsContainer');
+            if (btnContainer) {
+                btnContainer.prepend(previewBtn);
+            } else {
+                const container = successModal.querySelector('.wizard-container');
+                if (container) {
+                    const waBtn = container.querySelector('#btnGoToWA');
+                    if (waBtn) container.insertBefore(previewBtn, waBtn);
+                    else container.appendChild(previewBtn);
+                }
             }
         }
     }
