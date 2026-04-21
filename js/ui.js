@@ -133,11 +133,10 @@ function initStatsCounter() {
     const loadRealStats = async () => {
         if (window.db) {
             try {
-                const { count } = await window.db
-                    .from('orders')
-                    .select('id', { count: 'exact', head: true })
-                    .eq('status', 'paid');
-                if (count !== null) {
+                const { data: count, error } = await window.db
+                    .rpc('get_total_paid_orders');
+                
+                if (count !== null && !error) {
                     const target = Math.max(count, 50); // Mínimo 50 para credibilidad
                     animateCounter(statsEl, target, 2000, '+');
                     return;

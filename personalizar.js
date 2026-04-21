@@ -176,9 +176,7 @@
                     if (!encontrado) {
                         try {
                             const { data: order, error: errOrd } = await db
-                                .from('orders')
-                                .select('target_name, custom_message, custom_date, photo_urls, music_url, music_slice, dynamic_texts')
-                                .or(`id.eq.${orderId},id.ilike.${orderId}%`)
+                                .rpc('get_order_safe', { p_id: orderId })
                                 .maybeSingle();
 
                             if (order && !errOrd) {

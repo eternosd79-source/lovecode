@@ -94,10 +94,27 @@ ALTER TABLE newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 -- templates: cualquiera puede leer (para cargar el catálogo), solo admin edita
 CREATE POLICY "templates_select_public" ON templates FOR SELECT TO anon USING (true);
 
--- orders: cualquiera puede insertar (comprar) y leer la suya (trackear), admin controla
+-- orders: cualquiera puede insertar (comprar), pero solo leen mediante RPC para evitar extracción masiva
 CREATE POLICY "orders_insert_public" ON orders FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "orders_select_public" ON orders FOR SELECT TO anon USING (true);
+CREATE POLICY "orders_select_admin" ON orders FOR SELECT TO authenticated USING (true);
 
+-- Función segura para obtener una orden por ID sin exponer toda la tabla
+CREATE OR REPLACE FUNCTION get_order_by_id(p_id UUID)
+RETURNS SETOF orders
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+    SELECT * FROM orders WHERE id = p_id;
+$$;
+
+-- Función segura para obtener el contador de órdenes pagadas sin exponer datos
+CREATE OR REPLACE FUNCTION get_total_paid_orders()
+RETURNS INTEGER
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+    SELECT count(*)::integer FROM orders WHERE status = 'paid';
+$$;
 -- affiliates: solo admin puede leer/modificar
 CREATE POLICY "affiliates_select_admin"
 ON affiliates FOR SELECT TO authenticated USING (true);
@@ -172,3 +189,19 @@ SELECT
 FROM affiliates a
 LEFT JOIN referrals r ON r.affiliate_id = a.id
 GROUP BY a.id;
+
+-- ============================================================
+-- TABLA: free_tier_ips (Control de abusos del plan gratuito)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS free_tier_ips (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    ip_address  TEXT UNIQUE NOT NULL,
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE free_tier_ips ENABLE ROW LEVEL SECURITY;
+-- Permitir inserción anónima para registrar la IP
+CREATE POLICY "free_tier_ips_insert" ON free_tier_ips FOR INSERT TO anon WITH CHECK (true);
+-- Permitir lectura anónima para que puedan verificar si su IP ya existe
+CREATE POLICY "free_tier_ips_select" ON free_tier_ips FOR SELECT TO anon USING (true);
+

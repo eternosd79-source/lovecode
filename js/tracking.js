@@ -118,11 +118,11 @@ function buildExpirationBanner(order) {
 
     const planHours = (function(p) {
         if (!p) return 336;
-        if (p.includes('$0') || /demo|gratis/i.test(p))           return 24;
-        if (p.includes('$3') || /b.?sico/i.test(p))               return 336;
-        if (p.includes('$4.50') || /hub|suscripci/i.test(p))      return 1800;
-        if (p.includes('$5') || /fotograf|personalizado/i.test(p)) return 1800;
-        if (p.includes('$7') || /ultra/i.test(p))                  return 4320;
+        if (p.includes('$0') || /demo|gratis/i.test(p))            return 24;
+        if (p.includes('$1.50') || /b.?sico/i.test(p))               return 336;
+        if (p.includes('$2.50') || /hub|suscripci/i.test(p))      return 1800;
+        if (p.includes('$3') || /fotograf|personalizado/i.test(p)) return 1800;
+        if (p.includes('$4.50') || /ultra/i.test(p))                  return 4320;
         return 336;
     })(order.plan_name);
 
@@ -184,7 +184,8 @@ function renderOrderStatus(order) {
     )}`;
 
     const isPaid    = order.status === 'paid';
-    const isHub     = order.plan_name && order.plan_name.includes('$4.50');
+    const isDemo    = order.plan_name && order.plan_name.includes('$0');
+    const isHub     = order.plan_name && order.plan_name.includes('$2.50');
     const isExpired = order.status === 'expired';
 
     let statusHTML = ``;
@@ -234,7 +235,7 @@ function renderOrderStatus(order) {
 
                     ${buildExpirationBanner(order)}
 
-                    ${order.plan_name && order.plan_name.includes('$7') ? `
+                    ${order.plan_name && order.plan_name.includes('$4.50') ? `
                         <button class="btn-primary" onclick="window.open('${order.zip_url || '#'}')" style="width:100%; justify-content:center; margin-bottom:14px;">
                             <i class="fa-solid fa-file-zipper"></i> Descargar Código Fuente (.zip)
                         </button>

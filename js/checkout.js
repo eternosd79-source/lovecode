@@ -204,7 +204,7 @@ if (btnNext) {
             const grpFloatToggle = document.getElementById('grpFloatImageToggle');
             const msgGratis     = document.getElementById('msgGratisRestriccion');
             
-            if (dataForm.plan.includes("$0") || dataForm.plan.includes("$3")) {
+            if (dataForm.plan.includes("$0") || dataForm.plan.includes("$1.50")) {
                 if (grpTextosBase) grpTextosBase.style.display = 'none';
                 if (grpFloatToggle) grpFloatToggle.style.display = 'none';
                 if (msgGratis)     msgGratis.style.display = 'block';
@@ -214,10 +214,10 @@ if (btnNext) {
                 if (msgGratis)     msgGratis.style.display = 'none';
             }
 
-            if (dataForm.plan.includes("$3") || dataForm.plan.includes("$0")) {
+            if (dataForm.plan.includes("$1.50") || dataForm.plan.includes("$0")) {
                 if (grpMusic)       grpMusic.style.display  = "none";
                 if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye modificaciones de música.";
-            } else if (dataForm.plan.includes("$4.50") || dataForm.plan.includes("$5")) {
+            } else if (dataForm.plan.includes("$2.50") || dataForm.plan.includes("$3")) {
                 if (grpMusic)       grpMusic.style.display  = "none";
                 if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye opciones de música. Solo puedes editar el texto o foto en el paso anterior.";
             } else {
@@ -313,13 +313,13 @@ if (btnTabMundo) {
 // -------------------------------------------------------
 // Helper: duración de plan en horas (usado localmente para display)
 // -------------------------------------------------------
-function getPlanDurationHours(planName) {
+function getPlanHours(planName) {
     if (!planName) return 336;
     if (planName.includes('$0') || /demo|gratis/i.test(planName)) return 24;
-    if (planName.includes('$3') || /básico|basico/i.test(planName))  return 336;
-    if (planName.includes('$4.50') || /hub|membresía/i.test(planName)) return 1800;
-    if (planName.includes('$5') || /fotografías|personalizado/i.test(planName)) return 1800;
-    if (planName.includes('$7') || /ultra/i.test(planName)) return 4320;
+    if (planName.includes('$1.50') || /básico|basico/i.test(planName))  return 336;
+    if (planName.includes('$2.50') || /hub|membresía/i.test(planName)) return 1800;
+    if (planName.includes('$3') || /fotografías|personalizado/i.test(planName)) return 1800;
+    if (planName.includes('$4.50') || /ultra/i.test(planName)) return 4320;
     return 336;
 }
 
@@ -333,6 +333,35 @@ if (btnFinishOrder) {
             alert("Error: No se detectó la plantilla seleccionada. Por favor cierra y vuelve a intentar.");
             return;
         }
+
+        // --- NUEVO: IP BLOCKING PARA FREE TIER ---
+        if (dataForm.plan.includes('$0') || dataForm.plan.toLowerCase().includes('gratis')) {
+            if (localStorage.getItem('free_code_used')) {
+                alert("Ya has utilizado tu código gratuito de 24 horas. Por favor, adquiere un plan para continuar apoyando el proyecto.");
+                return;
+            }
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const ipData = await res.json();
+                const ip = ipData.ip;
+                
+                if (window.db) {
+                    const { data: ipCheck } = await window.db.from('free_tier_ips').select('ip_address').eq('ip_address', ip).maybeSingle();
+                    if (ipCheck) {
+                        localStorage.setItem('free_code_used', 'true');
+                        alert("Esta dirección IP ya ha generado un código gratuito previamente. Por favor, adquiere un plan premium.");
+                        return;
+                    }
+                    // Insertar la nueva IP
+                    await window.db.from('free_tier_ips').insert([{ ip_address: ip }]);
+                }
+                localStorage.setItem('free_code_used', 'true');
+            } catch (e) {
+                console.warn("No se pudo validar la IP, continuando de forma local...", e);
+                localStorage.setItem('free_code_used', 'true');
+            }
+        }
+        // --- FIN IP BLOCKING ---
 
         const tempId = "LC-" + Math.random().toString(36).substr(2, 6).toUpperCase();
         let price = 0;
@@ -371,7 +400,7 @@ if (btnFinishOrder) {
 
                 // Guardamos plan_duration_hours como referencia informativa.
                 // El campo expires_at real lo calcula el trigger de Supabase al aprobar.
-                const planHours = getPlanDurationHours(dataForm.plan);
+                const planHours = getPlanHours(dataForm.plan);
 
                 const orderData = {
                     customer_name:   dataForm.destino || "Cliente Web",
@@ -464,8 +493,8 @@ function processFinalOrder(order, isOffline = false) {
         }).catch(err => console.warn('[Email] Error al disparar email:', err));
     }
 
-    // --- Crear cuenta de afiliado si compran Membresía Hub ---
-    if (dataForm.plan.includes('$4.50') && typeof createOrGetAffiliate === 'function' && !isOffline) {
+    // --- Crear cuenta de afiliado si compran Membresía Hub ($2.50) ---
+    if (dataForm.plan.includes('$2.50') && typeof createOrGetAffiliate === 'function' && !isOffline) {
         createOrGetAffiliate(order.id, order.customer_name || 'LC');
     }
 

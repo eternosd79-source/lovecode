@@ -326,10 +326,10 @@
     function getPlanInfo(planName = '') {
         if (!planName) return PLAN_DURATIONS.basic;
         if (planName.includes('$0') || planName.toLowerCase().includes('demo') || planName.toLowerCase().includes('gratis')) return PLAN_DURATIONS.demo;
-        if (planName.includes('$3') || planName.toLowerCase().includes('básico') || planName.toLowerCase().includes('basico')) return PLAN_DURATIONS.basic;
-        if (planName.includes('$4.50') || planName.toLowerCase().includes('hub') || planName.toLowerCase().includes('suscripción')) return PLAN_DURATIONS.hub;
-        if (planName.includes('$5') || planName.toLowerCase().includes('fotografías') || planName.toLowerCase().includes('personalizado')) return PLAN_DURATIONS.photo;
-        if (planName.includes('$7') || planName.toLowerCase().includes('ultra')) return PLAN_DURATIONS.ultra;
+        if (planName.includes('$1.50') || planName.toLowerCase().includes('básico') || planName.toLowerCase().includes('basico')) return PLAN_DURATIONS.basic;
+        if (planName.includes('$2.50') || planName.toLowerCase().includes('hub') || planName.toLowerCase().includes('suscripción')) return PLAN_DURATIONS.hub;
+        if (planName.includes('$3') || planName.toLowerCase().includes('fotografías') || planName.toLowerCase().includes('personalizado')) return PLAN_DURATIONS.photo;
+        if (planName.includes('$4.50') || planName.toLowerCase().includes('ultra')) return PLAN_DURATIONS.ultra;
         return PLAN_DURATIONS.basic;
     }
 

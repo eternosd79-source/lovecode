@@ -1,6 +1,6 @@
 // ============================================================
 // CORAZÓNCÓDIGO — AFFILIATES.JS
-// Sistema completo de afiliados para Membresía Hub ($4.50)
+// Sistema completo de afiliados para Membresía Hub ($2.50)
 // 
 // Flujo:
 //   1. Cliente compra Membresía Hub → se crea registro en 'affiliates'
@@ -169,7 +169,7 @@ async function renderAffiliateDashboard(orderId) {
             </div>
             <p style="font-size:0.75rem; color:var(--color-dim); margin-top:12px;">
                 <i class="fa-solid fa-circle-info"></i>
-                Los pagos de comisiones se realizan vía WhatsApp al acumular $5+ en ganancias.
+                Los pagos de comisiones se realizan vía WhatsApp al acumular $3+ en ganancias.
                 <a href="https://wa.me/${CONFIG?.whatsappNumber || '593990480389'}?text=Hola%20CorazónCódigo!%20Quiero%20cobrar%20mis%20comisiones%20de%20afiliado." 
                    target="_blank" style="color:var(--accent-cyan); text-decoration:none;">
                    Solicitar pago →

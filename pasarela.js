@@ -25,7 +25,7 @@ const orderId = urlParams.get('orderId');
 document.getElementById('lblPlantilla').innerText = template;
 document.getElementById('lblPlan').innerText = plan;
 
-const isSourceCodePlan = plan.includes('$7');
+const isSourceCodePlan = plan.includes('$4.50');
 
 // Mostrar aviso si es plan de $7 que incluye descarga
 if (isSourceCodePlan) {
