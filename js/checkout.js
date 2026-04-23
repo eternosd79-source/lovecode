@@ -98,6 +98,19 @@ function openCheckoutWizard(templateName) {
         if (basicRadio) basicRadio.checked = true;
     }
 
+    // Listener dinámico: mostrar/ocultar panel Ultra Benefit
+    document.querySelectorAll('input[name="planType"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const grpUltra = document.getElementById('grpUltraBenefit');
+            if (grpUltra) {
+                grpUltra.style.display = radio.value.includes('$4.50') ? 'block' : 'none';
+            }
+        });
+    });
+    // Reset estado del panel al abrir
+    const grpUltraInit = document.getElementById('grpUltraBenefit');
+    if (grpUltraInit) grpUltraInit.style.display = 'none';
+
     resetWizard();
     if (modal) modal.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -196,6 +209,10 @@ if (btnNext) {
             let selectedRadio = document.querySelector('input[name="planType"]:checked');
             if (!selectedRadio) { alert("Por favor selecciona un plan para continuar."); return; }
             dataForm.plan = selectedRadio.value;
+
+            // Capturar beneficio Ultra si aplica
+            const ultraBenefitRadio = document.querySelector('input[name="ultraBenefit"]:checked');
+            dataForm.ultraBenefit = ultraBenefitRadio ? ultraBenefitRadio.value : 'zip';
 
             const grpDate = document.getElementById('grpDate');
             if (grpDate) grpDate.style.display = (activeTemplateInfo && activeTemplateInfo.hasDate) ? "block" : "none";
@@ -476,7 +493,7 @@ if (btnFinishOrder) {
                     music_url:       dataForm.musicUrl || "",
                     music_start:     parseInt(dataForm.musicStart)    || 0,
                     music_duration:  parseInt(dataForm.musicDuration) || 30,
-                    dynamic_texts:   dynamicTexts,
+                    dynamic_texts:   { ...dynamicTexts, ultra_benefit: dataForm.ultraBenefit || 'zip' },
                     status:          'pending'
                     // expires_at: lo establece el trigger en Supabase al cambiar status → 'paid'
                 };

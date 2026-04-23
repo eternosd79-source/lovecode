@@ -581,7 +581,7 @@ function renderCatalog(filter = 'all') {
                             <button class="btn-qr-direct" data-id="${item.id}" data-name="${item.name}" style="background:white; color:black; border:none; padding:10px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-qrcode"></i></button>
                         </div>
                     ` : `
-                        <button class="btn-comprar" data-id="${item.id}" data-name="${item.name}"><i class="fa-solid fa-cart-shopping"></i> Comprar / Configurar</button>
+                        <button class="btn-comprar" data-id="${item.id}" data-name="${item.name}"><i class="fa-solid fa-wand-magic-sparkles"></i> Comenzar a crear magia</button>
                     `}
                 </div>
             </div>

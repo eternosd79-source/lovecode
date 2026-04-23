@@ -214,16 +214,40 @@ function renderOrderStatus(order) {
 
     } else if (isExpired) {
         statusHTML = `
-            <div class="product-card" style="margin:0 auto;max-width:400px;text-align:left;animation:floatUp 0.5s ease-out backwards;">
-                <div class="card-content" style="padding:24px;">
-                    <h3 style="margin:0 0 6px;font-size:1.2rem;">${order.template_name || 'Regalo Experiencia'}</h3>
-                    <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:18px;">Orden #${displayId}</p>
-                    ${buildExpirationBanner(order)}
-                </div>
-            </div>`;
-
-    } else {
+             } else {
         // Tarjeta VIP para pedidos pagados y activos
+        const isUltra  = order.plan_name && order.plan_name.includes('$4.50');
+        const benefit  = (order.dynamic_texts && order.dynamic_texts.ultra_benefit) || 'zip';
+
+        let ultraBlock = '';
+        if (isUltra && benefit === 'hosting') {
+            ultraBlock = `
+                <div style="margin-bottom:14px;padding:12px;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.3);border-radius:10px;text-align:center;">
+                    <i class="fa-solid fa-infinity" style="color:var(--accent-cyan);font-size:1.5rem;"></i>
+                    <p style="margin:6px 0 0;color:var(--accent-cyan);font-weight:700;">Hosting Extendido Activo</p>
+                    <p style="margin:2px 0;font-size:0.8rem;color:var(--color-dim);">Tu regalo estar\u00e1 en l\u00ednea durante 9 meses 💜</p>
+                </div>`;
+        } else if (isUltra) {
+            ultraBlock = `
+                <button class="btn-primary" onclick="window.open('${order.zip_url || '#'}')" style="width:100%; justify-content:center; margin-bottom:14px;">
+                    <i class="fa-solid fa-file-zipper"></i> Descargar C\u00f3digo Fuente (.zip)
+                </button>`;
+        } else {
+            ultraBlock = `
+                <div class="final-link-box" style="margin-bottom: 14px; border-color:var(--accent-cyan);">
+                    <input type="text" readonly value="${fullLink}" id="finalLink" style="font-size:0.8rem;">
+                    <button onclick="copyLink()" title="Copiar"><i class="fa-solid fa-copy"></i></button>
+                </div>
+                <div class="card-actions" style="display:flex; gap:10px; margin-bottom: 12px;">
+                    <button class="btn-primary" onclick="window.open('${fullLink}','_blank')" style="flex:1; justify-content:center;">
+                        <i class="fa-solid fa-eye"></i> Abrir Link
+                    </button>
+                    <button class="btn-secondary" onclick="openQRModal('${fullLink}')" style="width:50px; padding:0; justify-content:center; flex-shrink:0;" title="Ver C\u00f3digo QR">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </button>
+                </div>`;
+        }
+
         statusHTML = `
             <div class="product-card" style="margin: 0 auto; max-width: 400px; text-align: left; animation: floatUp 0.6s ease-out backwards;">
                 <div class="card-image" id="tracking-card-img" style="position:relative; height: 180px; overflow: hidden; border-radius: 12px 12px 0 0;">
@@ -231,28 +255,11 @@ function renderOrderStatus(order) {
                 </div>
                 <div class="card-content" style="padding: 20px;">
                     <h3 class="card-title" style="margin:0 0 6px; font-size:1.2rem;">${order.template_name || 'Regalo Experiencia'}</h3>
-                    <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:14px;">Orden: #${displayId} · ${(order.plan_name || '').split('(')[0].trim()}</p>
+                    <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:14px;">Orden: #${displayId} \u00b7 ${(order.plan_name || '').split('(')[0].trim()}</p>
 
                     ${buildExpirationBanner(order)}
 
-                    ${order.plan_name && order.plan_name.includes('$4.50') ? `
-                        <button class="btn-primary" onclick="window.open('${order.zip_url || '#'}')" style="width:100%; justify-content:center; margin-bottom:14px;">
-                            <i class="fa-solid fa-file-zipper"></i> Descargar Código Fuente (.zip)
-                        </button>
-                    ` : `
-                        <div class="final-link-box" style="margin-bottom: 14px; border-color:var(--accent-cyan);">
-                            <input type="text" readonly value="${fullLink}" id="finalLink" style="font-size:0.8rem;">
-                            <button onclick="copyLink()" title="Copiar"><i class="fa-solid fa-copy"></i></button>
-                        </div>
-                        <div class="card-actions" style="display:flex; gap:10px; margin-bottom: 12px;">
-                            <button class="btn-primary" onclick="window.open('${fullLink}','_blank')" style="flex:1; justify-content:center;">
-                                <i class="fa-solid fa-eye"></i> Abrir Link
-                            </button>
-                            <button class="btn-secondary" onclick="openQRModal('${fullLink}')" style="width:50px; padding:0; justify-content:center; flex-shrink:0;" title="Ver Código QR">
-                                <i class="fa-solid fa-qrcode"></i>
-                            </button>
-                        </div>
-                    `}
+                    ${ultraBlock}
                 </div>
             </div>`;
     }

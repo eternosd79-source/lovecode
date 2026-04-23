@@ -510,6 +510,7 @@
                     <td>
                         <span style="font-size:0.8rem;color:${planInfo.color};font-weight:600;">${planInfo.label}</span><br>
                         <span style="font-size:0.72rem;color:var(--color-dim);">${(order.plan_name || '').split('(')[0].trim()}</span>
+                        ${(order.plan_name || '').includes('$4.50') || (order.plan_name || '').toLowerCase().includes('ultra') ? `<br><span style="font-size:0.7rem;padding:2px 6px;border-radius:8px;background:rgba(6,182,212,0.15);color:var(--accent-cyan);">${((order.dynamic_texts && order.dynamic_texts.ultra_benefit) === 'hosting') ? '⏳ +3 Meses' : '📦 ZIP'}</span>` : ''}
                     </td>
                     <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
                     <td>${timeHTML}</td>
@@ -528,23 +529,34 @@
         if (!client) { alert('Sin conexión a la base de datos.'); return; }
 
         const order = allOrders.find(o => o.id === id);
-        let zipUrl = null;
+        const updateData = { status: 'paid' };
+
         if (order && order.plan_name && (order.plan_name.includes('$4.50') || order.plan_name.includes('Ultra'))) {
-            zipUrl = prompt('Has aprobado un plan Ultra Premium ($4.50).\nPor favor, ingresa el enlace de descarga (Google Drive, Mega, etc.) del código fuente (.zip) para este cliente:');
-            if (zipUrl === null) {
-                // Canceló el prompt
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Aprobar';
-                return;
+            const benefit = (order.dynamic_texts && order.dynamic_texts.ultra_benefit) || 'zip';
+
+            if (benefit === 'hosting') {
+                // El cliente eligió 9 meses — el trigger pone 6 meses, nosotros sumamos 3 meses más (90 días)
+                // expires_at = NOW() + 9 meses — lo manejamos manualmente aquí
+                const nineMonthsFromNow = new Date();
+                nineMonthsFromNow.setDate(nineMonthsFromNow.getDate() + 273); // 9 meses ≈ 273 días
+                updateData.expires_at = nineMonthsFromNow.toISOString();
+                updateData.zip_url = null;
+                alert('✅ Plan extendido a 9 meses de hosting. No se entregará archivo ZIP.');
+            } else {
+                // El cliente eligió ZIP
+                const zipUrl = prompt('📦 Cliente eligió CÓDIGO FUENTE (ZIP).\nPega aquí el enlace de descarga (Google Drive / Mega):');
+                if (zipUrl === null) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Aprobar';
+                    return;
+                }
+                if (zipUrl.trim()) updateData.zip_url = zipUrl.trim();
             }
         }
 
-        const updateData = { status: 'paid' };
-        if (zipUrl) updateData.zip_url = zipUrl.trim();
-
         const { error } = await client
             .from('orders')
-            .update(updateData)   // El trigger SQL calculará expires_at automáticamente
+            .update(updateData)   // El trigger SQL calculará expires_at si no lo pusimos manualmente
             .eq('id', id);
 
         if (error) {
