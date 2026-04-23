@@ -204,12 +204,38 @@
                     <i class="fa-solid fa-ticket"></i> Códigos de Compra Pre-Pagados
                 </h3>
                 <p style="font-size:0.78rem;color:var(--color-dim);margin-bottom:16px;">
-                    Genera un código único que el cliente ingresa en la tienda como forma de pago, válido para <strong style="color:white;">cualquier plan</strong>. El cliente elige su plantilla y usa el código en vez de pagar con banco.
+                    Genera códigos atados a una <strong>plantilla</strong> y un <strong>plan</strong> específico. El cliente usará el código en el checkout sin pagar con banco.
                 </p>
 
+                <!-- Selección de Plantilla (Las 31 visuales) -->
+                <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:10px;">1. Selecciona la Plantilla:</p>
+                <div id="adminCatalogContainer" style="display:flex;gap:15px;overflow-x:auto;padding-bottom:10px;margin-bottom:20px;scrollbar-width:thin;scrollbar-color:var(--accent-purple) rgba(255,255,255,0.05);">
+                    <!-- Se llena con JS -->
+                </div>
+
+                <!-- Selección del Plan -->
+                <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:10px;">2. Selecciona el Plan de Precio:</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+                    <label id="planCardBasic" style="cursor:pointer;border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;text-align:center;background:rgba(255,255,255,0.02);transition:all 0.2s;">
+                        <input type="radio" name="codePlan" value="basico" style="display:none;" checked>
+                        <span style="font-weight:700;color:white;display:block;">Básico</span>
+                        <span style="font-size:0.7rem;color:var(--color-dim);">$1.50</span>
+                    </label>
+                    <label id="planCardCustom" style="cursor:pointer;border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;text-align:center;background:rgba(255,255,255,0.02);transition:all 0.2s;">
+                        <input type="radio" name="codePlan" value="personalizado" style="display:none;">
+                        <span style="font-weight:700;color:white;display:block;">Personalizado</span>
+                        <span style="font-size:0.7rem;color:var(--color-dim);">$3.00</span>
+                    </label>
+                    <label id="planCardUltra" style="cursor:pointer;border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;text-align:center;background:rgba(255,255,255,0.02);transition:all 0.2s;">
+                        <input type="radio" name="codePlan" value="ultra" style="display:none;">
+                        <span style="font-weight:700;color:white;display:block;">Ultra Premium</span>
+                        <span style="font-size:0.7rem;color:var(--color-dim);">$4.50</span>
+                    </label>
+                </div>
+
                 <!-- Selección visual de origen -->
-                <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:10px;">¿Quién entrega el código?</p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+                <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:10px;">3. ¿Quién entrega el código?</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
                     <label id="originCardDennis" style="cursor:pointer;border:2px solid var(--accent-purple);border-radius:12px;padding:14px;text-align:center;background:rgba(192,38,211,0.15);transition:all 0.2s;">
                         <input type="radio" name="codeOrigin" value="DENNIS" style="display:none;" checked>
                         <i class="fa-solid fa-user-tie" style="font-size:1.6rem;color:var(--accent-purple);display:block;margin-bottom:6px;"></i>
@@ -654,6 +680,24 @@
             }).join('');
         }
 
+        // ── Construir cuadrícula visual de 31 códigos ──
+        const adminCatalog = document.getElementById('adminCatalogContainer');
+        if (adminCatalog) {
+            window.selectedPromoTemplateId = catalogData[0].id; // default
+            adminCatalog.innerHTML = catalogData.map(item => {
+                const bg = item.preview ? `url('${item.preview}')` : 'none';
+                return `<div class="admin-catalog-card" data-id="${item.id}" onclick="selectAdminCatalogCard('${item.id}')" style="
+                    min-width: 140px; height: 100px; border-radius: 12px; cursor: pointer;
+                    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), ${bg} center/cover;
+                    border: 2px solid ${item.id === window.selectedPromoTemplateId ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)'};
+                    display: flex; flex-direction: column; justify-content: flex-end; padding: 10px;
+                    opacity: ${item.id === window.selectedPromoTemplateId ? '1' : '0.5'}; transition: all 0.2s;
+                ">
+                    <span style="font-weight:700;font-size:0.75rem;text-align:center;color:white;text-shadow:0 2px 4px rgba(0,0,0,0.8);">${item.name}</span>
+                </div>`;
+            }).join('');
+        }
+
         // ── Toggle visual Dennis / Delifrozen ──
         const cardDennis = document.getElementById('originCardDennis');
         const cardDeli   = document.getElementById('originCardDeli');
@@ -715,9 +759,40 @@
         if (content && content.style.display !== 'none') loadOrders();
     }, 120_000);
 
+    // Funciones para la UI de códigos pre-pagados
+    window.selectAdminCatalogCard = function(id) {
+        window.selectedPromoTemplateId = id;
+        document.querySelectorAll('.admin-catalog-card').forEach(card => {
+            const isSelected = card.getAttribute('data-id') === id;
+            card.style.borderColor = isSelected ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)';
+            card.style.opacity = isSelected ? '1' : '0.5';
+        });
+    }
+
+    function updatePlanCards() {
+        const plans = ['Basic', 'Custom', 'Ultra'];
+        plans.forEach(p => {
+            const card = document.getElementById('planCard' + p);
+            if (card) {
+                const isSel = card.querySelector('input').checked;
+                card.style.borderColor = isSel ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)';
+                card.style.background = isSel ? 'rgba(192,38,211,0.15)' : 'rgba(255,255,255,0.02)';
+            }
+        });
+    }
+    document.querySelectorAll('input[name="codePlan"]').forEach(r => r.addEventListener('change', updatePlanCards));
+    // updatePlanCards se llama en initPromoGenerator o aquí directamente
+    setTimeout(updatePlanCards, 500);
+
     async function generatePhysicalPromoCodes() {
         const originRadio = document.querySelector('input[name="codeOrigin"]:checked');
         const origin = originRadio ? originRadio.value : 'DENNIS';
+        
+        const planRadio = document.querySelector('input[name="codePlan"]:checked');
+        const planName = planRadio ? planRadio.value : 'basico';
+        
+        const templateId = window.selectedPromoTemplateId || 'boulevard';
+        
         const amount = parseInt(document.getElementById('promoCodeAmount').value) || 1;
 
         if (amount < 1 || amount > 50) return alert('Cantidad debe ser entre 1 y 50');
@@ -737,7 +812,10 @@
         const resultEl  = document.getElementById('promoPhysicalResult');
         const statusEl  = document.getElementById('promoCodeStatus');
 
-        listEl.value = generatedCodes.join('\n');
+        // Mostrar un resumen de lo que significa este código
+        const headerInfo = `[Plantilla: ${templateId.toUpperCase()} | Plan: ${planName.toUpperCase()}]\n`;
+        listEl.value = headerInfo + generatedCodes.join('\n');
+        
         resultEl.style.display = 'block';
         if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando en base de datos...';
         resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -746,11 +824,16 @@
         const client = adminSupabase || window.db;
         if (client) {
             try {
-                const rows = generatedCodes.map(code => ({ code, origin }));
+                const rows = generatedCodes.map(code => ({ 
+                    code, 
+                    origin,
+                    template_id: templateId,
+                    plan_name: planName
+                }));
                 const { error } = await client.from('promo_codes').insert(rows);
                 if (statusEl) {
                     if (error) {
-                        statusEl.innerHTML = `<span style="color:#f87171;"><i class="fa-solid fa-triangle-exclamation"></i> No se pudo guardar en BD: ${error.message}. Los códigos son válidos si los añades manualmente.</span>`;
+                        statusEl.innerHTML = `<span style="color:#f87171;"><i class="fa-solid fa-triangle-exclamation"></i> No se pudo guardar en BD: ${error.message}. Asegúrate de haber actualizado Supabase con las columnas template_id y plan_name.</span>`;
                     } else {
                         statusEl.innerHTML = '<span style="color:#34d399;"><i class="fa-solid fa-circle-check"></i> Guardados y activos en la plataforma.</span>';
                     }

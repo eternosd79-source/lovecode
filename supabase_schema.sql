@@ -228,6 +228,8 @@ CREATE POLICY "free_tier_ips_select" ON free_tier_ips FOR SELECT TO anon USING (
 CREATE TABLE IF NOT EXISTS promo_codes (
     code        TEXT PRIMARY KEY,
     origin      TEXT NOT NULL DEFAULT 'admin', -- 'dennis', 'delifrozen', etc.
+    template_id TEXT, -- ID de la plantilla para la que es válido (opcional o obligatorio según el admin)
+    plan_name   TEXT, -- Plan asignado (Básico, Personalizado, Ultra)
     is_used     BOOLEAN DEFAULT false,
     used_by     UUID REFERENCES orders(id),
     created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
