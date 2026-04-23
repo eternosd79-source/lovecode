@@ -210,6 +210,13 @@ if (btnNext) {
             if (!selectedRadio) { alert("Por favor selecciona un plan para continuar."); return; }
             dataForm.plan = selectedRadio.value;
 
+            // Membresía Hub → va directo a WhatsApp
+            if (dataForm.plan.includes("$2.50") || dataForm.plan.toLowerCase().includes("hub")) {
+                const waMsg = encodeURIComponent("Hola CorazónCódigo! Quiero formar parte del grupo CorazónCódigo (Membresía Hub $2.50) 💖");
+                window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${waMsg}`, '_blank');
+                return;
+            }
+
             // Capturar beneficio Ultra si aplica
             const ultraBenefitRadio = document.querySelector('input[name="ultraBenefit"]:checked');
             dataForm.ultraBenefit = ultraBenefitRadio ? ultraBenefitRadio.value : 'zip';

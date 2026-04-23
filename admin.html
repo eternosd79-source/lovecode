@@ -172,65 +172,79 @@
         <!-- ── Generador de Promoción ── -->
         <div style="margin-top:50px;background:rgba(0,0,0,0.25);padding:28px;border-radius:16px;border:1px solid rgba(255,255,255,0.05);">
             <h2 class="neon-cyan"><i class="fa-solid fa-bullhorn"></i> Generador de Promoción</h2>
-            <p style="color:var(--color-dim);margin-bottom:20px;">Genera links directos y códigos para promocionar tus experiencias.</p>
-            
-            <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:40px;">
-                <!-- PROMO DIGITAL -->
-                <div style="flex:1;min-width:280px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;">
-                    <h3 style="margin-top:0;font-size:1.1rem;color:white;"><i class="fa-solid fa-link"></i> Enlace Digital (Gratuito)</h3>
-                    <p style="font-size:0.8rem;color:var(--color-dim);margin-bottom:15px;">Ideal para enviar por WhatsApp la plantilla gratuita semanal.</p>
-                    
-                    <div style="background:rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-                        <span style="font-size: 0.8rem; color: var(--color-dim);">Semana Actual: Plantilla Gratuita Activa</span><br>
-                        <strong class="neon-cyan" id="currentFreeTemplateName" style="font-size: 1.1rem;">Cargando...</strong>
-                    </div>
+            <p style="color:var(--color-dim);margin-bottom:24px;">Gestiona los regalos gratuitos semanales y genera códigos de compra pre-pagados.</p>
 
-                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Selecciona el Código:</label>
-                    <select id="promoTemplateSelect" class="form-input" style="margin-bottom:16px;"></select>
-                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Para quién (opcional):</label>
-                    <input type="text" id="promoTargetName" placeholder="Ej: Dani" class="form-input" style="margin-bottom:16px;">
-                    <button class="btn-primary" onclick="generatePromo()" style="width:100%;">
-                        <i class="fa-solid fa-qrcode"></i> Generar QR y Link
-                    </button>
+            <!-- ══ SECCIÓN 1: REGALO GRATUITO SEMANAL ══ -->
+            <div style="background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.2);border-radius:14px;padding:20px;margin-bottom:30px;">
+                <h3 style="margin-top:0;font-size:1rem;color:var(--accent-cyan);margin-bottom:5px;">
+                    <i class="fa-solid fa-gift"></i> Regalo Gratuito de la Semana
+                </h3>
+                <p style="font-size:0.78rem;color:var(--color-dim);margin-bottom:16px;">Solo 1 plantilla está activa por semana. Las otras 3 estarán bloqueadas hasta que les toque su turno.</p>
+
+                <div id="freeTemplateCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
+                    <!-- Se llenan desde JS -->
                 </div>
 
-                <!-- PROMO FISICA -->
-                <div style="flex:1;min-width:280px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;">
-                    <h3 style="margin-top:0;font-size:1.1rem;color:var(--accent-purple);"><i class="fa-solid fa-ticket"></i> Códigos Físicos (Pre-Pagados)</h3>
-                    <p style="font-size:0.8rem;color:var(--color-dim);margin-bottom:15px;">Genera códigos que la gente puede canjear en la web para que su regalo salga a $0.</p>
-                    
-                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Origen (Quién lo vende):</label>
-                    <select id="promoCodeOrigin" class="form-input" style="margin-bottom:16px;">
-                        <option value="DELI">Heladería Delifrozen (DELI-XXXX)</option>
-                        <option value="DENNIS">Promotor Dennis (DENNIS-XXXX)</option>
-                    </select>
-
-                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Cantidad a generar:</label>
-                    <input type="number" id="promoCodeAmount" value="5" min="1" max="50" class="form-input" style="margin-bottom:16px;">
-
-                    <button class="btn-secondary" onclick="generatePhysicalPromoCodes()" style="width:100%;border-color:var(--accent-purple);color:var(--accent-purple);">
-                        <i class="fa-solid fa-gears"></i> Crear Códigos
-                    </button>
-                </div>
-            </div>
-
-            <!-- RESULTADOS PROMO DIGITAL -->
-                    <h4 id="promoTitle" style="margin-bottom:15px;"></h4>
-                    <div id="qrcode" style="background:#fff;padding:15px;display:inline-block;border-radius:8px;margin-bottom:15px;"></div>
-                    <button class="btn-secondary" onclick="downloadQR()" style="width:100%;border-color:#10b981;color:#10b981;margin-bottom:12px;">
+                <div id="promoResult" style="background:rgba(255,255,255,0.02);padding:16px;border-radius:10px;display:none;text-align:center;margin-top:12px;">
+                    <h4 id="promoTitle" style="margin-bottom:12px;font-size:0.95rem;"></h4>
+                    <div id="qrcode" style="background:#fff;padding:12px;display:inline-block;border-radius:8px;margin-bottom:12px;"></div>
+                    <button class="btn-secondary" onclick="downloadQR()" style="width:100%;border-color:#10b981;color:#10b981;margin-bottom:10px;">
                         <i class="fa-solid fa-download"></i> Descargar QR
                     </button>
                     <div class="final-link-box">
-                        <input type="text" id="promoLink" readonly class="form-input" style="font-size:0.8rem;">
+                        <input type="text" id="promoLink" readonly class="form-input" style="font-size:0.78rem;">
                         <button onclick="copyPromoLink()"><i class="fa-solid fa-copy"></i></button>
                     </div>
                 </div>
-            <!-- RESULTADOS PROMO FÍSICA -->
-            <div id="promoPhysicalResult" style="margin-top:20px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;display:none;">
-                <h4 style="margin-top:0;color:var(--accent-purple);"><i class="fa-solid fa-list-check"></i> Códigos Generados</h4>
-                <p style="font-size:0.8rem;color:var(--color-dim);margin-bottom:15px;">Copia y guarda estos códigos. Ya son válidos en la plataforma.</p>
-                <textarea id="promoPhysicalList" readonly class="form-input" style="height:150px;font-family:monospace;font-size:1rem;margin-bottom:10px;resize:none;"></textarea>
-                <button onclick="copyPhysicalCodes()" class="btn-primary" style="width:100%;"><i class="fa-solid fa-copy"></i> Copiar Lista</button>
+            </div>
+
+            <!-- ══ SECCIÓN 2: CÓDIGOS PRE-PAGADOS ══ -->
+            <div style="background:rgba(192,38,211,0.05);border:1px solid rgba(192,38,211,0.2);border-radius:14px;padding:20px;">
+                <h3 style="margin-top:0;font-size:1rem;color:var(--accent-purple);margin-bottom:5px;">
+                    <i class="fa-solid fa-ticket"></i> Códigos de Compra Pre-Pagados
+                </h3>
+                <p style="font-size:0.78rem;color:var(--color-dim);margin-bottom:16px;">
+                    Genera un código único que el cliente ingresa en la tienda como forma de pago, válido para <strong style="color:white;">cualquier plan</strong>. El cliente elige su plantilla y usa el código en vez de pagar con banco.
+                </p>
+
+                <!-- Selección visual de origen -->
+                <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:10px;">¿Quién entrega el código?</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+                    <label id="originCardDennis" style="cursor:pointer;border:2px solid var(--accent-purple);border-radius:12px;padding:14px;text-align:center;background:rgba(192,38,211,0.15);transition:all 0.2s;">
+                        <input type="radio" name="codeOrigin" value="DENNIS" style="display:none;" checked>
+                        <i class="fa-solid fa-user-tie" style="font-size:1.6rem;color:var(--accent-purple);display:block;margin-bottom:6px;"></i>
+                        <span style="font-weight:700;color:white;display:block;">Dennis</span>
+                        <span style="font-size:0.72rem;color:var(--color-dim);">Promotor directo</span>
+                    </label>
+                    <label id="originCardDeli" style="cursor:pointer;border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,0.02);transition:all 0.2s;">
+                        <input type="radio" name="codeOrigin" value="DELI" style="display:none;">
+                        <i class="fa-solid fa-ice-cream" style="font-size:1.6rem;color:#a78bfa;display:block;margin-bottom:6px;"></i>
+                        <span style="font-weight:700;color:white;display:block;">Delifrozen</span>
+                        <span style="font-size:0.72rem;color:var(--color-dim);">Heladería aliada</span>
+                    </label>
+                </div>
+
+                <div style="display:flex;gap:12px;align-items:flex-end;">
+                    <div style="flex:1;">
+                        <label style="display:block;margin-bottom:6px;color:var(--color-dim);font-size:0.82rem;">Cantidad a generar:</label>
+                        <input type="number" id="promoCodeAmount" value="1" min="1" max="50" class="form-input">
+                    </div>
+                    <button class="btn-primary" onclick="generatePhysicalPromoCodes()" style="padding:12px 20px;background:linear-gradient(135deg,#7c3aed,#c026d3);border:none;white-space:nowrap;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generar
+                    </button>
+                </div>
+
+                <!-- Resultado -->
+                <div id="promoPhysicalResult" style="margin-top:16px;background:rgba(255,255,255,0.02);padding:16px;border-radius:10px;display:none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <h4 style="margin:0;color:var(--accent-purple);font-size:0.9rem;"><i class="fa-solid fa-list-check"></i> Códigos Generados</h4>
+                        <button onclick="copyPhysicalCodes()" class="btn-primary" style="padding:6px 14px;font-size:0.8rem;background:var(--accent-purple);border:none;">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <p style="font-size:0.75rem;color:var(--color-dim);margin-bottom:10px;">Entrega estos códigos a los clientes. Cada uno puede usarse una sola vez en cualquier plan de la tienda.</p>
+                    <textarea id="promoPhysicalList" readonly class="form-input" style="height:120px;font-family:monospace;font-size:1rem;resize:none;letter-spacing:1px;"></textarea>
+                </div>
             </div>
         </div>
     </div><!-- /adminContent -->
@@ -600,45 +614,83 @@
     // GENERADOR DE PROMOCIÓN
     // ============================================================
     function initPromoGenerator() {
-        const select = document.getElementById('promoTemplateSelect');
-        if (!select) return;
         if (typeof catalogData === 'undefined' || catalogData.length === 0) {
             setTimeout(initPromoGenerator, 600);
             return;
         }
 
-        // Determinar plantilla gratuita de la semana
+        // ── Calcular semana y plantilla activa ──
         const freeCandidates = ['latido', 'corazon3d', 'neon', 'cometa'];
-        const weekNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
-        const activeFreeId = freeCandidates[weekNumber % freeCandidates.length];
-        const activeItem = catalogData.find(item => item.id === activeFreeId);
-        
-        const labelFree = document.getElementById('currentFreeTemplateName');
-        if (labelFree && activeItem) {
-            labelFree.innerText = activeItem.name.toUpperCase();
+        const weekNumber     = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+        const activeFreeId   = freeCandidates[weekNumber % freeCandidates.length];
+        const activeItem     = catalogData.find(i => i.id === activeFreeId);
+
+        // ── Construir tarjetas de plantillas gratuitas ──
+        const container = document.getElementById('freeTemplateCards');
+        if (container) {
+            container.innerHTML = freeCandidates.map(id => {
+                const item    = catalogData.find(i => i.id === id);
+                const name    = item ? item.name : id;
+                const isActive = id === activeFreeId;
+                const weekIdx = freeCandidates.indexOf(id);
+                const weeksUntil = ((weekIdx - (weekNumber % 4)) + 4) % 4;
+                const lockLabel  = weeksUntil === 0 ? '' : `en ${weeksUntil} semana${weeksUntil > 1 ? 's' : ''}`;
+
+                return `<div onclick="${isActive ? `generatePromoForId('${id}')` : ''}" style="
+                    border:2px solid ${isActive ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.1)'};
+                    border-radius:12px; padding:14px; text-align:center; position:relative;
+                    background:${isActive ? 'rgba(6,182,212,0.1)' : 'rgba(255,255,255,0.02)'};
+                    cursor:${isActive ? 'pointer' : 'default'};
+                    opacity:${isActive ? '1' : '0.5'};
+                    transition:all 0.2s;
+                ">
+                    ${isActive ? '<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent-cyan);color:#000;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;">ACTIVA ESTA SEMANA</span>' 
+                               : `<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.15);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:20px;white-space:nowrap;">🔒 ${lockLabel}</span>`}
+                    <i class="fa-solid ${isActive ? 'fa-gift' : 'fa-lock'}" style="font-size:1.4rem;color:${isActive ? 'var(--accent-cyan)' : 'var(--color-dim)'};display:block;margin:8px 0 4px;"></i>
+                    <span style="font-weight:700;font-size:0.85rem;display:block;">${name.toUpperCase()}</span>
+                    ${isActive ? '<span style="font-size:0.7rem;color:var(--accent-cyan);">Clic para generar QR</span>' : ''}
+                </div>`;
+            }).join('');
         }
 
-        select.innerHTML = '<option value="" disabled selected>-- SELECCIONA UNO DE LOS 31 CÓDIGOS --</option>' +
-            catalogData.map(item => `<option value="${item.id}">${item.name.toUpperCase()}</option>`).join('');
+        // ── Toggle visual Dennis / Delifrozen ──
+        const cardDennis = document.getElementById('originCardDennis');
+        const cardDeli   = document.getElementById('originCardDeli');
+
+        function updateOriginCards() {
+            const sel = document.querySelector('input[name="codeOrigin"]:checked')?.value;
+            if (cardDennis) {
+                cardDennis.style.borderColor  = sel === 'DENNIS' ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)';
+                cardDennis.style.background   = sel === 'DENNIS' ? 'rgba(192,38,211,0.15)' : 'rgba(255,255,255,0.02)';
+            }
+            if (cardDeli) {
+                cardDeli.style.borderColor  = sel === 'DELI' ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)';
+                cardDeli.style.background   = sel === 'DELI' ? 'rgba(192,38,211,0.15)' : 'rgba(255,255,255,0.02)';
+            }
+        }
+        document.querySelectorAll('input[name="codeOrigin"]').forEach(r => r.addEventListener('change', updateOriginCards));
+        updateOriginCards();
     }
 
-    function generatePromo() {
-        const tid    = document.getElementById('promoTemplateSelect').value;
-        const item   = (typeof catalogData !== 'undefined') ? catalogData.find(x => x.id === tid) : null;
-        if (!item) { alert('Por favor selecciona un código.'); return; }
+    // Genera QR y Link para la plantilla gratuita activa
+    function generatePromoForId(templateId) {
+        const item = (typeof catalogData !== 'undefined') ? catalogData.find(x => x.id === templateId) : null;
+        if (!item) return;
 
-        const target = document.getElementById('promoTargetName').value.trim();
-        let link = window.location.origin + '/' + item.id + '/index.html';
-        if (target) link += '?para=' + encodeURIComponent(target);
+        const link = window.location.origin + '/' + item.id + '/index.html';
 
-        document.getElementById('promoTitle').innerText = 'Material: ' + item.name + (target ? ' (Para ' + target + ')' : '');
+        document.getElementById('promoTitle').innerText = '🎁 Regalo Gratuito: ' + item.name;
         document.getElementById('promoLink').value = link;
         document.getElementById('promoResult').style.display = 'block';
 
         const qrBox = document.getElementById('qrcode');
         qrBox.innerHTML = '';
         new QRCode(qrBox, { text: link, width: 150, height: 150, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+
+        document.getElementById('promoResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+
+    function generatePromo() { /* compat stub - ahora se usa generatePromoForId */ }
 
     function copyPromoLink() {
         const el = document.getElementById('promoLink');
@@ -649,11 +701,10 @@
 
     function downloadQR() {
         const canvas = document.querySelector('#qrcode canvas');
-        if (!canvas) { const img = document.querySelector('#qrcode img'); if (!img) { alert('Genera primero el QR.'); return; } }
-        const c = canvas || (() => { const tmp = document.createElement('canvas'); const img = document.querySelector('#qrcode img'); tmp.width = img.width; tmp.height = img.height; tmp.getContext('2d').drawImage(img,0,0); return tmp; })();
+        if (!canvas) { alert('Genera primero el QR.'); return; }
         const a = document.createElement('a');
-        a.download = 'QR_CorazónCódigo_' + (document.getElementById('promoTemplateSelect').value || 'promo') + '.png';
-        a.href = c.toDataURL('image/png');
+        a.download = 'QR_CorazónCódigo_promo.png';
+        a.href = canvas.toDataURL('image/png');
         a.click();
     }
 
@@ -662,6 +713,37 @@
         const content = document.getElementById('adminContent');
         if (content && content.style.display !== 'none') loadOrders();
     }, 120_000);
+
+    async function generatePhysicalPromoCodes() {
+        const originRadio = document.querySelector('input[name="codeOrigin"]:checked');
+        const origin = originRadio ? originRadio.value : 'DENNIS';
+        const amount = parseInt(document.getElementById('promoCodeAmount').value) || 1;
+
+        if (amount < 1 || amount > 50) return alert('Cantidad debe ser entre 1 y 50');
+        const client = adminSupabase || window.db;
+        if (!client) return alert('Error de base de datos.');
+
+        const codes = [];
+        for (let i = 0; i < amount; i++) {
+            const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+            codes.push({ code: `${origin}-${randomPart}`, origin: origin });
+        }
+
+        const { data, error } = await client.from('promo_codes').insert(codes).select('code');
+        if (error) { alert('Error generando códigos: ' + error.message); return; }
+
+        const codeList = data.map(r => r.code).join('\n');
+        document.getElementById('promoPhysicalList').value = codeList;
+        document.getElementById('promoPhysicalResult').style.display = 'block';
+        document.getElementById('promoPhysicalResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function copyPhysicalCodes() {
+        const el = document.getElementById('promoPhysicalList');
+        el.select();
+        document.execCommand('copy');
+        alert('✅ Lista de códigos copiada al portapapeles.');
+    }
     </script>
 </body>
 </html>
