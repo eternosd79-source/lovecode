@@ -243,7 +243,8 @@
                         </button>
                     </div>
                     <p style="font-size:0.75rem;color:var(--color-dim);margin-bottom:10px;">Entrega estos códigos a los clientes. Cada uno puede usarse una sola vez en cualquier plan de la tienda.</p>
-                    <textarea id="promoPhysicalList" readonly class="form-input" style="height:120px;font-family:monospace;font-size:1rem;resize:none;letter-spacing:1px;"></textarea>
+                    <textarea id="promoPhysicalList" readonly class="form-input" style="height:120px;font-family:monospace;font-size:1rem;resize:none;letter-spacing:1px;margin-bottom:10px;"></textarea>
+                    <div id="promoCodeStatus" style="font-size:0.8rem; text-align:center;"></div>
                 </div>
             </div>
         </div>
@@ -720,29 +721,53 @@
         const amount = parseInt(document.getElementById('promoCodeAmount').value) || 1;
 
         if (amount < 1 || amount > 50) return alert('Cantidad debe ser entre 1 y 50');
-        const client = adminSupabase || window.db;
-        if (!client) return alert('Error de base de datos.');
 
-        const codes = [];
+        // ── 1. Generar códigos LOCALMENTE de inmediato ──
+        const generatedCodes = [];
         for (let i = 0; i < amount; i++) {
-            const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
-            codes.push({ code: `${origin}-${randomPart}`, origin: origin });
+            // 6 caracteres alfanuméricos: DENNIS-X9QA2Z
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let part = '';
+            for (let j = 0; j < 6; j++) part += chars[Math.floor(Math.random() * chars.length)];
+            generatedCodes.push(`${origin}-${part}`);
         }
 
-        const { data, error } = await client.from('promo_codes').insert(codes).select('code');
-        if (error) { alert('Error generando códigos: ' + error.message); return; }
+        // ── 2. Mostrar los códigos INMEDIATAMENTE ──
+        const listEl    = document.getElementById('promoPhysicalList');
+        const resultEl  = document.getElementById('promoPhysicalResult');
+        const statusEl  = document.getElementById('promoCodeStatus');
 
-        const codeList = data.map(r => r.code).join('\n');
-        document.getElementById('promoPhysicalList').value = codeList;
-        document.getElementById('promoPhysicalResult').style.display = 'block';
-        document.getElementById('promoPhysicalResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        listEl.value = generatedCodes.join('\n');
+        resultEl.style.display = 'block';
+        if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando en base de datos...';
+        resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // ── 3. Guardar en Supabase en segundo plano ──
+        const client = adminSupabase || window.db;
+        if (client) {
+            try {
+                const rows = generatedCodes.map(code => ({ code, origin }));
+                const { error } = await client.from('promo_codes').insert(rows);
+                if (statusEl) {
+                    if (error) {
+                        statusEl.innerHTML = `<span style="color:#f87171;"><i class="fa-solid fa-triangle-exclamation"></i> No se pudo guardar en BD: ${error.message}. Los códigos son válidos si los añades manualmente.</span>`;
+                    } else {
+                        statusEl.innerHTML = '<span style="color:#34d399;"><i class="fa-solid fa-circle-check"></i> Guardados y activos en la plataforma.</span>';
+                    }
+                }
+            } catch(e) {
+                if (statusEl) statusEl.innerHTML = `<span style="color:#f87171;"><i class="fa-solid fa-triangle-exclamation"></i> Error de conexión. Los códigos NO están en la BD.</span>`;
+            }
+        } else {
+            if (statusEl) statusEl.innerHTML = '<span style="color:#f87171;"><i class="fa-solid fa-triangle-exclamation"></i> Sin conexión a Supabase. Guarda los códigos manualmente.</span>';
+        }
     }
 
     function copyPhysicalCodes() {
         const el = document.getElementById('promoPhysicalList');
         el.select();
         document.execCommand('copy');
-        alert('✅ Lista de códigos copiada al portapapeles.');
+        alert('✅ Códigos copiados al portapapeles.');
     }
     </script>
 </body>
