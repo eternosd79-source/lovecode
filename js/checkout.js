@@ -342,6 +342,37 @@ if (btnApplyPromo && inpPromoCode) {
                 promoCodeMsg.style.color = '#ff5e7e';
                 promoCodeMsg.innerText = '❌ Código inválido o ya ha sido utilizado.';
             } else {
+                // Validación de Plantilla (si el código tiene template_id)
+                if (data.template_id && activeTemplateInfo && data.template_id !== activeTemplateInfo.id) {
+                    promoCodeMsg.style.display = 'block';
+                    promoCodeMsg.style.color = '#ff5e7e';
+                    promoCodeMsg.innerText = `❌ Código válido solo para la plantilla: ${data.template_id.toUpperCase()}.`;
+                    btnApplyPromo.innerHTML = '<i class="fa-solid fa-check"></i> Canjear';
+                    btnApplyPromo.disabled = false;
+                    return;
+                }
+
+                // Validación de Plan (si el código tiene plan_name)
+                if (data.plan_name && dataForm.plan) {
+                    const planSelectedLow = dataForm.plan.toLowerCase();
+                    const requiredLow = data.plan_name.toLowerCase();
+                    // "basico" vs "básico", "personalizado" vs "fotografías", "ultra"
+                    let match = false;
+                    if (requiredLow === 'basico' && (planSelectedLow.includes('básico') || planSelectedLow.includes('basico') || planSelectedLow.includes('$1.50'))) match = true;
+                    if (requiredLow === 'personalizado' && (planSelectedLow.includes('personalizado') || planSelectedLow.includes('fotografías') || planSelectedLow.includes('$3.00'))) match = true;
+                    if (requiredLow === 'ultra' && (planSelectedLow.includes('ultra') || planSelectedLow.includes('$4.50'))) match = true;
+                    
+                    if (!match) {
+                        const planLabels = { 'basico': 'Básico ($1.50)', 'personalizado': 'Personalizado ($3.00)', 'ultra': 'Ultra Premium ($4.50)' };
+                        promoCodeMsg.style.display = 'block';
+                        promoCodeMsg.style.color = '#ff5e7e';
+                        promoCodeMsg.innerText = `❌ Código válido solo para el Plan ${planLabels[requiredLow] || data.plan_name}.`;
+                        btnApplyPromo.innerHTML = '<i class="fa-solid fa-check"></i> Canjear';
+                        btnApplyPromo.disabled = false;
+                        return;
+                    }
+                }
+
                 // Código Válido
                 promoCodeMsg.style.display = 'block';
                 promoCodeMsg.style.color = '#10b981';
@@ -349,9 +380,9 @@ if (btnApplyPromo && inpPromoCode) {
                 
                 // Actualizar plan y precio
                 dataForm.usedPromo = data.code;
-                dataForm.plan = "Plan Pre-Pagado (Promo)";
+                dataForm.plan = dataForm.plan + " (Pre-Pagado)";
                 const sumPlan = document.getElementById('sumPlan');
-                if (sumPlan) sumPlan.innerHTML = `Plan Pre-Pagado <span class="badge">PROMO</span>`;
+                if (sumPlan) sumPlan.innerHTML = `${dataForm.plan} <span class="badge" style="background:#10b981;">PAGADO</span>`;
                 
                 // Ocultar tabs de banco
                 const payEcuador = document.getElementById('payEcuador');
