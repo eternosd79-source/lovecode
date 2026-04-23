@@ -204,10 +204,14 @@ if (btnNext) {
             const grpFloatToggle = document.getElementById('grpFloatImageToggle');
             const msgGratis     = document.getElementById('msgGratisRestriccion');
             
-            if (dataForm.plan.includes("$0") || dataForm.plan.includes("$1.50")) {
+            if (dataForm.plan.includes("$0")) {
                 if (grpTextosBase) grpTextosBase.style.display = 'none';
                 if (grpFloatToggle) grpFloatToggle.style.display = 'none';
                 if (msgGratis)     msgGratis.style.display = 'block';
+            } else if (dataForm.plan.includes("$1.50")) {
+                if (grpTextosBase) grpTextosBase.style.display = 'block';
+                if (grpFloatToggle) grpFloatToggle.style.display = 'none';
+                if (msgGratis)     msgGratis.style.display = 'none';
             } else {
                 if (grpTextosBase) grpTextosBase.style.display = 'block';
                 if (grpFloatToggle) grpFloatToggle.style.display = 'block';
@@ -219,7 +223,7 @@ if (btnNext) {
                 if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye modificaciones de música.";
             } else if (dataForm.plan.includes("$2.50") || dataForm.plan.includes("$3")) {
                 if (grpMusic)       grpMusic.style.display  = "none";
-                if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye opciones de música. Solo puedes editar el texto o foto en el paso anterior.";
+                if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye opciones de música. Solo puedes editar el texto y foto en el paso anterior.";
             } else {
                 if (grpMusic)       grpMusic.style.display  = "block";
                 if (multimediaDesc) multimediaDesc.innerText = "Elige una canción de nuestra lista para que suene de fondo.";
@@ -286,7 +290,64 @@ if (btnPrev) {
 }
 
 // -------------------------------------------------------
-// Tabs de pago Ecuador / Mundo
+// Listener Promo Codes
+// -------------------------------------------------------
+const btnApplyPromo = document.getElementById('btnApplyPromo');
+const inpPromoCode = document.getElementById('inpPromoCode');
+const promoCodeMsg = document.getElementById('promoCodeMsg');
+
+if (btnApplyPromo && inpPromoCode) {
+    btnApplyPromo.addEventListener('click', async () => {
+        const code = inpPromoCode.value.trim().toUpperCase();
+        if (!code) return;
+        if (!db) {
+            promoCodeMsg.style.display = 'block';
+            promoCodeMsg.style.color = '#ff5e7e';
+            promoCodeMsg.innerText = 'Error de conexión. Intenta de nuevo.';
+            return;
+        }
+
+        btnApplyPromo.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        btnApplyPromo.disabled = true;
+
+        try {
+            const { data, error } = await db.from('promo_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+            
+            if (error || !data) {
+                promoCodeMsg.style.display = 'block';
+                promoCodeMsg.style.color = '#ff5e7e';
+                promoCodeMsg.innerText = '❌ Código inválido o ya ha sido utilizado.';
+            } else {
+                // Código Válido
+                promoCodeMsg.style.display = 'block';
+                promoCodeMsg.style.color = '#10b981';
+                promoCodeMsg.innerText = '✅ ¡Código aplicado con éxito! Tu regalo está pagado.';
+                
+                // Actualizar plan y precio
+                dataForm.usedPromo = data.code;
+                dataForm.plan = "Plan Pre-Pagado (Promo)";
+                const sumPlan = document.getElementById('sumPlan');
+                if (sumPlan) sumPlan.innerHTML = `Plan Pre-Pagado <span class="badge">PROMO</span>`;
+                
+                // Ocultar tabs de banco
+                const payEcuador = document.getElementById('payEcuador');
+                const paymentTabs = document.querySelector('.payment-tabs');
+                if (payEcuador) payEcuador.style.display = 'none';
+                if (paymentTabs) paymentTabs.style.display = 'none';
+                
+                inpPromoCode.disabled = true;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        btnApplyPromo.innerHTML = '<i class="fa-solid fa-check"></i> Canjear';
+        btnApplyPromo.disabled = false;
+    });
+}
+
+// -------------------------------------------------------
+// Listener Comprar / Confirmar Pedido
 // -------------------------------------------------------
 const btnTabEcuador = document.getElementById('btnTabEcuador');
 const btnTabMundo   = document.getElementById('btnTabMundo');
@@ -423,6 +484,12 @@ if (btnFinishOrder) {
                 const { data: insertData, error: insertError } = await db.from('orders').insert([orderData]).select();
                 if (insertError) throw insertError;
                 if (insertData && insertData.length > 0) {
+                    // Si usó un código promocional, lo marcamos como usado y marcamos la orden como 'paid'
+                    if (dataForm.usedPromo) {
+                        await db.from('promo_codes').update({ is_used: true, used_by: insertData[0].id }).eq('code', dataForm.usedPromo);
+                        await db.from('orders').update({ status: 'paid' }).eq('id', insertData[0].id);
+                        insertData[0].status = 'paid';
+                    }
                     processFinalOrder(insertData[0]);
                     return;
                 }
@@ -464,7 +531,29 @@ function processFinalOrder(order, isOffline = false) {
     }
 
     localStorage.setItem('lastOrderId', order.id);
-    if (successModal)      successModal.classList.add('active');
+    
+    if (successModal) {
+        if (order.status === 'paid') {
+            const smTitle = successModal.querySelector('h3');
+            const smText = successModal.querySelector('p');
+            if (smTitle) smTitle.innerText = "¡Pedido Activado Exitosamente!";
+            if (smText) smText.innerHTML = `Tu código promocional ha sido validado. Ya puedes rastrear tu orden en el menú principal.`;
+            if (btnGoToWA) {
+                btnGoToWA.innerHTML = '<i class="fa-solid fa-truck-fast"></i> Ir al Rastreador';
+                btnGoToWA.onclick = () => {
+                    successModal.classList.remove('active');
+                    window.location.href = "#rastrear";
+                    const inpOrderId = document.getElementById('inpOrderId');
+                    const btnTrackOrder = document.getElementById('btnTrackOrder');
+                    if (inpOrderId && btnTrackOrder) {
+                        inpOrderId.value = displayId;
+                        setTimeout(() => btnTrackOrder.click(), 500);
+                    }
+                };
+            }
+        }
+        successModal.classList.add('active');
+    }
     const checkoutModal = document.getElementById('checkoutModal');
     if (checkoutModal) checkoutModal.classList.remove('active');
     document.body.style.overflow = 'hidden';

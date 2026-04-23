@@ -586,6 +586,15 @@
                                 <li><strong>Plan Elegido:</strong> <span id="sumPlan" class="neon-cyan"></span></li>
                             </ul>
 
+                            <div style="margin-top: 15px; margin-bottom: 15px; padding: 15px; background: rgba(16, 185, 129, 0.05); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 12px; text-align: center;">
+                                <label style="font-size: 0.85rem; color: var(--color-dim); display: block; margin-bottom: 8px;"><i class="fa-solid fa-ticket"></i> ¿Tienes un código promocional?</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input type="text" id="inpPromoCode" class="form-input" placeholder="Ej: DELI-XXXX" style="flex: 1; text-transform: uppercase;">
+                                    <button class="btn-primary" id="btnApplyPromo" style="padding: 10px 15px; white-space: nowrap;"><i class="fa-solid fa-check"></i> Canjear</button>
+                                </div>
+                                <p id="promoCodeMsg" style="font-size: 0.8rem; margin-top: 8px; display: none;"></p>
+                            </div>
+
                             <div class="payment-tabs">
                                 <button class="btn-pay-tab active" id="btnTabEcuador">🇪🇨 Solo Ecuador</button>
                                 <button class="btn-pay-tab" id="btnTabMundo">🌍 Resto del Mundo</button>

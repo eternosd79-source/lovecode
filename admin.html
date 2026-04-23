@@ -172,18 +172,49 @@
         <!-- ── Generador de Promoción ── -->
         <div style="margin-top:50px;background:rgba(0,0,0,0.25);padding:28px;border-radius:16px;border:1px solid rgba(255,255,255,0.05);">
             <h2 class="neon-cyan"><i class="fa-solid fa-bullhorn"></i> Generador de Promoción</h2>
-            <p style="color:var(--color-dim);margin-bottom:20px;">Genera links directos y QR para promocionar tus experiencias gratuitas.</p>
-            <div style="display:flex;gap:20px;flex-wrap:wrap;">
-                <div style="flex:1;min-width:280px;">
+            <p style="color:var(--color-dim);margin-bottom:20px;">Genera links directos y códigos para promocionar tus experiencias.</p>
+            
+            <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:40px;">
+                <!-- PROMO DIGITAL -->
+                <div style="flex:1;min-width:280px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;">
+                    <h3 style="margin-top:0;font-size:1.1rem;color:white;"><i class="fa-solid fa-link"></i> Enlace Digital (Gratuito)</h3>
+                    <p style="font-size:0.8rem;color:var(--color-dim);margin-bottom:15px;">Ideal para enviar por WhatsApp la plantilla gratuita semanal.</p>
+                    
+                    <div style="background:rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                        <span style="font-size: 0.8rem; color: var(--color-dim);">Semana Actual: Plantilla Gratuita Activa</span><br>
+                        <strong class="neon-cyan" id="currentFreeTemplateName" style="font-size: 1.1rem;">Cargando...</strong>
+                    </div>
+
                     <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Selecciona el Código:</label>
                     <select id="promoTemplateSelect" class="form-input" style="margin-bottom:16px;"></select>
                     <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Para quién (opcional):</label>
                     <input type="text" id="promoTargetName" placeholder="Ej: Dani" class="form-input" style="margin-bottom:16px;">
                     <button class="btn-primary" onclick="generatePromo()" style="width:100%;">
-                        <i class="fa-solid fa-qrcode"></i> Generar Material
+                        <i class="fa-solid fa-qrcode"></i> Generar QR y Link
                     </button>
                 </div>
-                <div id="promoResult" style="flex:1;min-width:280px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;display:none;text-align:center;">
+
+                <!-- PROMO FISICA -->
+                <div style="flex:1;min-width:280px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;">
+                    <h3 style="margin-top:0;font-size:1.1rem;color:var(--accent-purple);"><i class="fa-solid fa-ticket"></i> Códigos Físicos (Pre-Pagados)</h3>
+                    <p style="font-size:0.8rem;color:var(--color-dim);margin-bottom:15px;">Genera códigos que la gente puede canjear en la web para que su regalo salga a $0.</p>
+                    
+                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Origen (Quién lo vende):</label>
+                    <select id="promoCodeOrigin" class="form-input" style="margin-bottom:16px;">
+                        <option value="DELI">Heladería Delifrozen (DELI-XXXX)</option>
+                        <option value="DENNIS">Promotor Dennis (DENNIS-XXXX)</option>
+                    </select>
+
+                    <label style="display:block;margin-bottom:8px;color:var(--color-dim);font-size:0.85rem;">Cantidad a generar:</label>
+                    <input type="number" id="promoCodeAmount" value="5" min="1" max="50" class="form-input" style="margin-bottom:16px;">
+
+                    <button class="btn-secondary" onclick="generatePhysicalPromoCodes()" style="width:100%;border-color:var(--accent-purple);color:var(--accent-purple);">
+                        <i class="fa-solid fa-gears"></i> Crear Códigos
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULTADOS PROMO DIGITAL -->
                     <h4 id="promoTitle" style="margin-bottom:15px;"></h4>
                     <div id="qrcode" style="background:#fff;padding:15px;display:inline-block;border-radius:8px;margin-bottom:15px;"></div>
                     <button class="btn-secondary" onclick="downloadQR()" style="width:100%;border-color:#10b981;color:#10b981;margin-bottom:12px;">
@@ -194,6 +225,12 @@
                         <button onclick="copyPromoLink()"><i class="fa-solid fa-copy"></i></button>
                     </div>
                 </div>
+            <!-- RESULTADOS PROMO FÍSICA -->
+            <div id="promoPhysicalResult" style="margin-top:20px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;display:none;">
+                <h4 style="margin-top:0;color:var(--accent-purple);"><i class="fa-solid fa-list-check"></i> Códigos Generados</h4>
+                <p style="font-size:0.8rem;color:var(--color-dim);margin-bottom:15px;">Copia y guarda estos códigos. Ya son válidos en la plataforma.</p>
+                <textarea id="promoPhysicalList" readonly class="form-input" style="height:150px;font-family:monospace;font-size:1rem;margin-bottom:10px;resize:none;"></textarea>
+                <button onclick="copyPhysicalCodes()" class="btn-primary" style="width:100%;"><i class="fa-solid fa-copy"></i> Copiar Lista</button>
             </div>
         </div>
     </div><!-- /adminContent -->
@@ -490,9 +527,24 @@
         const client = adminSupabase || window.db;
         if (!client) { alert('Sin conexión a la base de datos.'); return; }
 
+        const order = allOrders.find(o => o.id === id);
+        let zipUrl = null;
+        if (order && order.plan_name && (order.plan_name.includes('$4.50') || order.plan_name.includes('Ultra'))) {
+            zipUrl = prompt('Has aprobado un plan Ultra Premium ($4.50).\nPor favor, ingresa el enlace de descarga (Google Drive, Mega, etc.) del código fuente (.zip) para este cliente:');
+            if (zipUrl === null) {
+                // Canceló el prompt
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Aprobar';
+                return;
+            }
+        }
+
+        const updateData = { status: 'paid' };
+        if (zipUrl) updateData.zip_url = zipUrl.trim();
+
         const { error } = await client
             .from('orders')
-            .update({ status: 'paid' })   // El trigger SQL calculará expires_at automáticamente
+            .update(updateData)   // El trigger SQL calculará expires_at automáticamente
             .eq('id', id);
 
         if (error) {
@@ -542,6 +594,18 @@
             setTimeout(initPromoGenerator, 600);
             return;
         }
+
+        // Determinar plantilla gratuita de la semana
+        const freeCandidates = ['latido', 'corazon3d', 'neon', 'cometa'];
+        const weekNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+        const activeFreeId = freeCandidates[weekNumber % freeCandidates.length];
+        const activeItem = catalogData.find(item => item.id === activeFreeId);
+        
+        const labelFree = document.getElementById('currentFreeTemplateName');
+        if (labelFree && activeItem) {
+            labelFree.innerText = activeItem.name.toUpperCase();
+        }
+
         select.innerHTML = '<option value="" disabled selected>-- SELECCIONA UNO DE LOS 31 CÓDIGOS --</option>' +
             catalogData.map(item => `<option value="${item.id}">${item.name.toUpperCase()}</option>`).join('');
     }

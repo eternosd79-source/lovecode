@@ -222,3 +222,24 @@ CREATE POLICY "free_tier_ips_insert" ON free_tier_ips FOR INSERT TO anon WITH CH
 -- Permitir lectura anónima para que puedan verificar si su IP ya existe
 CREATE POLICY "free_tier_ips_select" ON free_tier_ips FOR SELECT TO anon USING (true);
 
+-- ============================================================
+-- TABLA: promo_codes (Códigos Promocionales Físicos/Digitales)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS promo_codes (
+    code        TEXT PRIMARY KEY,
+    origin      TEXT NOT NULL DEFAULT 'admin', -- 'dennis', 'delifrozen', etc.
+    is_used     BOOLEAN DEFAULT false,
+    used_by     UUID REFERENCES orders(id),
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE promo_codes ENABLE ROW LEVEL SECURITY;
+-- Cualquiera puede leer códigos para verificar si existen y no han sido usados
+CREATE POLICY "promo_codes_select" ON promo_codes FOR SELECT TO anon USING (true);
+CREATE POLICY "promo_codes_select_auth" ON promo_codes FOR SELECT TO authenticated USING (true);
+-- Cualquiera puede usar un código (marcarlo como usado) al crear una orden
+CREATE POLICY "promo_codes_update_anon" ON promo_codes FOR UPDATE TO anon USING (true);
+-- Solo admin puede insertar
+CREATE POLICY "promo_codes_insert" ON promo_codes FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "promo_codes_update" ON promo_codes FOR UPDATE TO authenticated USING (true);
+

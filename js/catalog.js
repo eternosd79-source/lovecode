@@ -525,7 +525,26 @@ const catalogData = [
 // ============================================================
 // RENDERIZAR CATÁLOGO
 // ============================================================
+function updateFreeTemplateWeekly() {
+    const freeCandidates = ['latido', 'corazon3d', 'neon', 'cometa'];
+    // Número de semana (rotación cada 7 días aprox desde Epoch)
+    const weekNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+    const activeFreeId = freeCandidates[weekNumber % freeCandidates.length];
+
+    catalogData.forEach(item => {
+        if (freeCandidates.includes(item.id)) {
+            if (item.id === activeFreeId) {
+                item.badge = "Gratis (24h)";
+            } else {
+                item.badge = "Básico";
+            }
+        }
+    });
+}
+
 function renderCatalog(filter = 'all') {
+    updateFreeTemplateWeekly();
+    
     const catalogGrid = document.getElementById("catalogGrid");
     if (!catalogGrid) return;
 
