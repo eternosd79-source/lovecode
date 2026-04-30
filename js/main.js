@@ -190,6 +190,12 @@ function initAnalyticsEvents() {
             currency: 'USD',
             plan:     e.detail?.plan
         });
+        if (typeof window.logOrderEvent === 'function' && e.detail?.orderId) {
+            window.logOrderEvent(e.detail.orderId, 'purchase_completed', {
+                price: e.detail?.price || 0,
+                plan: e.detail?.plan || ''
+            });
+        }
     });
 
     // Evento: scroll hasta catálogo
@@ -211,28 +217,34 @@ function initAnalyticsEvents() {
  * Envía evento a Vercel Analytics y/o Meta Pixel si están disponibles
  */
 function trackEvent(name, params = {}) {
-    // Vercel Analytics
-    if (typeof va === 'function') {
-        va('event', name, params);
-    }
-    // Meta Pixel (fbq)
-    if (typeof fbq === 'function') {
-        const fbEvents = {
-            purchase:       () => fbq('track', 'Purchase', { value: params.value, currency: 'USD' }),
-            begin_checkout: () => fbq('track', 'InitiateCheckout'),
-            view_template:  () => fbq('track', 'ViewContent', { content_name: params.template }),
-            view_catalog:   () => fbq('track', 'ViewContent', { content_name: 'catalog' })
-        };
-        fbEvents[name]?.();
-    }
-    // TikTok Pixel (ttq)
-    if (typeof ttq !== 'undefined') {
-        const tiktokEvents = {
-            purchase:       () => ttq.track('PlaceAnOrder', { value: params.value, currency: 'USD' }),
-            begin_checkout: () => ttq.track('InitiateCheckout'),
-            view_catalog:   () => ttq.track('ViewContent')
-        };
-        tiktokEvents[name]?.();
+    try {
+        // Vercel Analytics
+        if (typeof va === 'function') {
+            va('event', name, params);
+        }
+        // Meta Pixel (fbq)
+        if (typeof fbq === 'function') {
+            const fbEvents = {
+                purchase:       () => fbq('track', 'Purchase', { value: params.value, currency: 'USD' }),
+                begin_checkout: () => fbq('track', 'InitiateCheckout'),
+                view_template:  () => fbq('track', 'ViewContent', { content_name: params.template }),
+                view_catalog:   () => fbq('track', 'ViewContent', { content_name: 'catalog' })
+            };
+            fbEvents[name]?.();
+        }
+        // TikTok Pixel (ttq)
+        if (typeof ttq !== 'undefined') {
+            const tiktokEvents = {
+                purchase:       () => ttq.track('PlaceAnOrder', { value: params.value, currency: 'USD' }),
+                begin_checkout: () => ttq.track('InitiateCheckout'),
+                view_catalog:   () => ttq.track('ViewContent')
+            };
+            tiktokEvents[name]?.();
+        }
+    } catch (err) {
+        if (typeof window.logFrontendError === 'function') {
+            window.logFrontendError('analytics_error', err?.message || 'trackEvent failed', { name, params });
+        }
     }
     console.log(`[Analytics] ${name}`, params);
 }

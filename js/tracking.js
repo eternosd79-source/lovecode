@@ -8,6 +8,22 @@ const btnTrackOrder    = document.getElementById('btnTrackOrder');
 const inpOrderId       = document.getElementById('inpOrderId');
 const orderStatusResult = document.getElementById('orderStatusResult');
 
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function sanitizeUrl(value) {
+    if (typeof value !== 'string') return '';
+    const trimmed = value.trim();
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return '';
+}
+
 function openQRModal(linkStr) {
     let qrOverlay = document.getElementById('qrOverlay');
     if (!qrOverlay) {
@@ -79,7 +95,7 @@ if (btnTrackOrder) {
                         <i class="fa-solid fa-circle-exclamation"></i>
                         <h4>Orden no encontrada</h4>
                         <p>Verifica que el ID sea correcto o contacta a soporte por WhatsApp.</p>
-                        <a href="https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent('Hola CorazónCódigo! Necesito ayuda para ubicar mi pedido. Mi ID aproximado es: ' + id)}"
+                        <a href="https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent('Hola CorazónCódigo! Necesito ayuda para ubicar mi pedido. Mi ID aproximado es: ' + escapeHtml(id))}"
                            target="_blank" class="btn-whatsapp" style="display:inline-flex; margin-top:15px; text-decoration:none;">
                            <i class="fa-brands fa-whatsapp"></i> Contactar Soporte
                         </a>
@@ -159,6 +175,9 @@ function buildExpirationBanner(order) {
 // ──────────────────────────────────────────────────────────────
 function renderOrderStatus(order) {
     const displayId = order.id.substring(0, 8).toUpperCase();
+    const safeTemplateName = escapeHtml(order.template_name || order.template_id || 'N/A');
+    const safePlanName = escapeHtml(order.plan_name || '');
+    const safeTargetName = escapeHtml(order.target_name || 'N/A');
 
     let fullLink = order.final_link || "";
     // Reconstruir el link en caso de que no se haya guardado
@@ -178,6 +197,7 @@ function renderOrderStatus(order) {
         const separator = fullLink.includes('?') ? '&' : '?';
         fullLink += `${separator}orderId=${order.id}`;
     }
+    const safeFullLink = sanitizeUrl(fullLink) || '#';
 
     const waComprobante = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(
         `Hola CorazónCódigo! Te envío el comprobante de pago de mi pedido #${displayId}. ¡Gracias!`
@@ -198,9 +218,9 @@ function renderOrderStatus(order) {
                     <span class="badge-status">⏳ Pendiente de Pago</span>
                 </div>
                 <div class="status-body">
-                    <p><strong>Plantilla:</strong> ${order.template_name || order.template_id || 'N/A'}</p>
-                    <p><strong>Plan:</strong> ${order.plan_name}</p>
-                    <p><strong>Para:</strong> ${order.target_name || 'N/A'}</p>
+                    <p><strong>Plantilla:</strong> ${safeTemplateName}</p>
+                    <p><strong>Plan:</strong> ${safePlanName}</p>
+                    <p><strong>Para:</strong> ${safeTargetName}</p>
                     <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
                     <p class="status-msg">
                         ✅ Tu pedido está registrado. Envíanos el comprobante de pago por WhatsApp
@@ -214,7 +234,16 @@ function renderOrderStatus(order) {
 
     } else if (isExpired) {
         statusHTML = `
-             } else {
+            <div class="status-card error">
+                <div class="status-header">
+                    <span>Orden: <strong>#${displayId}</strong></span>
+                    <span class="badge-status" style="background:#ef4444;">⌛ Expirada</span>
+                </div>
+                <div class="status-body">
+                    <p>Tu orden ha expirado. Por favor comunícate por soporte.</p>
+                </div>
+            </div>`;
+    } else {
         // Tarjeta VIP para pedidos pagados y activos
         const isUltra  = order.plan_name && order.plan_name.includes('$4.50');
         const benefit  = (order.dynamic_texts && order.dynamic_texts.ultra_benefit) || 'zip';
@@ -229,20 +258,20 @@ function renderOrderStatus(order) {
                 </div>`;
         } else if (isUltra) {
             ultraBlock = `
-                <button class="btn-primary" onclick="window.open('${order.zip_url || '#'}')" style="width:100%; justify-content:center; margin-bottom:14px;">
+                <button class="btn-primary" onclick="window.open('${sanitizeUrl(order.zip_url) || '#'}')" style="width:100%; justify-content:center; margin-bottom:14px;">
                     <i class="fa-solid fa-file-zipper"></i> Descargar C\u00f3digo Fuente (.zip)
                 </button>`;
         } else {
             ultraBlock = `
                 <div class="final-link-box" style="margin-bottom: 14px; border-color:var(--accent-cyan);">
-                    <input type="text" readonly value="${fullLink}" id="finalLink" style="font-size:0.8rem;">
+                    <input type="text" readonly value="${escapeHtml(safeFullLink)}" id="finalLink" style="font-size:0.8rem;">
                     <button onclick="copyLink()" title="Copiar"><i class="fa-solid fa-copy"></i></button>
                 </div>
                 <div class="card-actions" style="display:flex; gap:10px; margin-bottom: 12px;">
-                    <button class="btn-primary" onclick="window.open('${fullLink}','_blank')" style="flex:1; justify-content:center;">
+                    <button class="btn-primary" onclick="window.open('${safeFullLink}','_blank')" style="flex:1; justify-content:center;">
                         <i class="fa-solid fa-eye"></i> Abrir Link
                     </button>
-                    <button class="btn-secondary" onclick="openQRModal('${fullLink}')" style="width:50px; padding:0; justify-content:center; flex-shrink:0;" title="Ver C\u00f3digo QR">
+                    <button class="btn-secondary" onclick="openQRModal('${safeFullLink}')" style="width:50px; padding:0; justify-content:center; flex-shrink:0;" title="Ver C\u00f3digo QR">
                         <i class="fa-solid fa-qrcode"></i>
                     </button>
                 </div>`;
@@ -254,8 +283,8 @@ function renderOrderStatus(order) {
                     <span class="badge" style="background:#10b981; color:#fff; font-weight:bold; position:absolute; top:10px; left:10px; z-index:10;"><i class="fa-solid fa-check"></i> Activo</span>
                 </div>
                 <div class="card-content" style="padding: 20px;">
-                    <h3 class="card-title" style="margin:0 0 6px; font-size:1.2rem;">${order.template_name || 'Regalo Experiencia'}</h3>
-                    <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:14px;">Orden: #${displayId} \u00b7 ${(order.plan_name || '').split('(')[0].trim()}</p>
+                    <h3 class="card-title" style="margin:0 0 6px; font-size:1.2rem;">${escapeHtml(order.template_name || 'Regalo Experiencia')}</h3>
+                    <p style="font-size:0.82rem;color:var(--color-dim);margin-bottom:14px;">Orden: #${displayId} \u00b7 ${escapeHtml((order.plan_name || '').split('(')[0].trim())}</p>
 
                     ${buildExpirationBanner(order)}
 

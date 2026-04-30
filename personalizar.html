@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalizar tu Regalo — CorazónCódigo</title>
+    <meta name="description" content="Personaliza tu regalo digital romántico con textos, foto y música.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+        --pink:   #ff2d75;
+        --cyan:   #06b6d4;
+        --purple: #c026d3;
+        --green:  #10b981;
+        --bg:     #07070e;
+        --card:   #0d0d1a;
+        --border: rgba(255,255,255,0.07);
+        --dim:    #4a4a6a;
+        --light:  #9999bb;
+        --white:  #f0f0f8;
+        --font:   'Inter', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--white); min-height: 100vh; }
+    body::before {
+        content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+        background:
+            radial-gradient(ellipse 55% 45% at 10% 0%,   rgba(192,38,211,0.11) 0%, transparent 60%),
+            radial-gradient(ellipse 45% 35% at 90% 95%,  rgba(6,182,212,0.09)  0%, transparent 60%);
+    }
+
+    /* ── NAV ── */
+    nav {
+        position: sticky; top: 0; z-index: 200;
+        background: rgba(7,7,14,0.92); backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 24px; gap: 12px;
+    }
+    .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; text-decoration: none; color: var(--white); }
+    .logo i { color: var(--purple); }
+    .nav-back { display: flex; align-items: center; gap: 5px; color: var(--dim); font-size: 0.78rem; text-decoration: none; transition: color .2s; }
+    .nav-back:hover { color: var(--cyan); }
+    .nav-tpl {
+        background: rgba(192,38,211,0.12); border: 1px solid rgba(192,38,211,0.28);
+        color: var(--purple); padding: 4px 12px; border-radius: 50px;
+        font-size: 0.7rem; font-weight: 600;
+        max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* ── PAGE LAYOUT ── */
+    .page {
+        position: relative; z-index: 1;
+        display: grid;
+        grid-template-columns: 520px 1fr;
+        gap: 0;
+        max-width: 1280px; margin: 0 auto;
+        min-height: calc(100vh - 49px);
+    }
+    @media (max-width: 1000px) { .page { grid-template-columns: 1fr; } }
+
+    /* ── FORM COLUMN ── */
+    .form-col {
+        padding: 24px 28px 80px;
+        border-right: 1px solid var(--border);
+        overflow-y: auto;
+    }
+
+    /* ── PREVIEW COLUMN ── */
+    .preview-col {
+        position: sticky; top: 49px;
+        height: calc(100vh - 49px);
+        display: flex; flex-direction: column;
+        background: #050510;
+    }
+    @media (max-width: 1000px) {
+        .preview-col {
+            position: relative; top: 0;
+            height: 320px;
+            border-top: 1px solid var(--border);
+        }
+    }
+    .preview-top {
+        padding: 12px 16px; border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0;
+    }
+    .preview-title { font-size: 0.75rem; font-weight: 700; color: var(--light); display: flex; align-items: center; gap: 6px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 1.4s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .btn-fullprev {
+        display: flex; align-items: center; gap: 5px;
+        padding: 5px 12px; border-radius: 6px;
+        background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25);
+        color: var(--cyan); font-size: 0.72rem; font-weight: 600;
+        cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    .btn-fullprev:hover { background: rgba(6,182,212,0.18); }
+    #previewFrame {
+        flex: 1; width: 100%; border: none;
+        background: #000;
+    }
+
+    /* ── FORM SECTIONS ── */
+    .fsec { margin-bottom: 20px; }
+    .fsec-head {
+        display: flex; align-items: center; gap: 10px;
+        padding: 14px 0 12px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 14px;
+    }
+    .ficon {
+        width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center; font-size: 0.78rem;
+    }
+    .ficon.gold   { background: rgba(251,191,36,0.14); color: #fbbf24; }
+    .ficon.pink   { background: rgba(255,45,117,0.14);  color: var(--pink); }
+    .ficon.green  { background: rgba(16,185,129,0.14);  color: var(--green); }
+    .ficon.cyan   { background: rgba(6,182,212,0.14);   color: var(--cyan); }
+    .ficon.purple { background: rgba(192,38,211,0.14);  color: var(--purple); }
+    .fsec-head h3 { font-size: 0.88rem; font-weight: 700; }
+    .fsec-head p  { font-size: 0.69rem; color: var(--dim); margin-top: 2px; }
+
+    /* ── LABEL & INPUT ── */
+    label.fl { display: block; font-size: 0.72rem; font-weight: 600; margin-bottom: 5px; color: var(--light); letter-spacing: .02em; }
+    label.fl em { color: var(--dim); font-style: normal; font-weight: 400; }
+    input[type=text], input[type=date], textarea, select {
+        width: 100%; padding: 9px 12px;
+        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+        border-radius: 9px; color: var(--white);
+        font-family: var(--font); font-size: 0.83rem; outline: none;
+        transition: border-color .2s, background .2s; resize: vertical;
+    }
+    input:focus, textarea:focus, select:focus {
+        border-color: var(--cyan); background: rgba(6,182,212,0.04);
+    }
+    input::placeholder, textarea::placeholder { color: var(--dim); }
+    textarea { min-height: 72px; line-height: 1.5; }
+    select option { background: #111; }
+
+    /* FIELD GRID — horizontal rows */
+    .frow { display: grid; gap: 10px; margin-bottom: 12px; }
+    .frow.c1 { grid-template-columns: 1fr; }
+    .frow.c2 { grid-template-columns: 1fr 1fr; }
+    .frow.c3 { grid-template-columns: 1fr 1fr 1fr; }
+    .frow.c2-1 { grid-template-columns: 2fr 1fr; }
+    .frow.c1-2 { grid-template-columns: 1fr 2fr; }
+    .frow:last-child { margin-bottom: 0; }
+
+    /* ── PLAN ROWS ── */
+    .plan-list { display: flex; flex-direction: column; gap: 6px; }
+    .plan-row {
+        display: grid; grid-template-columns: 20px 1fr auto auto;
+        align-items: center; gap: 10px;
+        padding: 10px 14px; border-radius: 10px;
+        border: 1.5px solid rgba(255,255,255,0.07);
+        background: rgba(255,255,255,0.02);
+        cursor: pointer; transition: all .2s;
+    }
+    .plan-row:hover { border-color: rgba(192,38,211,0.35); background: rgba(192,38,211,0.04); }
+    .plan-row.sel   { border-color: var(--purple); background: rgba(192,38,211,0.08); }
+    .plan-row input  { display: none; }
+    .rd { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18); flex-shrink: 0; transition: all .2s; }
+    .plan-row.sel .rd { background: var(--purple); border-color: var(--purple); box-shadow: 0 0 6px rgba(192,38,211,.5); }
+    .pname { font-size: 0.82rem; font-weight: 600; }
+    .pdur  { font-size: 0.67rem; color: var(--dim); margin-top: 1px; }
+    .pbadge { font-size: 0.6rem; padding: 1px 6px; border-radius: 50px; font-weight: 700; background: var(--pink); color: white; }
+    .pprice { font-size: 0.9rem; font-weight: 800; color: var(--cyan); white-space: nowrap; font-family: 'Fira Code', monospace; }
+    .pprice small { font-size: 0.62rem; color: var(--dim); font-family: var(--font); font-weight: 400; }
+    .plan-info-box {
+        margin-top: 8px; padding: 8px 12px; border-radius: 8px;
+        font-size: 0.73rem; line-height: 1.45; display: none;
+    }
+    .plan-info-box.show { display: block; }
+    .plan-info-box.info { background: rgba(6,182,212,0.07);  border: 1px solid rgba(6,182,212,0.2);  color: var(--cyan); }
+    .plan-info-box.warn { background: rgba(255,45,117,0.07); border: 1px solid rgba(255,45,117,0.2); color: #ff7aaa; }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 14px; border-radius: 10px;
+        border: 1.5px dashed rgba(16,185,129,0.3);
+        background: rgba(16,185,129,0.02);
+        cursor: pointer; transition: all .2s; margin-bottom: 8px;
+    }
+    .upload-zone:hover, .upload-zone.has { border-color: var(--green); background: rgba(16,185,129,0.06); }
+    .upload-zone i { font-size: 1.4rem; color: var(--green); flex-shrink: 0; }
+    .upload-zone-txt p  { font-size: 0.8rem; font-weight: 600; }
+    .upload-zone-txt small { font-size: 0.68rem; color: var(--dim); }
+    .upload-name { font-size: 0.72rem; color: var(--green); font-weight: 600; margin-top: 4px; display: none; }
+    #fileFoto { display: none; }
+
+    .img-thumb { display: none; position: relative; margin-top: 6px; }
+    .img-thumb img { width: 100%; max-height: 120px; object-fit: cover; border-radius: 8px; }
+    .rm-photo { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.65); border: none; color: white; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
+
+    /* ── MUSIC GRID ── */
+    .music-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
+        max-height: 160px; overflow-y: auto; margin-bottom: 10px;
+    }
+    .music-grid::-webkit-scrollbar { width: 3px; }
+    .music-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .msong {
+        padding: 5px 8px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.05);
+        background: rgba(255,255,255,0.02); cursor: pointer;
+        font-size: 0.68rem; color: #aaa; transition: all .18s;
+        display: flex; align-items: center; gap: 4px; overflow: hidden;
+    }
+    .msong i { font-size: 0.6rem; color: var(--cyan); flex-shrink: 0; }
+    .msong:hover { background: rgba(6,182,212,0.08); border-color: rgba(6,182,212,0.25); color: white; }
+    .msong.sel   { background: rgba(6,182,212,0.13); border-color: var(--cyan); color: white; font-weight: 600; }
+    .msong span  { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── DIVIDER ── */
+    .divider { display: flex; align-items: center; gap: 8px; margin: 10px 0; color: var(--dim); font-size: 0.66rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── NOTE BOX ── */
+    .note { padding: 10px 12px; border-radius: 8px; font-size: 0.75rem; line-height: 1.5; }
+    .note.info  { background: rgba(6,182,212,0.07);  border-left: 3px solid var(--cyan);  color: var(--light); }
+    .note.green { background: rgba(16,185,129,0.07); border-left: 3px solid var(--green); color: var(--light); }
+
+    /* ── CHIP ── */
+    .chip { display: inline-flex; align-items: center; gap: 3px; font-size: 0.62rem; padding: 2px 7px; border-radius: 50px; font-weight: 700; }
+    .chip.g { background: rgba(16,185,129,0.14); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+    .chip.c { background: rgba(6,182,212,0.14);  color: var(--cyan);  border: 1px solid rgba(6,182,212,0.25);  }
+
+    /* ── BOTTOM ACTION BAR ── */
+    .action-bar {
+        position: fixed; bottom: 0; left: 0; width: 520px;
+        background: rgba(7,7,14,0.96); backdrop-filter: blur(16px);
+        border-top: 1px solid var(--border);
+        padding: 12px 28px;
+        display: grid; grid-template-columns: 1fr auto auto;
+        align-items: center; gap: 12px; z-index: 150;
+    }
+    @media (max-width: 1000px) { .action-bar { width: 100%; } }
+    .bar-price { font-family: 'Fira Code', monospace; font-size: 1.2rem; font-weight: 700; color: var(--cyan); }
+    .bar-price small { font-family: var(--font); font-size: 0.65rem; color: var(--dim); font-weight: 400; margin-left: 2px; }
+    .bar-plan { font-size: 0.7rem; color: var(--dim); }
+
+    .btn-bar {
+        display: flex; align-items: center; gap: 7px;
+        padding: 10px 18px; border: none; border-radius: 10px;
+        font-family: var(--font); font-size: 0.82rem; font-weight: 700;
+        cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .btn-bar.wa {
+        background: linear-gradient(135deg,#25d366,#128c7e);
+        color: white; box-shadow: 0 4px 16px rgba(37,211,102,.28);
+    }
+    .btn-bar.wa:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(37,211,102,.38); }
+    .btn-bar.pay {
+        background: linear-gradient(135deg, var(--pink), var(--purple));
+        color: white; box-shadow: 0 4px 16px rgba(192,38,211,.28);
+    }
+    .btn-bar.pay:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(192,38,211,.38); }
+    .btn-bar:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+    /* spin */
+    .spin { display: none; animation: _r .7s linear infinite; }
+    @keyframes _r { to { transform: rotate(360deg); } }
+
+    /* ── RESULT BOX ── */
+    .result-card {
+        display: none; margin-bottom: 20px; margin-top: 4px;
+        background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.3);
+        border-radius: 14px; padding: 20px; text-align: center;
+    }
+    .result-card.show { display: block; }
+    .res-id { font-family: 'Fira Code', monospace; font-size: 1.5rem; font-weight: 700; letter-spacing: 3px; color: white; display: inline-block; background: rgba(0,0,0,0.35); padding: 8px 20px; border-radius: 8px; border: 1px dashed var(--cyan); margin: 10px 0; }
+    .btn-wa-res { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; background: linear-gradient(135deg,#25d366,#128c7e); border: none; border-radius: 10px; color: white; font-family: var(--font); font-weight: 700; font-size: 0.85rem; cursor: pointer; text-decoration: none; }
+
+    @media (max-width:640px) {
+        .frow.c2, .frow.c3, .frow.c2-1, .frow.c1-2 { grid-template-columns: 1fr; }
+        .music-grid { grid-template-columns: repeat(2, 1fr); }
+        .action-bar { grid-template-columns: 1fr; gap: 8px; }
+    }
+
+    /* ── FIELD HINT ── */
+    .field-hint { font-size: 0.67rem; color: var(--dim); margin-top: 5px; line-height: 1.4; }
+    .field-hint i { color: var(--cyan); margin-right: 3px; }
+
+    /* ── PHOTO CONTROLS: position grid + size slider ── */
+    .photo-controls { display: grid; grid-template-columns: auto 1fr; gap: 16px; margin-top: 12px; align-items: start; }
+    .ctrl-block { display: flex; flex-direction: column; }
+
+    .pos-grid {
+        display: grid; grid-template-columns: repeat(3, 38px); grid-template-rows: repeat(3, 38px);
+        gap: 4px; width: fit-content;
+    }
+    .pos-cell {
+        width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+        border: 1px solid rgba(255,255,255,0.08); border-radius: 7px;
+        background: rgba(255,255,255,0.02); cursor: pointer; font-size: 0.9rem;
+        color: var(--dim); transition: all .18s; user-select: none;
+    }
+    .pos-cell:hover  { background: rgba(6,182,212,0.10); border-color: rgba(6,182,212,0.35); color: white; }
+    .pos-cell.active { background: rgba(6,182,212,0.18); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 8px rgba(6,182,212,.3); }
+
+    .size-labels { display: flex; justify-content: space-between; font-size: 0.67rem; color: var(--dim); margin-bottom: 4px; }
+    .size-slider {
+        -webkit-appearance: none; appearance: none;
+        width: 100%; height: 5px; border-radius: 3px; outline: none; cursor: pointer;
+        background: linear-gradient(90deg, rgba(6,182,212,0.5) 0%, var(--cyan) 100%);
+    }
+    .size-slider::-webkit-slider-thumb {
+        -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+        background: white; border: 2px solid var(--cyan); cursor: pointer;
+        box-shadow: 0 0 6px rgba(6,182,212,.5);
+    }
+    .size-val-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .size-preview {
+        display: inline-block; background: rgba(6,182,212,0.18); border: 1px solid rgba(6,182,212,0.3);
+        border-radius: 4px; transition: all .2s;
+    }
+    .size-val { font-size: 0.73rem; font-weight: 600; color: var(--cyan); }
+
+    @media (max-width:560px) { .photo-controls { grid-template-columns: 1fr; } }
+
+    /* ── MUSIC PLAYER + TRIM ── */
+    .music-player {
+        margin: 10px 0; background: rgba(6,182,212,0.05); border: 1px solid rgba(6,182,212,0.18);
+        border-radius: 12px; padding: 14px;
+    }
+    .mp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .mp-info { display: flex; align-items: center; gap: 7px; font-size: 0.82rem; font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mp-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .mp-btn {
+        width: 34px; height: 34px; border-radius: 50%; background: var(--cyan); border: none;
+        color: #000; font-size: 0.85rem; cursor: pointer; transition: all .2s;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .mp-btn:hover { transform: scale(1.08); box-shadow: 0 0 10px rgba(6,182,212,.5); }
+    .mp-time { font-size: 0.72rem; color: var(--light); font-family: 'Fira Code', monospace; }
+
+    .trim-wrap { margin-top: 4px; }
+    .trim-bar-outer {
+        position: relative; height: 28px; border-radius: 8px;
+        background: rgba(255,255,255,0.06); overflow: visible; cursor: pointer; margin: 6px 0;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .trim-bar-fill {
+        position: absolute; top: 0; height: 100%; border-radius: 7px;
+        background: rgba(6,182,212,0.22); border: 1px solid rgba(6,182,212,0.4);
+    }
+    .trim-progress {
+        position: absolute; top: 0; height: 100%; width: 2px; background: white;
+        border-radius: 2px; pointer-events: none; z-index: 2; display: none;
+    }
+    .trim-handle {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 14px; height: 26px; border-radius: 5px; background: var(--cyan);
+        border: 2px solid white; cursor: ew-resize; z-index: 3;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .trim-handle::after { content: '|||'; color: rgba(0,0,0,0.5); font-size: 0.45rem; line-height: 26px; display: block; text-align: center; }
+    .trim-times { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--dim); margin-top: 3px; }
+    /* ── PHOTO EDITOR STAGE ── */
+    .p-stage-wrap { margin-bottom: 12px; }
+    .p-stage {
+        position: relative; width: 100%; aspect-ratio: 16/9;
+        border-radius: 12px; overflow: hidden;
+        background: #050510;
+        border: 1.5px solid rgba(6,182,212,0.25);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+        cursor: crosshair;
+    }
+    .p-stage-bg {
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(192,38,211,0.12), transparent),
+                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path d="M0 0h40v40H0z" fill="%23070710"/><path d="M0 20h40M20 0v40" stroke="%23ffffff08" stroke-width="1"/></svg>') repeat;
+    }
+    .p-photo-wrap {
+        position: absolute; cursor: grab; user-select: none;
+        border: 2px dashed rgba(6,182,212,0.6);
+        border-radius: 8px; overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(6,182,212,0.3), 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .p-photo-wrap:active { cursor: grabbing; }
+    .p-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    .p-resize-handle {
+        position: absolute; bottom: -5px; right: -5px;
+        width: 16px; height: 16px; border-radius: 3px;
+        background: var(--cyan); border: 2px solid white;
+        cursor: se-resize; z-index: 10;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .p-crosshair-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.07); pointer-events: none; }
+    .p-crosshair-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.07); pointer-events: none; }
+    .p-pos-label {
+        position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+        padding: 3px 10px; border-radius: 20px; font-size: 0.67rem; color: var(--cyan);
+        pointer-events: none; white-space: nowrap;
+    }
+    /* sliders debajo del stage */
+    .p-ctrls { display: flex; flex-direction: column; gap: 8px; }
+    .p-ctrl-row { display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 10px; }
+    .p-ctrl-row .fl { font-size: 0.72rem; margin: 0; }
+    .p-slider-row { display: flex; align-items: center; gap: 6px; }
+    .p-slider-tag { font-size: 0.65rem; color: var(--dim); white-space: nowrap; }
+    .p-slider-row input { flex: 1; }
+    .p-val { font-size: 0.75rem; font-weight: 700; color: var(--cyan); min-width: 40px; text-align: right; font-family: 'Fira Code', monospace; }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <a href="index.html" class="nav-back"><i class="fa-solid fa-arrow-left"></i> Catálogo</a>
+    <a href="index.html" class="logo"><i class="fa-solid fa-heart"></i> CorazónCódigo</a>
+    <div class="nav-tpl" id="navTpl"><i class="fa-solid fa-star"></i> —</div>
+</nav>
+
+<!-- PAGE: form | preview -->
+<div class="page">
+
+    <!-- ════════════════════════════
+         FORM COLUMN
+    ════════════════════════════ -->
+    <section class="form-col">
+
+        <!-- RESULT (removed) -->
+
+        <!-- ── SECCIÓN 1: PLAN ── -->
+        <div class="fsec">
+            <div class="fsec-head">
+                <div class="ficon gold"><i class="fa-solid fa-tags"></i></div>
+                <div><h3>1. Elige tu Plan</h3><p>Determina qué incluye tu regalo y su precio</p></div>
+            </div>
+
+            <div class="plan-list">
+                <div class="plan-row" id="pr_basico" onclick="selectPlan('basico')">
+                    <input type="radio" name="plan"><div class="rd"></div>
+                    <div><div class="pname">Básico</div><div class="pdur">Solo textos personalizados · 2 semanas en línea</div></div>
+                    <div></div>
+                    <div class="pprice">$1.50 <small>USD</small></div>
+                </div>
+                <div class="plan-row" id="pr_personalizado" onclick="selectPlan('personalizado')">
+                    <input type="radio" name="plan"><div class="rd"></div>
+                    <div><div class="pname">Con Fotografía <span class="pbadge">⭐ Popular</span></div><div class="pdur">Textos + foto real integrada · 2.5 meses</div></div>
+                    <div></div>
+                    <div class="pprice">$3.00 <small>USD</small></div>
+                </div>
+                <div class="plan-row" id="pr_ultra" onclick="selectPlan('ultra')">
+                    <input type="radio" name="plan"><div class="rd"></div>
+                    <div><div class="pname"><i class="fa-solid fa-crown" style="color:#fbbf24;font-size:0.75rem;margin-right:3px;"></i>Ultra Premium</div><div class="pdur">Foto + Música + Código fuente ZIP · 6 meses</div></div>
+                    <div></div>
+                    <div class="pprice">$4.50 <small>USD</small></div>
+                </div>
+
+            </div>
+
+            <div class="plan-info-box" id="planInfoBox"></div>
+        </div>
+
+        <!-- ── SECCIÓN 2: TEXTOS ESPECÍFICOS DE CADA PLANTILLA ── -->
+        <div class="fsec" id="secTextos">
+            <div class="fsec-head">
+                <div class="ficon pink"><i class="fa-solid fa-pen-nib"></i></div>
+                <div><h3>2. Editar los Textos</h3><p id="secTextosDesc">Personaliza cada campo que verá el destinatario</p></div>
+            </div>
+
+            <!-- Campos base (siempre presentes) -->
+            <div class="frow c2">
+                <div>
+                    <label class="fl">¿Para quién es el regalo? <em>(nombre)</em></label>
+                    <input type="text" id="inpPara" placeholder="Ej: Valeria" oninput="livePreview()">
+                    <p class="field-hint"><i class="fa-solid fa-arrow-right-to-bracket"></i> Aparece como destinatario en el título de la animación — lo primero que verá al abrirlo</p>
+                </div>
+                <div id="grpFecha" style="display:none;">
+                    <label class="fl">Fecha de inicio <em>(cronómetro)</em></label>
+                    <input type="text" id="inpFecha" placeholder="Ej: 14 Feb 2021" oninput="livePreview()">
+                    <p class="field-hint"><i class="fa-solid fa-clock"></i> El contador mostrará cuánto tiempo llevan juntos desde esta fecha</p>
+                </div>
+            </div>
+
+            <!-- Campos dinámicos de la plantilla -->
+            <div id="dynFields"></div>
+
+            <div class="note info" style="margin-top:10px;" id="notaTextos">
+                <i class="fa-solid fa-circle-info"></i> Cada campo corresponde a un texto real dentro de la animación. Si dejas uno vacío, se usará el texto original de la plantilla.
+            </div>
+        </div>
+
+        <!-- ── SECCIÓN 3: FOTO (condicional) ── -->
+        <div class="fsec" id="secFoto" style="display:none;">
+            <div class="fsec-head">
+                <div class="ficon green"><i class="fa-solid fa-camera-retro"></i></div>
+                <div>
+                    <h3>3. Editor de Foto <span class="chip g"><i class="fa-solid fa-check"></i> Incluida en tu plan</span></h3>
+                    <p id="fotoDesc">Sube tu foto y ajústala visualmente — arrastra y redimensiona</p>
+                </div>
+            </div>
+
+            <!-- ZONA UPLOAD -->
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileFoto').click()">
+                <input type="file" id="fileFoto" accept="image/*">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <div class="upload-zone-txt">
+                    <p>Seleccionar foto de galería</p>
+                    <small>También puedes arrastrar · JPG · PNG · WEBP · Máx. 10MB</small>
+                </div>
+            </div>
+
+            <!-- EDITOR VISUAL (visible after upload) -->
+            <div id="photoEditor" style="display:none; margin-top:12px;">
+
+                <!-- STAGE: simula el área de la animación -->
+                <div class="p-stage-wrap">
+                    <label class="fl" style="margin-bottom:6px;"><i class="fa-solid fa-hand-pointer" style="color:var(--green);"></i> Arrastra la foto dentro del recuadro para posicionarla</label>
+                    <div class="p-stage" id="pStage">
+                        <!-- fondo oscuro simulando la animación -->
+                        <div class="p-stage-bg"></div>
+                        <!-- foto arrastrable -->
+                        <div class="p-photo-wrap" id="pPhotoWrap">
+                            <img id="pPhotoImg" src="" alt="" draggable="false">
+                            <!-- handles de resize en esquinas -->
+                            <div class="p-resize-handle" id="pResizeSE"></div>
+                        </div>
+                        <!-- crosshair guía -->
+                        <div class="p-crosshair-h"></div>
+                        <div class="p-crosshair-v"></div>
+                        <!-- label de posición actual -->
+                        <div class="p-pos-label" id="pPosLabel">Centro · Mediana</div>
+                    </div>
+                </div>
+
+                <!-- CONTROLES BAJO EL STAGE -->
+                <div class="p-ctrls">
+                    <div class="p-ctrl-row">
+                        <label class="fl"><i class="fa-solid fa-expand"></i> Tamaño</label>
+                        <div class="p-slider-row">
+                            <span class="p-slider-tag">S</span>
+                            <input type="range" id="inpFlS" class="size-slider" min="10" max="80" value="35" step="1" oninput="applyPhotoSize()">
+                            <span class="p-slider-tag">XL</span>
+                        </div>
+                        <span class="p-val" id="pSizeLabel">35%</span>
+                    </div>
+                    <div class="p-ctrl-row">
+                        <label class="fl"><i class="fa-solid fa-clock"></i> Aparece a los</label>
+                        <div class="p-slider-row">
+                            <span class="p-slider-tag">0s</span>
+                            <input type="range" id="inpFlT" class="size-slider" min="0" max="30" value="0" step="1" oninput="applyPhotoTime()">
+                            <span class="p-slider-tag">30s</span>
+                        </div>
+                        <span class="p-val" id="pTimeLabel">Al inicio</span>
+                    </div>
+                    <div class="p-ctrl-row">
+                        <label class="fl"><i class="fa-solid fa-hourglass-half"></i> Visible durante</label>
+                        <div class="p-slider-row">
+                            <span class="p-slider-tag">3s</span>
+                            <input type="range" id="inpFlD" class="size-slider" min="3" max="60" value="20" step="1" oninput="applyPhotoTime()">
+                            <span class="p-slider-tag">60s</span>
+                        </div>
+                        <span class="p-val" id="pDurLabel">20s</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-top:8px;">
+                    <p style="font-size:0.67rem;color:var(--dim);"><i class="fa-solid fa-shield-halved" style="color:var(--green);"></i> La foto se sube cifrada al enviar el pedido</p>
+                    <button onclick="removePhoto()" style="font-size:0.7rem;color:#ff7a9d;background:none;border:none;cursor:pointer;"><i class="fa-solid fa-trash"></i> Quitar foto</button>
+                </div>
+            </div>
+
+            <!-- hidden fields de posición -->
+            <input type="hidden" id="inpFlX" value="50">
+            <input type="hidden" id="inpFlY" value="50">
+        </div>
+
+        <!-- ── SECCIÓN 4: MÚSICA (solo Ultra) ── -->
+        <div class="fsec" id="secMusica" style="display:none;">
+            <div class="fsec-head">
+                <div class="ficon cyan"><i class="fa-solid fa-music"></i></div>
+                <div>
+                    <h3>4. Música de Fondo <span class="chip c"><i class="fa-solid fa-crown"></i> Ultra Premium</span></h3>
+                    <p>Elige la canción que sonará en segundo plano</p>
+                </div>
+            </div>
+
+            <div class="music-grid" id="musicGrid"></div>
+
+            <!-- AUDIO PLAYER y TRIM EDITOR -->
+            <div class="music-player" id="musicPlayer" style="display:none;">
+                <div class="mp-head">
+                    <div class="mp-info">
+                        <i class="fa-solid fa-music" style="color:var(--cyan);"></i>
+                        <span id="mpSongName">—</span>
+                    </div>
+                    <div class="mp-controls">
+                        <button class="mp-btn" id="mpPlayBtn" onclick="togglePlay()">
+                            <i class="fa-solid fa-play" id="mpPlayIco"></i>
+                        </button>
+                        <span class="mp-time" id="mpTimeDisplay">0:00 / 0:00</span>
+                    </div>
+                </div>
+
+                <!-- BARRA DE CORTE VISUAL -->
+                <div class="trim-wrap">
+                    <label class="fl" style="margin-bottom:6px;">Selecciona el fragmento que sonará en el regalo:</label>
+                    <div class="trim-bar-outer" id="trimBarOuter">
+                        <div class="trim-bar-fill" id="trimFill"></div>
+                        <div class="trim-progress" id="trimProgress"></div>
+                        <div class="trim-handle trim-start" id="trimStart" title="Inicio del fragmento"></div>
+                        <div class="trim-handle trim-end"   id="trimEnd"   title="Fin del fragmento"></div>
+                    </div>
+                    <div class="trim-times">
+                        <span>Desde: <strong id="trimFromLabel">0s</strong></span>
+                        <span id="trimDurLabel" style="color:var(--cyan);">Duración: 30s</span>
+                        <span>Hasta: <strong id="trimToLabel">30s</strong></span>
+                    </div>
+                </div>
+
+                <audio id="audioEl" preload="metadata"></audio>
+                <!-- hidden fields para el submit -->
+                <input type="hidden" id="inpMStart" value="0">
+                <input type="hidden" id="inpMDur"   value="30">
+            </div>
+
+            <div class="divider">o pega el link de tu canción</div>
+            <input type="text" id="inpMusicUrl" placeholder="https://... (mp3, mp4)" oninput="handleMusicUrl()">
+        </div>
+
+
+
+        <!-- spacer para el action bar -->
+        <div style="height:70px;"></div>
+    </section>
+
+    <!-- ════════════════════════════
+         PREVIEW COLUMN
+    ════════════════════════════ -->
+    <aside class="preview-col">
+        <div class="preview-top">
+            <div class="preview-title">
+                <div class="live-dot"></div>
+                Vista Previa en Vivo
+            </div>
+            <a href="#" class="btn-fullprev" id="btnFullPrev" target="_blank">
+                <i class="fa-solid fa-expand"></i> Ver completa
+            </a>
+        </div>
+        <iframe id="previewFrame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+    </aside>
+</div>
+
+<!-- ── ACTION BAR ── -->
+<div class="action-bar">
+    <div>
+        <div class="bar-price" id="barPrice">$— <small>USD</small></div>
+        <div class="bar-plan"  id="barPlan">Selecciona un plan para continuar</div>
+    </div>
+    <button class="btn-bar pay" id="btnPay" onclick="generarPedido()" disabled>
+        <i class="fa-solid fa-circle-notch spin" id="spinIcoPay" style="display:none;"></i>
+        <i class="fa-solid fa-credit-card" id="payIco"></i>
+        Ir a Pagar
+    </button>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/catalog.js?v=6"></script>
+<script>
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
+const WA_NUM  = '593990480389';
+const SB_URL  = 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
+const SB_KEY  = 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc';
+
+let db = null;
+try { db = supabase.createClient(SB_URL, SB_KEY); } catch(e){}
+
+const P = new URLSearchParams(location.search);
+const TPL_ID = P.get('t') || '';
+
+let tpl          = null;
+let currentPlan  = '';
+let fotoFile     = null;
+let fotoUrl      = null;
+let selectedSong = null;
+let previewDebounce = null;
+
+const PLANS = {
+    basico:        { label:'Básico',          price:1.50, foto:false, music:false, dur:'2 semanas' },
+    personalizado: { label:'Con Fotografía',  price:3.00, foto:true,  music:false, dur:'2.5 meses' },
+    ultra:         { label:'Ultra Premium',   price:4.50, foto:true,  music:true,  dur:'6 meses'   },
+};
+
+const PLAN_MSG = {
+    basico:        { t:'info', m:'✏️ Solo textos personalizados, sin foto ni música. Ideal para un mensaje rápido y emotivo.' },
+    personalizado: { t:'info', m:'📸 Tus textos + tu foto real integrada automáticamente dentro de la animación. La opción más elegida.' },
+    ultra:         { t:'info', m:'🎵 Todo incluido: textos, foto real, música sincronizada y código fuente ZIP. El regalo definitivo.' },
+};
+
+const SONGS = [
+    '506','ADMV','Acuérdate de mi','Aprender a quererte','Así te pedí',
+    'Canción Bonita','Casa en el Aire','Chica Ideal','Confieso','Cuando nadie ve',
+    'Destino','Fantasía','Hoy es un buen día','Locuras mías','Mar y Bosque',
+    'Mon Amour','No se va','No te cambiaría','Pero te conocí','Persona Favorita',
+    'Poeta','Princesa','Promesa','Rizos','Sirena','Te Amo','Te voy amar',
+    'The Reason','The first time','Vine a buscarte'
+];
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    // Buscar plantilla
+    if (typeof catalogData !== 'undefined' && TPL_ID) {
+        tpl = catalogData.find(t => t.id === TPL_ID) || null;
+    }
+
+    if (tpl) {
+        document.getElementById('navTpl').innerHTML = `<i class="fa-solid ${tpl.icon||'fa-star'}"></i> ${tpl.name}`;
+        document.title = `Personalizar: ${tpl.name} — CorazónCódigo`;
+        document.getElementById('secTextosDesc').textContent = `${tpl.editableTexts?.length || 0} campos para editar en "${tpl.name}"`;
+        if (tpl.hasDate) document.getElementById('grpFecha').style.display = 'block';
+        if (tpl.photosInfo) document.getElementById('fotoDesc').textContent = tpl.photosInfo;
+        buildDynFields();
+        loadPreview();
+    } else {
+        document.getElementById('secTextosDesc').textContent = 'Selecciona una plantilla desde el catálogo';
+    }
+
+    selectPlan('personalizado');
+    buildMusicGrid();
+    // File input + drag-drop on upload zone
+    document.getElementById('fileFoto').addEventListener('change', e => {
+        const f = e.target.files[0]; if (f) setPhoto(f);
+    });
+    const uz = document.getElementById('uploadZone');
+    uz.addEventListener('dragover',  e => { e.preventDefault(); uz.style.borderColor='var(--green)'; });
+    uz.addEventListener('dragleave', () => { uz.style.borderColor=''; });
+    uz.addEventListener('drop', e => {
+        e.preventDefault(); uz.style.borderColor='';
+        const f = e.dataTransfer.files[0];
+        if (f?.type.startsWith('image/')) setPhoto(f);
+    });
+    updateActionBar();
+});
+
+// ══════════════════════════════════════════
+//  DYNAMIC FIELDS (por plantilla)
+// ══════════════════════════════════════════
+function buildDynFields() {
+    const cont = document.getElementById('dynFields');
+    if (!tpl?.editableTexts?.length) return;
+
+    // Agrupar en filas de 2 (campos cortos) o 1 (textarea)
+    let html = '';
+    let i = 0;
+    const fields = tpl.editableTexts;
+
+    while (i < fields.length) {
+        const f = fields[i];
+        if (f.type === 'textarea') {
+            html += `
+            <div class="frow c1" style="margin-top:0;">
+                <div>
+                    <label class="fl">${f.label} <em>(editable)</em></label>
+                    <textarea id="dyn_${f.id}" rows="3" placeholder="${f.default||''}" oninput="livePreview()">${f.default||''}</textarea>
+                </div>
+            </div>`;
+            i++;
+        } else {
+            // Agrupar 2 campos de texto en la misma fila
+            const next = fields[i+1];
+            if (next && next.type !== 'textarea') {
+                html += `
+                <div class="frow c2" style="margin-top:0;">
+                    <div>
+                        <label class="fl">${f.label} <em>(editable)</em></label>
+                        <input type="text" id="dyn_${f.id}" placeholder="${f.default||''}" value="${f.default||''}" oninput="livePreview()">
+                    </div>
+                    <div>
+                        <label class="fl">${next.label} <em>(editable)</em></label>
+                        <input type="text" id="dyn_${next.id}" placeholder="${next.default||''}" value="${next.default||''}" oninput="livePreview()">
+                    </div>
+                </div>`;
+                i += 2;
+            } else {
+                html += `
+                <div class="frow c1" style="margin-top:0;">
+                    <div>
+                        <label class="fl">${f.label} <em>(editable)</em></label>
+                        <input type="text" id="dyn_${f.id}" placeholder="${f.default||''}" value="${f.default||''}" oninput="livePreview()">
+                    </div>
+                </div>`;
+                i++;
+            }
+        }
+    }
+    cont.innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+//  PLAN
+// ══════════════════════════════════════════
+function selectPlan(key) {
+    currentPlan = key;
+    const p = PLANS[key];
+
+    document.querySelectorAll('.plan-row').forEach(el => el.classList.remove('sel'));
+    const el = document.getElementById(`pr_${key}`);
+    if (el) { el.classList.add('sel'); el.querySelector('input').checked = true; }
+
+    const box = document.getElementById('planInfoBox');
+    const m   = PLAN_MSG[key];
+    box.textContent = m.m;
+    box.className   = `plan-info-box show ${m.t}`;
+
+    document.getElementById('secFoto').style.display   = p.foto  ? 'block' : 'none';
+    document.getElementById('secMusica').style.display = p.music ? 'block' : 'none';
+
+    updateActionBar();
+}
+
+function updateActionBar() {
+    const p = PLANS[currentPlan];
+    if (!p) return;
+
+    document.getElementById('barPrice').innerHTML = `$${p.price.toFixed(2)} <small>USD</small>`;
+    document.getElementById('barPlan').textContent = `${p.label} · ${p.dur}`;
+    document.getElementById('btnPay').disabled = false;
+}
+
+// ══════════════════════════════════════════
+//  LIVE PREVIEW
+// ══════════════════════════════════════════
+function livePreview() {
+    clearTimeout(previewDebounce);
+    previewDebounce = setTimeout(loadPreview, 500);
+}
+
+function loadPreview() {
+    if (!tpl?.path) return;
+    const params = buildPreviewParams();
+    const url = tpl.path + (params ? '?' + params : '');
+    document.getElementById('previewFrame').src = url;
+    document.getElementById('btnFullPrev').href = url;
+}
+
+function buildPreviewParams() {
+    const p = new URLSearchParams();
+    p.set('editorLivePreview', 'true');
+
+    const para = document.getElementById('inpPara')?.value.trim();
+    if (para) p.set('para', para);
+
+    const fecha = document.getElementById('inpFecha')?.value.trim();
+    if (fecha) p.set('fecha', fecha);
+
+    // Campos dinámicos de la plantilla
+    if (tpl?.editableTexts) {
+        tpl.editableTexts.forEach(f => {
+            const el = document.getElementById(`dyn_${f.id}`);
+            if (el?.value?.trim()) p.set(`txt_${f.id}`, el.value.trim());
+        });
+    }
+
+    // Foto (si ya fue subida)
+    if (fotoUrl || blobUrl) {
+        p.set('flImg', fotoUrl || blobUrl);
+        p.set('flS',   document.getElementById('inpFlS')?.value || '35');
+        p.set('flX',   document.getElementById('inpFlX')?.value || '50');
+        p.set('flY',   document.getElementById('inpFlY')?.value || '50');
+        p.set('flT',   document.getElementById('inpFlT')?.value || '0');
+        p.set('flD',   document.getElementById('inpFlD')?.value || '20');
+    }
+
+    // Música
+    if (selectedSong) {
+        p.set('musica', selectedSong);
+        p.set('mStart', document.getElementById('inpMStart')?.value || '0');
+        p.set('mDur',   document.getElementById('inpMDur')?.value   || '30');
+    }
+
+    return p.toString();
+}
+
+// ══════════════════════════════════════════
+//  FOTO — EDITOR VISUAL COMPLETO
+// ══════════════════════════════════════════
+let pDragging    = false;
+let pResizing    = false;
+let pDragStartX  = 0, pDragStartY  = 0;
+let pPhotoLeft   = 50, pPhotoTop = 50; // % within stage
+let pPhotoSize   = 35; // % of stage width
+let pTouchId     = null;
+let pPhotoAspect = 1;
+let blobUrl      = null;
+
+function setPhoto(f) {
+    fotoFile = f;
+    document.getElementById('uploadZone').classList.add('has');
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    blobUrl = URL.createObjectURL(f);
+    const reader = new FileReader();
+    reader.onload = ev => {
+        const src = ev.target.result;
+        const img = new Image();
+        img.onload = () => {
+            pPhotoAspect = img.naturalWidth / img.naturalHeight || 1;
+            // Set on the stage photo
+            document.getElementById('pPhotoImg').src = src;
+            // Show editor, hide upload zone
+            document.getElementById('photoEditor').style.display = 'block';
+            document.getElementById('uploadZone').style.display = 'none';
+            // Init position to center
+            pPhotoLeft = 50; pPhotoTop = 50; pPhotoSize = 35;
+            document.getElementById('inpFlS').value = pPhotoSize;
+            applyPhotoPosition();
+            applyPhotoSize();
+            applyPhotoTime();
+            initPhotoDrag();
+        };
+        img.src = src;
+    };
+    reader.readAsDataURL(f);
+}
+
+function removePhoto() {
+    fotoFile = null; fotoUrl = null;
+    if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+    document.getElementById('fileFoto').value = '';
+    document.getElementById('photoEditor').style.display = 'none';
+    document.getElementById('uploadZone').style.display = '';
+    document.getElementById('uploadZone').classList.remove('has');
+    livePreview();
+}
+
+function applyPhotoPosition() {
+    const wrap  = document.getElementById('pPhotoWrap');
+    const stage = document.getElementById('pStage');
+    const sW = stage.offsetWidth || 460;
+    const sH = stage.offsetHeight || 260;
+    const photoW = sW * pPhotoSize / 100;
+    const photoH = photoW / pPhotoAspect; // cuadrada
+    const left = (pPhotoLeft / 100) * sW - photoW / 2;
+    const top  = (pPhotoTop  / 100) * sH - photoH / 2;
+    wrap.style.left   = Math.max(0, Math.min(sW - photoW, left)) + 'px';
+    wrap.style.top    = Math.max(0, Math.min(sH - photoH, top))  + 'px';
+    wrap.style.width  = photoW + 'px';
+    wrap.style.height = photoH + 'px';
+    // update hidden fields
+    document.getElementById('inpFlX').value = Math.round(pPhotoLeft);
+    document.getElementById('inpFlY').value = Math.round(pPhotoTop);
+    // label
+    const hLabel = pPhotoLeft < 35 ? 'Izquierda' : pPhotoLeft > 65 ? 'Derecha' : 'Centro';
+    const vLabel = pPhotoTop  < 35 ? 'Arriba'    : pPhotoTop  > 65 ? 'Abajo'   : 'Centro';
+    document.getElementById('pPosLabel').textContent =
+        `${vLabel}-${hLabel} · ${pPhotoSize}%`;
+}
+
+function applyPhotoSize() {
+    pPhotoSize = parseInt(document.getElementById('inpFlS').value || 35);
+    document.getElementById('pSizeLabel').textContent = pPhotoSize + '%';
+    applyPhotoPosition();
+    livePreview();
+}
+
+function applyPhotoTime() {
+    const t = parseInt(document.getElementById('inpFlT')?.value || 0);
+    const d = parseInt(document.getElementById('inpFlD')?.value || 20);
+    document.getElementById('pTimeLabel').textContent = t === 0 ? 'Al inicio' : t + 's';
+    document.getElementById('pDurLabel').textContent  = d + 's';
+    livePreview();
+}
+
+function initPhotoDrag() {
+    const wrap   = document.getElementById('pPhotoWrap');
+    const stage  = document.getElementById('pStage');
+    const handle = document.getElementById('pResizeSE');
+
+    // —— DRAG PHOTO ——
+    function startDrag(cx, cy) {
+        pDragging = true;
+        pDragStartX = cx; pDragStartY = cy;
+    }
+    function doMove(cx, cy) {
+        if (!pDragging) return;
+        const sW = stage.offsetWidth; const sH = stage.offsetHeight;
+        const dx = (cx - pDragStartX) / sW * 100;
+        const dy = (cy - pDragStartY) / sH * 100;
+        pPhotoLeft = Math.max(0, Math.min(100, pPhotoLeft + dx));
+        pPhotoTop  = Math.max(0, Math.min(100, pPhotoTop  + dy));
+        pDragStartX = cx; pDragStartY = cy;
+        applyPhotoPosition();
+    }
+    function endDrag() { if (pDragging) { pDragging = false; livePreview(); } }
+
+    wrap.addEventListener('mousedown',  e => { if (e.target !== handle) { e.preventDefault(); startDrag(e.clientX, e.clientY); } });
+    document.addEventListener('mousemove', e => doMove(e.clientX, e.clientY));
+    document.addEventListener('mouseup',   endDrag);
+
+    wrap.addEventListener('touchstart', e => { if (e.target !== handle) { pTouchId = e.touches[0].identifier; startDrag(e.touches[0].clientX, e.touches[0].clientY); } }, {passive:true});
+    document.addEventListener('touchmove', e => {
+        const t = [...e.touches].find(t => t.identifier === pTouchId);
+        if (t) doMove(t.clientX, t.clientY);
+    }, {passive:true});
+    document.addEventListener('touchend', endDrag);
+
+    // —— RESIZE by handle ——
+    let resizeStartX = 0, resizeStartSize = 35;
+    function startResize(cx) { pResizing = true; resizeStartX = cx; resizeStartSize = pPhotoSize; }
+    function doResize(cx) {
+        if (!pResizing) return;
+        const sW = stage.offsetWidth;
+        const delta = (cx - resizeStartX) / sW * 100;
+        pPhotoSize = Math.max(8, Math.min(90, resizeStartSize + delta));
+        document.getElementById('inpFlS').value = Math.round(pPhotoSize);
+        document.getElementById('pSizeLabel').textContent = Math.round(pPhotoSize) + '%';
+        applyPhotoPosition();
+    }
+    function endResize() { if (pResizing) { pResizing = false; livePreview(); } }
+
+    handle.addEventListener('mousedown',  e => { e.stopPropagation(); e.preventDefault(); startResize(e.clientX); });
+    document.addEventListener('mousemove', e => doResize(e.clientX));
+    document.addEventListener('mouseup',   endResize);
+    handle.addEventListener('touchstart', e => { e.stopPropagation(); startResize(e.touches[0].clientX); }, {passive:true});
+    document.addEventListener('touchmove', e => { if (pResizing) doResize(e.touches[0].clientX); }, {passive:true});
+    document.addEventListener('touchend', endResize);
+}
+
+// stub for legacy calls
+function setPos() {}
+function updateSizeLabel() {}
+
+async function uploadPhoto() {
+    if (!fotoFile || !db) return null;
+    try {
+        const ext  = fotoFile.name.split('.').pop();
+        const name = `foto_${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+        const {error} = await db.storage.from('user_uploads').upload(name, fotoFile);
+        if (error) throw error;
+        const {data} = db.storage.from('user_uploads').getPublicUrl(name);
+        return data.publicUrl;
+    } catch(e) { console.error('[Upload]', e); return null; }
+}
+function initDragDrop() {} // handled in DOMContentLoaded
+
+// ══════════════════════════════════════════
+//  MÚSICA — PLAYER Y TRIM EDITOR
+// ══════════════════════════════════════════
+const MUSIC_BASE = 'https://qmnbcmioylgmcbzqrjiv.supabase.co/storage/v1/object/public/musica/';
+
+let trimStartPct = 0;    // 0-1
+let trimEndPct   = 0.3;  // 0-1 (inicio: 30s de 120s ≈ 0.25 por defecto; se ajusta cuando cargue)
+let dragging     = null; // 'start' | 'end'
+const MAX_DUR    = 180;  // segundos máximos asumidos si metadatos no cargan
+
+function buildMusicGrid() {
+    const grid = document.getElementById('musicGrid');
+    SONGS.forEach(s => {
+        const el = document.createElement('div');
+        el.className = 'msong';
+        el.innerHTML = `<i class="fa-solid fa-music"></i><span>${s}</span>`;
+        el.onclick = () => {
+            document.querySelectorAll('.msong').forEach(x => x.classList.remove('sel'));
+            el.classList.add('sel');
+            selectedSong = s + '.mp4';
+            document.getElementById('inpMusicUrl').value = '';
+            loadMusicPlayer(MUSIC_BASE + s + '.mp4', s);
+            livePreview();
+        };
+        grid.appendChild(el);
+    });
+
+    // Inicializar trim drag handlers
+    initTrimDrag();
+}
+
+function loadMusicPlayer(src, name) {
+    const player = document.getElementById('musicPlayer');
+    const audio  = document.getElementById('audioEl');
+
+    document.getElementById('mpSongName').textContent = name || src;
+    audio.src = src;
+    audio.load();
+
+    player.style.display = 'block';
+
+    audio.addEventListener('loadedmetadata', () => {
+        const dur = Math.round(audio.duration || MAX_DUR);
+        // Por defecto: empieza en 0, dura 30s (o toda la canción si es menor)
+        trimStartPct = 0;
+        trimEndPct   = Math.min(30, dur) / dur;
+        updateTrimUI(dur);
+        updateHiddenInputs(dur);
+    }, { once: true });
+
+    audio.addEventListener('timeupdate', () => {
+        const dur  = audio.duration || MAX_DUR;
+        const pct  = audio.currentTime / dur;
+        const prog = document.getElementById('trimProgress');
+        prog.style.display = 'block';
+        prog.style.left    = (pct * 100) + '%';
+        updateTimeDisplay(audio.currentTime, dur);
+
+        // Auto-stop at trim end
+        if (audio.currentTime >= (trimEndPct * dur)) {
+            audio.pause();
+            audio.currentTime = trimStartPct * dur;
+            document.getElementById('mpPlayIco').className = 'fa-solid fa-play';
+        }
+    });
+}
+
+function togglePlay() {
+    const audio  = document.getElementById('audioEl');
+    const ico    = document.getElementById('mpPlayIco');
+    if (!audio.src || audio.src === location.href) return;
+
+    if (audio.paused) {
+        if (!audio.currentTime || audio.currentTime < (trimStartPct * (audio.duration||MAX_DUR)) ||
+            audio.currentTime >= (trimEndPct * (audio.duration||MAX_DUR))) {
+            audio.currentTime = trimStartPct * (audio.duration || MAX_DUR);
+        }
+        audio.play().catch(() => {});
+        ico.className = 'fa-solid fa-pause';
+    } else {
+        audio.pause();
+        ico.className = 'fa-solid fa-play';
+    }
+}
+
+function updateTimeDisplay(cur, dur) {
+    const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+    document.getElementById('mpTimeDisplay').textContent = `${fmt(cur)} / ${fmt(dur)}`;
+}
+
+function updateTrimUI(dur) {
+    const outer  = document.getElementById('trimBarOuter');
+    const fill   = document.getElementById('trimFill');
+    const hStart = document.getElementById('trimStart');
+    const hEnd   = document.getElementById('trimEnd');
+    const W = outer.getBoundingClientRect().width || 300;
+
+    const lPct = trimStartPct * 100;
+    const rPct = trimEndPct   * 100;
+    fill.style.left  = lPct + '%';
+    fill.style.width = (rPct - lPct) + '%';
+    hStart.style.left = `calc(${lPct}% - 7px)`;
+    hEnd.style.left   = `calc(${rPct}% - 7px)`;
+
+    const fromS = Math.round(trimStartPct * dur);
+    const toS   = Math.round(trimEndPct   * dur);
+    document.getElementById('trimFromLabel').textContent = fromS + 's';
+    document.getElementById('trimToLabel').textContent   = toS   + 's';
+    document.getElementById('trimDurLabel').textContent  = `Duración: ${toS - fromS}s`;
+}
+
+function updateHiddenInputs(dur) {
+    document.getElementById('inpMStart').value = Math.round(trimStartPct * dur);
+    document.getElementById('inpMDur').value   = Math.round((trimEndPct - trimStartPct) * dur);
+}
+
+function initTrimDrag() {
+    const hStart = document.getElementById('trimStart');
+    const hEnd   = document.getElementById('trimEnd');
+    const outer  = document.getElementById('trimBarOuter');
+
+    function onMove(e) {
+        if (!dragging) return;
+        const rect = outer.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        const dur = document.getElementById('audioEl')?.duration || MAX_DUR;
+        const MIN_GAP = 5 / dur; // mínimo 5 segundos de fragmento
+
+        if (dragging === 'start') {
+            trimStartPct = Math.min(pct, trimEndPct - MIN_GAP);
+        } else {
+            trimEndPct = Math.max(pct, trimStartPct + MIN_GAP);
+        }
+        updateTrimUI(dur);
+        updateHiddenInputs(dur);
+    }
+
+    function onUp() { dragging = null; }
+
+    hStart.addEventListener('mousedown',  () => dragging = 'start');
+    hEnd.addEventListener('mousedown',    () => dragging = 'end');
+    hStart.addEventListener('touchstart', () => dragging = 'start', {passive:true});
+    hEnd.addEventListener('touchstart',   () => dragging = 'end',   {passive:true});
+
+    document.addEventListener('mousemove',  onMove);
+    document.addEventListener('mouseup',    onUp);
+    document.addEventListener('touchmove',  onMove, {passive:true});
+    document.addEventListener('touchend',   onUp);
+}
+
+function handleMusicUrl() {
+    const v = document.getElementById('inpMusicUrl').value.trim();
+    selectedSong = v || null;
+    document.querySelectorAll('.msong').forEach(x => x.classList.remove('sel'));
+    if (v) loadMusicPlayer(v, v.split('/').pop());
+    else document.getElementById('musicPlayer').style.display = 'none';
+    livePreview();
+}
+
+
+// ══════════════════════════════════════════
+//  GENERAR PEDIDO
+// ══════════════════════════════════════════
+async function generarPedido() {
+    const para  = document.getElementById('inpPara').value.trim();
+    const fecha = document.getElementById('inpFecha')?.value.trim() || '';
+    const plan  = PLANS[currentPlan];
+
+    if (!para) {
+        document.getElementById('inpPara').focus();
+        document.getElementById('inpPara').style.borderColor = 'var(--pink)';
+        setTimeout(() => document.getElementById('inpPara').style.borderColor = '', 2000);
+        return;
+    }
+
+    // UI Loading
+    const btnPay = document.getElementById('btnPay');
+    btnPay.disabled = true;
+    document.getElementById('spinIcoPay').style.display = 'inline-block';
+    document.getElementById('payIco').style.display   = 'none';
+
+    // Subir foto si aplica
+    if (plan.foto && fotoFile && !fotoUrl) {
+        fotoUrl = await uploadPhoto();
+        if (fotoUrl) livePreview(); // actualizar preview con foto subida
+    }
+
+    // Recolectar textos dinámicos
+    const dynTxts = { para };
+    if (fecha) dynTxts.fecha = fecha;
+    if (tpl?.editableTexts) {
+        tpl.editableTexts.forEach(f => {
+            const el = document.getElementById(`dyn_${f.id}`);
+            if (el?.value?.trim()) dynTxts[f.id] = el.value.trim();
+        });
+    }
+    if (fotoUrl) {
+        dynTxts.flImg = fotoUrl;
+        dynTxts.flS   = document.getElementById('inpFlS')?.value || '35';
+        dynTxts.flX   = document.getElementById('inpFlX')?.value || '50';
+        dynTxts.flY   = document.getElementById('inpFlY')?.value || '50';
+        dynTxts.flT   = document.getElementById('inpFlT')?.value || '0';
+        dynTxts.flD   = document.getElementById('inpFlD')?.value || '20';
+    }
+
+    const orderData = {
+        customer_name:  para,
+        target_name:    para,
+        plan_name:      plan.label,
+        price:          plan.price,
+        template_id:    null,
+        template_name:  tpl?.name || 'N/A',
+        custom_date:    fecha,
+        custom_message: Object.values(dynTxts).join(' '), // concat all for safety
+        photo_urls:     fotoUrl ? [fotoUrl] : [],
+        music_url:      selectedSong || '',
+        music_start:    parseInt(document.getElementById('inpMStart')?.value) || 0,
+        music_duration: parseInt(document.getElementById('inpMDur')?.value)   || 30,
+        dynamic_texts:  dynTxts,
+        status:         'pending',
+    };
+
+    let displayId = `LC-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+    let fullId    = displayId;
+
+    try {
+        if (db) {
+            try {
+                const {data:t} = await db.from('templates').select('id').eq('slug', tpl?.id).maybeSingle();
+                if (t) orderData.template_id = t.id;
+            } catch(e){}
+
+            const {data:ins, error} = await db.from('orders').insert([orderData]).select();
+            if (!error && ins?.[0]) {
+                fullId    = ins[0].id;
+                displayId = fullId.substring(0,8).toUpperCase();
+                localStorage.setItem('lastOrderId', fullId);
+            }
+        }
+    } catch(e) { console.warn('[Supabase] contingencia:', e); }
+
+    // Redirigir a pasarela directamente en lugar de mostrar el Result Card
+    window.location.href = `pasarela.html?orderId=${encodeURIComponent(fullId)}&plan=${encodeURIComponent(plan.label)}&price=${plan.price}&tpl=${encodeURIComponent(tpl?.name||'')}`;
+}
+</script>
+</body>
+</html>

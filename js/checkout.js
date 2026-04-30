@@ -19,6 +19,24 @@ const multimediaDesc = document.getElementById('multimediaDesc');
 let currentStep = 1;
 const totalSteps = 4;
 
+function parsePlanPrice(planLabel) {
+    if (typeof planLabel !== 'string') return 0;
+    const match = planLabel.match(/\$([0-9]+(?:[.,][0-9]+)?)/);
+    if (!match) return 0;
+    return Number.parseFloat(match[1].replace(',', '.')) || 0;
+}
+
+function getPlanTier(planLabel) {
+    const plan = (planLabel || '').toLowerCase();
+    const price = parsePlanPrice(planLabel);
+    if (price === 0 || /gratis|demo/.test(plan)) return 'free';
+    if (price === 1.5 || /básico|basico/.test(plan)) return 'basic';
+    if (price === 2.5 || /hub|membres/.test(plan)) return 'hub';
+    if (price === 3 || /personalizado|fotograf/.test(plan)) return 'personalized';
+    if (price === 4.5 || /ultra/.test(plan)) return 'ultra';
+    return 'unknown';
+}
+
 // -------------------------------------------------------
 // Sistema de Confirmación estilizado (reemplaza alert)
 // -------------------------------------------------------
@@ -100,12 +118,14 @@ function openCheckoutWizard(templateName) {
 
     // Listener dinámico: mostrar/ocultar panel Ultra Benefit
     document.querySelectorAll('input[name="planType"]').forEach(radio => {
+        if (radio.dataset.checkoutBound === 'true') return;
         radio.addEventListener('change', () => {
             const grpUltra = document.getElementById('grpUltraBenefit');
             if (grpUltra) {
-                grpUltra.style.display = radio.value.includes('$4.50') ? 'block' : 'none';
+                grpUltra.style.display = getPlanTier(radio.value) === 'ultra' ? 'block' : 'none';
             }
         });
+        radio.dataset.checkoutBound = 'true';
     });
     // Reset estado del panel al abrir
     const grpUltraInit = document.getElementById('grpUltraBenefit');
@@ -211,7 +231,7 @@ if (btnNext) {
             dataForm.plan = selectedRadio.value;
 
             // Membresía Hub → va directo a WhatsApp
-            if (dataForm.plan.includes("$2.50") || dataForm.plan.toLowerCase().includes("hub")) {
+            if (getPlanTier(dataForm.plan) === 'hub') {
                 const waMsg = encodeURIComponent("Hola CorazónCódigo! Quiero formar parte del grupo CorazónCódigo (Membresía Hub $2.50) 💖");
                 window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${waMsg}`, '_blank');
                 return;
@@ -228,11 +248,12 @@ if (btnNext) {
             const grpFloatToggle = document.getElementById('grpFloatImageToggle');
             const msgGratis     = document.getElementById('msgGratisRestriccion');
             
-            if (dataForm.plan.includes("$0")) {
+            const selectedTier = getPlanTier(dataForm.plan);
+            if (selectedTier === 'free') {
                 if (grpTextosBase) grpTextosBase.style.display = 'none';
                 if (grpFloatToggle) grpFloatToggle.style.display = 'none';
                 if (msgGratis)     msgGratis.style.display = 'block';
-            } else if (dataForm.plan.includes("$1.50")) {
+            } else if (selectedTier === 'basic') {
                 if (grpTextosBase) grpTextosBase.style.display = 'block';
                 if (grpFloatToggle) grpFloatToggle.style.display = 'none';
                 if (msgGratis)     msgGratis.style.display = 'none';
@@ -242,10 +263,10 @@ if (btnNext) {
                 if (msgGratis)     msgGratis.style.display = 'none';
             }
 
-            if (dataForm.plan.includes("$1.50") || dataForm.plan.includes("$0")) {
+            if (selectedTier === 'basic' || selectedTier === 'free') {
                 if (grpMusic)       grpMusic.style.display  = "none";
                 if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye modificaciones de música.";
-            } else if (dataForm.plan.includes("$2.50") || dataForm.plan.includes("$3")) {
+            } else if (selectedTier === 'hub' || selectedTier === 'personalized') {
                 if (grpMusic)       grpMusic.style.display  = "none";
                 if (multimediaDesc) multimediaDesc.innerText = "Este plan no incluye opciones de música. Solo puedes editar el texto y foto en el paso anterior.";
             } else {
@@ -354,13 +375,12 @@ if (btnApplyPromo && inpPromoCode) {
 
                 // Validación de Plan (si el código tiene plan_name)
                 if (data.plan_name && dataForm.plan) {
-                    const planSelectedLow = dataForm.plan.toLowerCase();
                     const requiredLow = data.plan_name.toLowerCase();
-                    // "basico" vs "básico", "personalizado" vs "fotografías", "ultra"
+                    const selectedTier = getPlanTier(dataForm.plan);
                     let match = false;
-                    if (requiredLow === 'basico' && (planSelectedLow.includes('básico') || planSelectedLow.includes('basico') || planSelectedLow.includes('$1.50'))) match = true;
-                    if (requiredLow === 'personalizado' && (planSelectedLow.includes('personalizado') || planSelectedLow.includes('fotografías') || planSelectedLow.includes('$3.00'))) match = true;
-                    if (requiredLow === 'ultra' && (planSelectedLow.includes('ultra') || planSelectedLow.includes('$4.50'))) match = true;
+                    if (requiredLow === 'basico' && selectedTier === 'basic') match = true;
+                    if (requiredLow === 'personalizado' && selectedTier === 'personalized') match = true;
+                    if (requiredLow === 'ultra' && selectedTier === 'ultra') match = true;
                     
                     if (!match) {
                         const planLabels = { 'basico': 'Básico ($1.50)', 'personalizado': 'Personalizado ($3.00)', 'ultra': 'Ultra Premium ($4.50)' };
@@ -382,7 +402,14 @@ if (btnApplyPromo && inpPromoCode) {
                 dataForm.usedPromo = data.code;
                 dataForm.plan = dataForm.plan + " (Pre-Pagado)";
                 const sumPlan = document.getElementById('sumPlan');
-                if (sumPlan) sumPlan.innerHTML = `${dataForm.plan} <span class="badge" style="background:#10b981;">PAGADO</span>`;
+                if (sumPlan) {
+                    sumPlan.textContent = dataForm.plan;
+                    const paidBadge = document.createElement('span');
+                    paidBadge.className = 'badge';
+                    paidBadge.style.background = '#10b981';
+                    paidBadge.textContent = 'PAGADO';
+                    sumPlan.append(' ', paidBadge);
+                }
                 
                 // Ocultar tabs de banco
                 const payEcuador = document.getElementById('payEcuador');
@@ -445,13 +472,18 @@ function getPlanHours(planName) {
 const btnFinishOrder = document.getElementById('btnFinishOrder');
 if (btnFinishOrder) {
     btnFinishOrder.addEventListener('click', async () => {
+        if (btnFinishOrder.dataset.processing === 'true') return;
+        btnFinishOrder.dataset.processing = 'true';
+
         if (!activeTemplateInfo) {
             alert("Error: No se detectó la plantilla seleccionada. Por favor cierra y vuelve a intentar.");
+            btnFinishOrder.dataset.processing = 'false';
             return;
         }
 
+        try {
         // --- NUEVO: IP BLOCKING PARA FREE TIER ---
-        if (dataForm.plan.includes('$0') || dataForm.plan.toLowerCase().includes('gratis')) {
+        if (getPlanTier(dataForm.plan) === 'free') {
             if (localStorage.getItem('free_code_used')) {
                 alert("Ya has utilizado tu código gratuito de 24 horas. Por favor, adquiere un plan para continuar apoyando el proyecto.");
                 return;
@@ -480,11 +512,7 @@ if (btnFinishOrder) {
         // --- FIN IP BLOCKING ---
 
         const tempId = "LC-" + Math.random().toString(36).substr(2, 6).toUpperCase();
-        let price = 0;
-        try {
-            const priceMatch = dataForm.plan.match(/\$(\d+(\.\d+)?)/);
-            if (priceMatch) price = parseFloat(priceMatch[1]);
-        } catch (e) {}
+        const price = parsePlanPrice(dataForm.plan);
 
         if (db) {
             try {
@@ -539,21 +567,42 @@ if (btnFinishOrder) {
                 const { data: insertData, error: insertError } = await db.from('orders').insert([orderData]).select();
                 if (insertError) throw insertError;
                 if (insertData && insertData.length > 0) {
+                    if (typeof window.logOrderEvent === 'function') {
+                        await window.logOrderEvent(insertData[0].id, 'order_created', {
+                            plan: dataForm.plan,
+                            template: activeTemplateInfo?.id || ''
+                        });
+                    }
                     // Si usó un código promocional, lo marcamos como usado y marcamos la orden como 'paid'
                     if (dataForm.usedPromo) {
-                        await db.from('promo_codes').update({ is_used: true, used_by: insertData[0].id }).eq('code', dataForm.usedPromo);
+                        const { data: redeemResult, error: redeemErr } = await db.rpc('redeem_promo_code', {
+                            p_code: dataForm.usedPromo,
+                            p_order_id: insertData[0].id
+                        });
+                        if (redeemErr || !redeemResult) {
+                            throw new Error('No se pudo canjear el código promocional.');
+                        }
                         await db.from('orders').update({ status: 'paid' }).eq('id', insertData[0].id);
                         insertData[0].status = 'paid';
+                        if (typeof window.logOrderEvent === 'function') {
+                            await window.logOrderEvent(insertData[0].id, 'promo_redeemed', { promo: dataForm.usedPromo });
+                        }
                     }
                     processFinalOrder(insertData[0]);
                     return;
                 }
             } catch (e) {
                 console.warn("Error Supabase — modo contingencia activado:", e);
+                if (typeof window.logFrontendError === 'function') {
+                    window.logFrontendError('checkout_insert_error', e?.message || 'Error creating order');
+                }
             }
         }
 
         processFinalOrder({ id: tempId, customer_name: dataForm.destino || "Cliente", plan_name: dataForm.plan }, true);
+        } finally {
+            btnFinishOrder.dataset.processing = 'false';
+        }
     });
 }
 
@@ -597,7 +646,7 @@ function processFinalOrder(order, isOffline = false) {
                 btnGoToWA.innerHTML = '<i class="fa-solid fa-truck-fast"></i> Ir al Rastreador';
                 btnGoToWA.onclick = () => {
                     successModal.classList.remove('active');
-                    window.location.href = "#rastrear";
+                    window.location.href = "#mis-pedidos";
                     const inpOrderId = document.getElementById('inpOrderId');
                     const btnTrackOrder = document.getElementById('btnTrackOrder');
                     if (inpOrderId && btnTrackOrder) {
@@ -614,11 +663,7 @@ function processFinalOrder(order, isOffline = false) {
     document.body.style.overflow = 'hidden';
 
     // --- Extraer precio ---
-    let price = 0;
-    try {
-        const m = dataForm.plan.match(/\$(\d+(\.\d+)?)/);
-        if (m) price = parseFloat(m[1]);
-    } catch(e) {}
+    const price = parsePlanPrice(dataForm.plan);
 
     // --- Dispatch analytics event ---
     document.dispatchEvent(new CustomEvent('corazoncodigo:order-completed', {
@@ -638,7 +683,7 @@ function processFinalOrder(order, isOffline = false) {
     }
 
     // --- Crear cuenta de afiliado si compran Membresía Hub ($2.50) ---
-    if (dataForm.plan.includes('$2.50') && typeof createOrGetAffiliate === 'function' && !isOffline) {
+    if (getPlanTier(dataForm.plan) === 'hub' && typeof createOrGetAffiliate === 'function' && !isOffline) {
         createOrGetAffiliate(order.id, order.customer_name || 'LC');
     }
 

@@ -94,9 +94,10 @@ ALTER TABLE newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 -- templates: cualquiera puede leer (para cargar el catálogo), solo admin edita
 CREATE POLICY "templates_select_public" ON templates FOR SELECT TO anon USING (true);
 
--- orders: cualquiera puede insertar (comprar) y leer la suya (trackear), admin controla
+-- orders: cualquiera puede insertar (comprar), lectura directa solo admin.
+-- El tracking público debe hacerse por RPC controlada.
 CREATE POLICY "orders_insert_public" ON orders FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "orders_select_public" ON orders FOR SELECT TO anon USING (true);
+CREATE POLICY "orders_select_admin" ON orders FOR SELECT TO authenticated USING (true);
 
 -- affiliates: solo admin puede leer/modificar
 CREATE POLICY "affiliates_select_admin"
@@ -172,3 +173,62 @@ SELECT
 FROM affiliates a
 LEFT JOIN referrals r ON r.affiliate_id = a.id
 GROUP BY a.id;
+
+-- ============================================================
+-- TABLA: order_events (auditoría operativa de órdenes)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS order_events (
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_id      UUID REFERENCES orders(id) ON DELETE CASCADE,
+    event_type    TEXT NOT NULL,
+    event_payload JSONB DEFAULT '{}'::jsonb,
+    created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE order_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "order_events_insert_public" ON order_events FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "order_events_select_admin"  ON order_events FOR SELECT TO authenticated USING (true);
+
+CREATE INDEX IF NOT EXISTS idx_order_events_order_id ON order_events(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_events_created_at ON order_events(created_at DESC);
+
+-- ============================================================
+-- TABLA: frontend_errors (telemetría de errores cliente)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS frontend_errors (
+    id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    error_type TEXT NOT NULL,
+    message    TEXT NOT NULL,
+    context    JSONB DEFAULT '{}'::jsonb,
+    page_url   TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE frontend_errors ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "frontend_errors_insert_public" ON frontend_errors FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "frontend_errors_select_admin"  ON frontend_errors FOR SELECT TO authenticated USING (true);
+
+CREATE INDEX IF NOT EXISTS idx_frontend_errors_created_at ON frontend_errors(created_at DESC);
+
+-- ============================================================
+-- FUNCIÓN SEGURA: canje de código promo (atómica)
+-- ============================================================
+CREATE OR REPLACE FUNCTION redeem_promo_code(p_code TEXT, p_order_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_updated INTEGER;
+BEGIN
+    UPDATE promo_codes
+    SET is_used = true, used_by = p_order_id
+    WHERE code = upper(trim(p_code)) AND is_used = false;
+
+    GET DIAGNOSTICS v_updated = ROW_COUNT;
+    RETURN v_updated = 1;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION redeem_promo_code(TEXT, UUID) TO anon;
+GRANT EXECUTE ON FUNCTION redeem_promo_code(TEXT, UUID) TO authenticated;

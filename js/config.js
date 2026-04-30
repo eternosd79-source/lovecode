@@ -97,3 +97,47 @@ let dataForm = {
     musicStart: 0,
     musicDuration: 30
 };
+
+// ============================================================
+// OBSERVABILIDAD BÁSICA (cliente)
+// ============================================================
+function throttleByKey(key, minMs) {
+    const now = Date.now();
+    const storageKey = `lc_throttle_${key}`;
+    const last = Number.parseInt(sessionStorage.getItem(storageKey) || '0', 10);
+    if (Number.isFinite(last) && now - last < minMs) return true;
+    sessionStorage.setItem(storageKey, String(now));
+    return false;
+}
+
+async function logOrderEvent(orderId, eventType, payload = {}) {
+    if (!db || !orderId || !eventType) return;
+    try {
+        await db.from('order_events').insert([{
+            order_id: orderId,
+            event_type: eventType,
+            event_payload: payload
+        }]);
+    } catch (err) {
+        console.warn('[Obs] No se pudo registrar order_event:', err?.message || err);
+    }
+}
+
+async function logFrontendError(errorType, message, context = {}) {
+    if (!db || !errorType || !message) return;
+    const limiterKey = `${errorType}_${String(message).slice(0, 24)}`;
+    if (throttleByKey(limiterKey, 5000)) return;
+    try {
+        await db.from('frontend_errors').insert([{
+            error_type: errorType,
+            message: String(message).slice(0, 500),
+            context,
+            page_url: window.location.href
+        }]);
+    } catch (err) {
+        console.warn('[Obs] No se pudo registrar frontend_error:', err?.message || err);
+    }
+}
+
+window.logOrderEvent = logOrderEvent;
+window.logFrontendError = logFrontendError;

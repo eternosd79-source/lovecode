@@ -107,6 +107,18 @@ AS $$
     SELECT * FROM orders WHERE id = p_id;
 $$;
 
+-- Compatibilidad con frontends existentes que llaman get_order_safe
+CREATE OR REPLACE FUNCTION get_order_safe(p_id TEXT)
+RETURNS SETOF orders
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+    SELECT *
+    FROM orders
+    WHERE id::text = trim(p_id)
+    LIMIT 1;
+$$;
+
 -- Función segura para obtener el contador de órdenes pagadas sin exponer datos
 CREATE OR REPLACE FUNCTION get_total_paid_orders()
 RETURNS INTEGER
@@ -122,6 +134,9 @@ RETURNS SETOF orders AS $$
 BEGIN
     -- Limpiar el término de búsqueda quitando '#' y espacios, pasándolo a minúsculas
     search_term := lower(trim(both ' ' from replace(search_term, '#', '')));
+    IF char_length(search_term) < 6 THEN
+        RETURN;
+    END IF;
     
     RETURN QUERY
     SELECT * FROM orders
@@ -132,6 +147,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 GRANT EXECUTE ON FUNCTION search_order_by_id(TEXT) TO anon;
 GRANT EXECUTE ON FUNCTION search_order_by_id(TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_order_safe(TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION get_order_safe(TEXT) TO authenticated;
 -- affiliates: solo admin puede leer/modificar
 CREATE POLICY "affiliates_select_admin"
 ON affiliates FOR SELECT TO authenticated USING (true);
@@ -240,8 +257,92 @@ ALTER TABLE promo_codes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "promo_codes_select" ON promo_codes FOR SELECT TO anon USING (true);
 CREATE POLICY "promo_codes_select_auth" ON promo_codes FOR SELECT TO authenticated USING (true);
 -- Cualquiera puede usar un código (marcarlo como usado) al crear una orden
-CREATE POLICY "promo_codes_update_anon" ON promo_codes FOR UPDATE TO anon USING (true);
+CREATE POLICY "promo_codes_update_anon"
+ON promo_codes
+FOR UPDATE TO anon
+USING (is_used = false)
+WITH CHECK (is_used = true);
 -- Solo admin puede insertar
 CREATE POLICY "promo_codes_insert" ON promo_codes FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "promo_codes_update" ON promo_codes FOR UPDATE TO authenticated USING (true);
 
+
+-- ============================================================
+-- STORAGE: Bucket de Fotos para el "Asistente Mágico"
+-- ============================================================
+-- Insertar registro del bucket "user_uploads", configurado para ser "público" 
+-- de manera que cualquiera pueda subir archivos (para los usuarios adultos que compran).
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('user_uploads', 'user_uploads', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Política para permitir que usuarios anónimos (visitantes web) suban archivos.
+CREATE POLICY "Permitir subida publica a user_uploads" 
+ON storage.objects FOR INSERT 
+TO public 
+WITH CHECK ( bucket_id = 'user_uploads' );
+
+-- Política para que cualquiera pueda leer/ver esas imágenes (para cargarlas en el frontend).
+CREATE POLICY "Permitir lectura publica a user_uploads" 
+ON storage.objects FOR SELECT 
+TO public 
+USING ( bucket_id = 'user_uploads' );
+
+-- ============================================================
+-- TABLA: order_events (auditoría operativa de órdenes)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS order_events (
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_id      UUID REFERENCES orders(id) ON DELETE CASCADE,
+    event_type    TEXT NOT NULL,
+    event_payload JSONB DEFAULT '{}'::jsonb,
+    created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE order_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "order_events_insert_public" ON order_events FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "order_events_select_admin"  ON order_events FOR SELECT TO authenticated USING (true);
+
+CREATE INDEX IF NOT EXISTS idx_order_events_order_id ON order_events(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_events_created_at ON order_events(created_at DESC);
+
+-- ============================================================
+-- TABLA: frontend_errors (telemetría de errores cliente)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS frontend_errors (
+    id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    error_type TEXT NOT NULL,
+    message    TEXT NOT NULL,
+    context    JSONB DEFAULT '{}'::jsonb,
+    page_url   TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE frontend_errors ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "frontend_errors_insert_public" ON frontend_errors FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "frontend_errors_select_admin"  ON frontend_errors FOR SELECT TO authenticated USING (true);
+
+CREATE INDEX IF NOT EXISTS idx_frontend_errors_created_at ON frontend_errors(created_at DESC);
+
+-- ============================================================
+-- FUNCIÓN SEGURA: canje de código promo (atómica)
+-- ============================================================
+CREATE OR REPLACE FUNCTION redeem_promo_code(p_code TEXT, p_order_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_updated INTEGER;
+BEGIN
+    UPDATE promo_codes
+    SET is_used = true, used_by = p_order_id
+    WHERE code = upper(trim(p_code)) AND is_used = false;
+
+    GET DIAGNOSTICS v_updated = ROW_COUNT;
+    RETURN v_updated = 1;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION redeem_promo_code(TEXT, UUID) TO anon;
+GRANT EXECUTE ON FUNCTION redeem_promo_code(TEXT, UUID) TO authenticated;

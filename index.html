@@ -288,7 +288,64 @@
     </div>
 
 
-    <!-- MODAL CHECKOUT VIZARD (Flujo de Pago) -->
+    <!-- MODAL ASISTENTE RÁPIDO (Bot Flow) -->
+    <div class="modal-overlay" id="botModal">
+        <div class="wizard-container" style="max-width: 450px;">
+            <button class="btn-close" id="btnCloseBot"><i class="fa-solid fa-times"></i></button>
+            <div class="wizard-header text-center">
+                <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 2.5rem; color: #10b981; margin-bottom: 10px;"></i>
+                <h3 style="color: white; font-size: 1.5rem;">Asistente Rápido</h3>
+                <p style="color: var(--color-dim); font-size: 0.9rem;">Configuraremos tu regalo en 3 pasos simples. Yo haré el trabajo duro.</p>
+            </div>
+            <div class="wizard-content" style="padding: 20px;">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>¿Para quién es el regalo?</label>
+                    <input type="text" id="botDestino" class="form-input" placeholder="Ej: Mi esposa Valeria" style="background: rgba(255,255,255,0.05);">
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Escribe una frase especial o dedicatoria:</label>
+                    <textarea id="botMensaje" class="form-input" rows="3" placeholder="Ej: Feliz aniversario de 10 años, gracias por hacerme tan feliz..." style="background: rgba(255,255,255,0.05);"></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px; border: 1px dashed #10b981; padding: 20px; border-radius: 12px; text-align: center; background: rgba(16, 185, 129, 0.05);">
+                    <i class="fa-solid fa-camera" style="font-size: 2rem; color: #10b981; margin-bottom: 10px;"></i>
+                    <label style="display: block; margin-bottom: 10px; color: white;">Sube su mejor foto (opcional)</label>
+                    <input type="file" id="botFotoFile" accept="image/*" style="display: none;">
+                    <button class="btn-secondary" id="btnTriggerFile" style="width: 100%; border-color: #10b981; color: #10b981;">
+                        <i class="fa-solid fa-image"></i> Seleccionar de Galería
+                    </button>
+                    <p id="botFotoName" style="color: #10b981; font-size: 0.8rem; margin-top: 10px; display: none;"></p>
+                </div>
+
+                <!-- Selección de Plan Oculta/Resumida -->
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Selecciona tu plan preferido:</label>
+                    <select id="botPlanSelect" class="form-input" style="background: #111;">
+                        <option value="Personalizado ($3.00)">Plan Personalizado completo ($3.00)</option>
+                        <option value="Básico ($1.50)">Plan Básico - Solo texto ($1.50)</option>
+                        <option value="Ultra Premium ($4.50)">Plan Ultra Vip ($4.50)</option>
+                        <option value="Demo Gratis ($0)">Versión Gratis 24h</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                    <button id="btnBotComprar" class="btn-primary" style="background: #10b981; color: white; padding: 15px;">
+                        <i class="fa-solid fa-magic"></i> ¡Crear Regalo Ahora!
+                    </button>
+                    <button id="btnSwitchAdvanced" class="btn-secondary" style="border: none; color: var(--color-dim); padding: 10px; font-size: 0.8rem; text-decoration: underline;">
+                        Prefiero usar el modo avanzado
+                    </button>
+                </div>
+                
+                <div id="botLoading" style="display: none; text-align: center; margin-top: 20px;">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="color: #10b981; font-size: 2rem;"></i>
+                    <p style="color: #10b981; margin-top: 10px; font-size: 0.9rem;" id="botLoadingText">Procesando y subiendo fotos...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL CHECKOUT WIZARD (Flujo de Pago) -->
     <div class="modal-overlay" id="checkoutModal">
         <div class="wizard-container">
             <button class="btn-close" id="btnCloseWizard"><i class="fa-solid fa-times"></i></button>
@@ -931,11 +988,13 @@
     <script src="js/audio-editor.js?v=6"></script>
     <script src="js/preview.js?v=6"></script>
     <script src="js/checkout.js?v=7"></script>
+    <script src="js/bot-flow.js?v=1"></script>
     <script src="js/tracking.js?v=7"></script>
     <script src="js/affiliates.js?v=7"></script>
     <script src="js/video-resumen.js?v=7"></script>
     <script src="js/three-preview.js?v=7"></script>
     <script src="js/ui.js?v=7"></script>
+    <script src="js/observability.js?v=1"></script>
     <script src="js/main.js?v=7"></script>
 
     <!-- ✨ EFECTO PARTÍCULAS ROMÁNTICAS (Corazones / Estrellas Flotantes) -->

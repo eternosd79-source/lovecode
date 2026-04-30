@@ -1,12 +1,22 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
+const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN') || 'https://corazoncodigo.me'
+
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('origin') || ''
+  if (origin && origin !== ALLOWED_ORIGIN) {
+    return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 403
+    })
+  }
+
   // CORS Preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -23,6 +33,17 @@ serve(async (req) => {
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!
+    const EDGE_SHARED_SECRET = Deno.env.get('EDGE_SHARED_SECRET') || ''
+
+    if (EDGE_SHARED_SECRET) {
+      const incomingSecret = req.headers.get('x-edge-secret') || ''
+      if (incomingSecret !== EDGE_SHARED_SECRET) {
+        return new Response(JSON.stringify({ error: 'Unauthorized call' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401
+        })
+      }
+    }
 
     if (!RESEND_API_KEY) {
       console.warn("No RESEND_API_KEY provided. Skipping email send.")

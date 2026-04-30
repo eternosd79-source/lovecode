@@ -6,6 +6,10 @@
  *   ?orderId=ID (Carga datos desde Supabase)
  */
 (function() {
+    const nativeAlert = window.alert.bind(window);
+    const nativeConfirm = window.confirm.bind(window);
+    let managedAudio = null;
+
     // 0. Crear pantalla de carga y sistema de modales elegante inmediatamente
     const modalCSS = `
         <style>
@@ -61,34 +65,19 @@
     // --- OVERRIDE ALERT Y CONFIRM ---
     window.alert = function(msg) {
         const modal = document.getElementById('lc-custom-modal');
+        if (!modal) {
+            nativeAlert(msg);
+            return;
+        }
         document.getElementById('lc-modal-title').innerText = "Aviso";
         document.getElementById('lc-modal-text').innerText = msg;
         document.getElementById('lc-modal-btn-cancel').style.display = 'none';
         document.getElementById('lc-modal-btn-ok').onclick = () => modal.classList.remove('active');
         modal.classList.add('active');
     };
-
+    // Mantener comportamiento síncrono nativo evita romper código legado.
     window.confirm = function(msg) {
-        // Confirm nativo es sincrónico (detiene el hilo), pero en web moderna 
-        // lo mejor es usar callbacks o promesas. Para no romper los códigos viejos,
-        // avisaremos que este confirm ahora es visual.
-        console.warn("CorazónCódigo: Se detectó un confirm(). Por seguridad visual, se muestra el modal estilizado.");
-        const modal = document.getElementById('lc-custom-modal');
-        document.getElementById('lc-modal-title').innerText = "Confirmación";
-        document.getElementById('lc-modal-text').innerText = msg;
-        document.getElementById('lc-modal-btn-cancel').style.display = 'block';
-        
-        return new Promise((resolve) => {
-            document.getElementById('lc-modal-btn-ok').onclick = () => {
-                modal.classList.remove('active');
-                resolve(true);
-            };
-            document.getElementById('lc-modal-btn-cancel').onclick = () => {
-                modal.classList.remove('active');
-                resolve(false);
-            };
-            modal.classList.add('active');
-        });
+        return nativeConfirm(msg);
     };
 
     const supabaseUrl = 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
@@ -175,9 +164,25 @@
                     // 2. Si no encontró en Pedidos, buscar en 'orders' (sistema oficial)
                     if (!encontrado) {
                         try {
-                            const { data: order, error: errOrd } = await db
-                                .rpc('get_order_safe', { p_id: orderId })
-                                .maybeSingle();
+                            let order = null;
+                            let errOrd = null;
+
+                            const safeResult = await db.rpc('get_order_safe', { p_id: orderId });
+                            if (!safeResult.error) {
+                                order = Array.isArray(safeResult.data) ? safeResult.data[0] : safeResult.data;
+                            } else {
+                                const byIdResult = await db.rpc('get_order_by_id', { p_id: orderId });
+                                if (!byIdResult.error) {
+                                    order = Array.isArray(byIdResult.data) ? byIdResult.data[0] : byIdResult.data;
+                                } else {
+                                    const bySearch = await db.rpc('search_order_by_id', { search_term: String(orderId) });
+                                    if (!bySearch.error) {
+                                        order = Array.isArray(bySearch.data) ? bySearch.data[0] : bySearch.data;
+                                    } else {
+                                        errOrd = bySearch.error;
+                                    }
+                                }
+                            }
 
                             if (order && !errOrd) {
                                 encontrado = true;
@@ -278,6 +283,7 @@
             // 5. Aplicar Música (Inyectar Audio)
             if (customData.musica) {
                 let audio = new Audio();
+                managedAudio = audio;
                 audio.loop = false; // Manejaremos el bucle manualmente para respetar el recorte
                 audio.volume = 1.0;
 
@@ -293,7 +299,9 @@
                 fetch(customData.musica)
                     .then(res => res.blob())
                     .then(blob => {
-                        audio.src = URL.createObjectURL(blob);
+                        const objectUrl = URL.createObjectURL(blob);
+                        audio.src = objectUrl;
+                        audio.addEventListener('ended', () => URL.revokeObjectURL(objectUrl), { once: true });
                         audio.load();
                     })
                     .catch(() => {
@@ -423,7 +431,7 @@
                     if (startOverlay) startOverlay.style.display = 'none';
                     removeLoader();
                     // Simular clic en body para iniciar cualquier animación nativa sin afectar audio (se recomienda silenciar si se puede)
-                    if (typeof audio !== 'undefined' && audio) audio.muted = true;
+                    if (managedAudio) managedAudio.muted = true;
                     setTimeout(() => document.body.click(), 100);
                 } else {
                     // Flujo normal de regalo web
