@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#07070e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Personalizar tu Regalo — CorazónCódigo</title>
     <meta name="description" content="Personaliza tu regalo digital romántico con textos, foto y música.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
@@ -24,7 +27,11 @@
         --font:   'Inter', sans-serif;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: var(--font); background: var(--bg); color: var(--white); min-height: 100vh; }
+    body {
+        font-family: var(--font); background: var(--bg); color: var(--white); min-height: 100vh;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
     body::before {
         content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
         background:
@@ -233,7 +240,7 @@
         position: fixed; bottom: 0; left: 0; width: 520px;
         background: rgba(7,7,14,0.96); backdrop-filter: blur(16px);
         border-top: 1px solid var(--border);
-        padding: 12px 28px;
+        padding: 12px 28px calc(12px + env(safe-area-inset-bottom));
         display: grid; grid-template-columns: 1fr auto auto;
         align-items: center; gap: 12px; z-index: 150;
     }
@@ -278,6 +285,9 @@
         .frow.c2, .frow.c3, .frow.c2-1, .frow.c1-2 { grid-template-columns: 1fr; }
         .music-grid { grid-template-columns: repeat(2, 1fr); }
         .action-bar { grid-template-columns: 1fr; gap: 8px; }
+        input[type=text], input[type=date], textarea, select { font-size: 16px; }
+        .form-col { padding: 16px 14px 92px; }
+        .preview-col { height: 280px; }
     }
 
     /* ── FIELD HINT ── */
@@ -469,12 +479,12 @@
             <div class="frow c2">
                 <div>
                     <label class="fl">¿Para quién es el regalo? <em>(nombre)</em></label>
-                    <input type="text" id="inpPara" placeholder="Ej: Valeria" oninput="livePreview()">
+                    <input type="text" id="inpPara" placeholder="Ej: Valeria" oninput="handleRecipientInput()">
                     <p class="field-hint"><i class="fa-solid fa-arrow-right-to-bracket"></i> Aparece como destinatario en el título de la animación — lo primero que verá al abrirlo</p>
                 </div>
                 <div id="grpFecha" style="display:none;">
                     <label class="fl">Fecha de inicio <em>(cronómetro)</em></label>
-                    <input type="text" id="inpFecha" placeholder="Ej: 14 Feb 2021" oninput="livePreview()">
+                    <input type="date" id="inpFecha" oninput="handleDateInput()">
                     <p class="field-hint"><i class="fa-solid fa-clock"></i> El contador mostrará cuánto tiempo llevan juntos desde esta fecha</p>
                 </div>
             </div>
@@ -722,6 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tpl.hasDate) document.getElementById('grpFecha').style.display = 'block';
         if (tpl.photosInfo) document.getElementById('fotoDesc').textContent = tpl.photosInfo;
         buildDynFields();
+        autoFillRecipientInTitle();
         loadPreview();
     } else {
         document.getElementById('secTextosDesc').textContent = 'Selecciona una plantilla desde el catálogo';
@@ -796,6 +807,39 @@ function buildDynFields() {
         }
     }
     cont.innerHTML = html;
+
+    // Si el usuario edita manualmente el título, no volver a sobreescribirlo automáticamente.
+    const titleInput = document.getElementById('dyn_title');
+    if (titleInput) {
+        titleInput.dataset.userEdited = 'false';
+        titleInput.addEventListener('input', () => {
+            titleInput.dataset.userEdited = 'true';
+        });
+    }
+}
+
+function autoFillRecipientInTitle() {
+    if (!tpl || tpl.id !== 'arbol') return;
+    const para = document.getElementById('inpPara')?.value?.trim();
+    const titleInput = document.getElementById('dyn_title');
+    if (!titleInput || !para) return;
+    if (titleInput.dataset.userEdited === 'true') return;
+
+    const titleField = (tpl.editableTexts || []).find(f => f.id === 'title');
+    const baseTitle = titleField?.default || 'Flores Amarillas para mi amor';
+
+    let computed = baseTitle;
+    if (/para\s+/i.test(baseTitle)) {
+        computed = baseTitle.replace(/(para\s+).*/i, `$1${para}`);
+    } else {
+        computed = `${baseTitle} para ${para}`;
+    }
+    titleInput.value = computed;
+}
+
+function handleRecipientInput() {
+    autoFillRecipientInTitle();
+    livePreview();
 }
 
 // ══════════════════════════════════════════
@@ -845,6 +889,26 @@ function loadPreview() {
     document.getElementById('btnFullPrev').href = url;
 }
 
+function formatDateForTemplate(rawDate) {
+    const value = String(rawDate || '').trim();
+    if (!value) return '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+    const [y, m, d] = value.split('-').map(Number);
+    const dt = new Date(y, (m || 1) - 1, d || 1);
+    const month = dt.toLocaleDateString('es-EC', { month: 'long' });
+    return `${d} de ${month} del ${y}`;
+}
+
+function getSelectedDateForTemplate() {
+    const raw = document.getElementById('inpFecha')?.value || '';
+    return formatDateForTemplate(raw);
+}
+
+function handleDateInput() {
+    livePreview();
+}
+
 function buildPreviewParams() {
     const p = new URLSearchParams();
     p.set('editorLivePreview', 'true');
@@ -852,7 +916,7 @@ function buildPreviewParams() {
     const para = document.getElementById('inpPara')?.value.trim();
     if (para) p.set('para', para);
 
-    const fecha = document.getElementById('inpFecha')?.value.trim();
+    const fecha = getSelectedDateForTemplate();
     if (fecha) p.set('fecha', fecha);
 
     // Campos dinámicos de la plantilla
@@ -1257,7 +1321,7 @@ function handleMusicUrl() {
 // ══════════════════════════════════════════
 async function generarPedido() {
     const para  = document.getElementById('inpPara').value.trim();
-    const fecha = document.getElementById('inpFecha')?.value.trim() || '';
+    const fecha = getSelectedDateForTemplate() || '';
     const plan  = PLANS[currentPlan];
 
     if (!para) {

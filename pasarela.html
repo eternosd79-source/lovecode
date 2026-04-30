@@ -2,23 +2,30 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#07070e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Pasarela Segura - CorazónCódigo</title>
     <!-- Mismos estilos globales -->
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        body {
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+            padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+            box-sizing: border-box;
+        }
         .payment-container {
             background: rgba(15, 15, 20, 0.85);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            width: 100%; max-width: 480px;
-            padding: 40px; box-sizing: border-box;
+            width: 100%; max-width: 620px;
+            padding: 28px; box-sizing: border-box;
             box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            position: relative; overflow: hidden;
+            position: relative;
         }
         .header-pay { text-align: center; margin-bottom: 25px; }
         .header-pay h2 { color: white; margin: 0; font-size: 1.5rem; display:flex; align-items:center; justify-content:center; gap:10px; }
@@ -33,122 +40,118 @@
         .order-summary span { display: block; color: #fff; font-size: 0.85rem; margin-bottom: 5px;}
         .order-summary b { color: var(--accent-cyan); }
 
-        .cc-form .form-group { margin-bottom: 18px; text-align: left; }
-        .cc-form label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #aaa; }
-        .cc-form input { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: white; font-family: var(--font-ui); box-sizing: border-box;}
-        
-        .row-2 { display: flex; gap: 15px; }
-        .row-2 .form-group { flex: 1; }
+        .payment-tabs { display:flex; gap:8px; margin: 10px 0 20px; }
+        .btn-pay-tab { flex:1; border:none; border-radius:10px; padding:10px; background:rgba(255,255,255,0.08); color:#ddd; cursor:pointer; font-weight:600; }
+        .btn-pay-tab.active { background:linear-gradient(135deg,#06b6d4,#3b82f6); color:#fff; }
+        .payment-content { display:none; }
 
-        .btn-pay {
-            width: 100%; margin-top: 10px; padding: 15px; border-radius: 12px;
-            background: linear-gradient(135deg, #06b6d4, #3b82f6);
-            color: white; font-weight: 800; font-size: 1.1rem; border: none;
-            cursor: pointer; transition: 0.3s;
-        }
-        .btn-pay:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); transform: translateY(-2px); }
+        .bank-selector { display:flex; flex-direction:column; gap:10px; }
+        .btn-bank { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ddd; padding: 14px 20px; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.3s; font-size:1rem; display: flex; align-items: center; justify-content: space-between;}
+        .btn-bank:hover { background: rgba(6,182,212,0.15); border-color: #06b6d4; color: white;}
 
-        /* LOADING OVERLAY */
-        #loadingOverlay {
-            position: absolute; top:0; left:0; width:100%; height:100%;
-            background: rgba(10,10,15, 0.95); z-index: 10;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
+        .btn-primary {
+            display:flex; align-items:center; justify-content:center; gap:8px;
+            width:100%; border:none; border-radius:12px; padding:14px; cursor:pointer;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6); color:#fff; text-decoration:none; font-weight:700;
         }
-        .spinner {
-            width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1);
-            border-top: 4px solid #06b6d4; border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn-payphone { background:#FF5A00; margin-top:12px; }
+        .btn-whatsapp { background:linear-gradient(135deg,#22c55e,#16a34a); margin-top:16px; }
 
-        /* SUCCESS SCREEN */
-        #successScreen { display: none; text-align: center; }
-        .success-icon { font-size: 4rem; color: #10b981; margin-bottom: 20px; }
-        .success-title { font-size: 1.8rem; color: white; margin-bottom: 10px; }
-        .success-msg { color: var(--color-dim); margin-bottom: 30px; font-size: 0.95rem; line-height: 1.5; }
-        
-        .btn-download {
-            background: linear-gradient(135deg, #d946ef, #8b5cf6); border: none;
-            padding: 15px 25px; border-radius: 12px; color: white; font-weight: bold; width: 100%; cursor: pointer;
-            display: none; align-items: center; justify-content: center; gap: 10px; font-size: 1.1rem;
+        .qr-box { margin: 10px auto; max-width: 180px; background:#fff; padding:10px; border-radius:10px; text-align:center; color:#000; font-size:0.8rem; }
+        .qr-box img { width:100%; border-radius:8px; }
+
+        .bank-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 999999;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
         }
-        .btn-whatsapp {
-            background: linear-gradient(135deg, #22c55e, #16a34a); border: none;
-            padding: 15px 25px; border-radius: 12px; color: white; font-weight: bold; width: 100%; cursor: pointer;
-            display: none; align-items: center; justify-content: center; gap: 10px; font-size: 1.1rem;
+        .bank-modal-content {
+            background: #111116; border: 1px solid var(--accent-cyan);
+            padding: 30px; border-radius: 20px; min-width: 300px; max-width: 90%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative;
+            text-align: center; color: white;
+        }
+        .bank-modal-close {
+            position: absolute; top: 10px; right: 20px; font-size: 28px;
+            color: #aaa; cursor: pointer; transition: 0.3s; line-height: 1;
+        }
+        .bank-modal-close:hover { color: white; }
+        .bank-text-modal { font-size: 0.85rem; line-height: 1.5; color: #ddd; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-top: 15px;}
+        .bank-text-modal strong { color: var(--accent-fuchsia); font-size: 1rem; display: block; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        @media (max-width: 640px) {
+            .payment-container { max-width: 100%; border-radius: 16px; padding: 18px; }
+            .header-pay h2 { font-size: 1.2rem; }
+            .btn-pay-tab, .btn-primary, .btn-bank { font-size: 0.92rem; }
         }
     </style>
 </head>
 <body>
 
     <div class="payment-container" id="formContainer">
-        <!-- LOADING OVERLAY -->
-        <div id="loadingOverlay">
-            <div class="spinner"></div>
-            <h3 style="color:white;">Procesando pago de forma segura...</h3>
-            <p style="color:var(--color-dim); font-size:0.8rem;">No cierres esta ventana</p>
+        <div class="header-pay">
+            <h2><i class="fa-solid fa-shield-check"></i> Pasarela de Pago</h2>
+            <p>Completa tu pago por banco o tarjeta y luego confirma por WhatsApp</p>
         </div>
 
-        <!-- FORMULARIO DE PAGO -->
-        <div id="paymentView">
-            <div class="header-pay">
-                <h2><i class="fa-solid fa-shield-check"></i> Pago Seguro Internacional</h2>
-                <p>Transferencia Encriptada SSL</p>
-            </div>
-
-            <div class="order-summary">
-                <h4>Resumen del Pedido (Internacional)</h4>
-                <span>Plantilla: <b id="lblPlantilla">Cargando...</b></span>
-                <span>Tier Activo: <b id="lblPlan">Cargando...</b></span>
-                <span id="txtInfoDownload" style="display:none; margin-top:8px; color:#d946ef;">
-                    <i class="fa-solid fa-download"></i> Este tier incluye auto-descarga del Código Fuente Zipeado tras confirmar.
-                </span>
-            </div>
-
-            <form class="cc-form" id="payForm">
-                <div class="form-group">
-                    <label>Nombre del Titular de la Tarjeta</label>
-                    <input type="text" placeholder="Ej. JOHN DOE" required>
-                </div>
-                <div class="form-group">
-                    <label>Número de la Tarjeta</label>
-                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" required>
-                </div>
-                <div class="row-2">
-                    <div class="form-group">
-                        <label>Vencimiento</label>
-                        <input type="text" placeholder="MM/YY" maxlength="5" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Código CCV</label>
-                        <input type="text" placeholder="123" maxlength="4" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn-pay"><i class="fa-solid fa-lock"></i> Pagar y Finalizar Orden</button>
-            </form>
+        <div class="order-summary">
+            <h4>Resumen del Pedido</h4>
+            <span>ID Orden: <b id="lblOrderId">Cargando...</b></span>
+            <span>Plantilla: <b id="lblPlantilla">Cargando...</b></span>
+            <span>Plan: <b id="lblPlan">Cargando...</b></span>
         </div>
 
-        <!-- PANTALLA DE EXITO -->
-        <div id="successScreen">
-            <i class="fa-solid fa-circle-check success-icon"></i>
-            <h2 class="success-title">¡Pago Confirmado!</h2>
-            <p class="success-msg">Tu transacción internacional ha sido procesada con éxito por nuestra red global.</p>
-            
-            <!-- Boton Descarga (Solo $7) -->
-            <button class="btn-download" id="btnDownloadZip" onclick="triggerDownload()">
-                <i class="fa-solid fa-file-zipper"></i> Descargar Código Fuente (.zip)
-            </button>
-            <p id="msgZipDesc" style="color:#d946ef; font-size:0.8rem; margin-top:10px; display:none;">El archivo debe estar alojado en la carpeta del modelo elegido.</p>
+        <div class="payment-tabs">
+            <button class="btn-pay-tab active" id="btnTabEcuador">🇪🇨 Solo Ecuador</button>
+            <button class="btn-pay-tab" id="btnTabMundo">🌍 Resto del Mundo</button>
+        </div>
 
-            <!-- Boton WSP (Otros planes) -->
-            <button class="btn-whatsapp" id="btnWspClaim" onclick="triggerWspClaim()">
-                <i class="fa-brands fa-whatsapp"></i> Reclamar Pedido en el Chat
+        <div class="payment-content" id="payEcuador" style="display:block;">
+            <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:12px;">Selecciona tu banco para ver cuenta y QR:</p>
+            <div class="bank-selector">
+                <button class="btn-bank" onclick="showBankModal('pichincha')"><span>🏦 Banco Pichincha</span><i class="fa-solid fa-chevron-right"></i></button>
+                <button class="btn-bank" onclick="showBankModal('loja')"><span>🏦 Banco de Loja</span><i class="fa-solid fa-chevron-right"></i></button>
+                <button class="btn-bank" onclick="showBankModal('produbanco')"><span>🏦 Produbanco</span><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-primary btn-payphone">
+                <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone (Visa/Mastercard)
+            </a>
+
+            <button class="btn-primary btn-whatsapp" onclick="confirmPayment('Transferencia Ecuador / PayPhone')">
+                <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
             </button>
+        </div>
+
+        <div class="payment-content" id="payMundo">
+            <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:12px;">Pago internacional con tarjeta:</p>
+            <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-primary btn-payphone">
+                <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone (Internacional)
+            </a>
+            <div class="qr-box">
+                <span>Escanea con tu celular</span>
+                <img src="PayPhone.jpeg" alt="QR PayPhone">
+            </div>
+            <button class="btn-primary btn-whatsapp" onclick="confirmPayment('PayPhone Internacional')">
+                <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
+            </button>
+        </div>
+
+        <div class="bank-modal-overlay" id="bankModalOverlay" onclick="closeBankModal(event)">
+            <div class="bank-modal-content">
+                <span class="bank-modal-close" onclick="closeBankModal()">&times;</span>
+                <h3 id="bankModalTitle" style="margin-top:0; color:white;">Datos del Banco</h3>
+                <div id="bankModalQr" class="qr-box" style="display:none;">
+                    <img id="bankModalImg" src="" alt="QR Banco">
+                </div>
+                <div id="bankModalText"></div>
+                <button class="btn-primary" style="margin-top:20px;" onclick="closeBankModal()">Entendido</button>
+            </div>
         </div>
     </div>
 
     <!-- Scripts de la pasarela -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="pasarela.js"></script>
+    <script src="pasarela.js?v=20260430b"></script>
 </body>
 </html>

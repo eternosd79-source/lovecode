@@ -1,99 +1,126 @@
 // ===================================
-// LÓGICA DE LA PASARELA INTERNACIONAL SIMULADA
+// PASARELA REAL (Bancos + QR + PayPhone)
 // ===================================
-
-// CONFIGURACIÓN SUPABASE
 const supabaseUrl = 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
 const supabaseKey = 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc';
+const WHATSAPP = '593990480389';
 let db = null;
 
 try {
-    const lib = (typeof supabase !== 'undefined' && supabase.createClient) ? supabase : (typeof supabasejs !== 'undefined' ? supabasejs : null);
-    if (lib) {
-        db = lib.createClient(supabaseUrl, supabaseKey);
-    }
+    const lib = (typeof supabase !== 'undefined' && supabase.createClient)
+        ? supabase
+        : (typeof supabasejs !== 'undefined' ? supabasejs : null);
+    if (lib) db = lib.createClient(supabaseUrl, supabaseKey);
 } catch (e) {
-    console.error("Error inicializando Supabase:", e);
+    console.error('Error inicializando Supabase:', e);
 }
 
 const urlParams = new URLSearchParams(window.location.search);
 const plan = urlParams.get('plan') || 'Desconocido';
-const template = urlParams.get('template') || 'Desconocida';
-const folder = urlParams.get('folder') || 'unknown';
+const template = urlParams.get('template') || urlParams.get('tpl') || 'Desconocida';
 const orderId = urlParams.get('orderId');
 
-document.getElementById('lblPlantilla').innerText = template;
-document.getElementById('lblPlan').innerText = plan;
+function initPasarela() {
+    const lblPlantilla = document.getElementById('lblPlantilla');
+    const lblPlan = document.getElementById('lblPlan');
+    const lblOrderId = document.getElementById('lblOrderId');
+    if (lblPlantilla) lblPlantilla.textContent = template;
+    if (lblPlan) lblPlan.textContent = plan;
+    if (lblOrderId) lblOrderId.textContent = orderId ? orderId.substring(0, 8).toUpperCase() : 'N/A';
 
-const isSourceCodePlan = plan.includes('$4.50');
-
-// Mostrar aviso si es plan de $7 que incluye descarga
-if (isSourceCodePlan) {
-    document.getElementById('txtInfoDownload').style.display = 'block';
+    const btnTabEcuador = document.getElementById('btnTabEcuador');
+    const btnTabMundo = document.getElementById('btnTabMundo');
+    if (btnTabEcuador) btnTabEcuador.addEventListener('click', () => setTab('ec'));
+    if (btnTabMundo) btnTabMundo.addEventListener('click', () => setTab('ww'));
+    setTab('ec');
 }
 
-// Simulador de Proceso del Formulario de Tarjeta
-const payForm = document.getElementById('payForm');
-const loadingOverlay = document.getElementById('loadingOverlay');
-const paymentView = document.getElementById('paymentView');
-const successScreen = document.getElementById('successScreen');
-const btnDownloadZip = document.getElementById('btnDownloadZip');
-const msgZipDesc = document.getElementById('msgZipDesc');
-const btnWspClaim = document.getElementById('btnWspClaim');
+function setTab(tab) {
+    const btnEc = document.getElementById('btnTabEcuador');
+    const btnWw = document.getElementById('btnTabMundo');
+    const ec = document.getElementById('payEcuador');
+    const ww = document.getElementById('payMundo');
+    if (!btnEc || !btnWw || !ec || !ww) return;
 
-payForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Evitamos recargar
-    
-    // Mostramos overlay de "Procesando"
-    loadingOverlay.style.display = 'flex';
-    
-    // ACTUALIZAR ESTADO EN SUPABASE SI TENEMOS EL ID
-    if (orderId && db) {
-        await db
-            .from('orders')
-            .update({ status: 'paid', payment_method: 'Tarjeta/PayPal' })
-            .eq('id', orderId);
+    const isEc = tab === 'ec';
+    btnEc.classList.toggle('active', isEc);
+    btnWw.classList.toggle('active', !isEc);
+    ec.style.display = isEc ? 'block' : 'none';
+    ww.style.display = isEc ? 'none' : 'block';
+}
+
+const bankDataInfo = {
+    pichincha: {
+        title: 'Banco Pichincha',
+        qr: 'qrPichincha.png',
+        text: `<strong>Pichincha</strong>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificacion: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389`
+    },
+    loja: {
+        title: 'Banco de Loja',
+        qr: 'qrLoja.png',
+        text: `<strong>Banco de Loja</strong>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificacion: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389`
+    },
+    produbanco: {
+        title: 'Produbanco',
+        qr: null,
+        text: `<strong>Produbanco</strong>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificacion: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389`
     }
+};
 
-    // Simulamos un delay de 2.5 Segundos de consulta bancaria
-    setTimeout(() => {
-        loadingOverlay.style.display = 'none';
-        paymentView.style.display = 'none';
-        successScreen.style.display = 'block';
-        
-        // Decisión del botón a mostrar
-        if (isSourceCodePlan) {
-            btnDownloadZip.style.display = 'flex';
-            msgZipDesc.style.display = 'block';
-        } else {
-            btnWspClaim.style.display = 'flex';
-        }
-        
-    }, 2500);
-});
+function showBankModal(bankId) {
+    const data = bankDataInfo[bankId];
+    if (!data) return;
+    const overlay = document.getElementById('bankModalOverlay');
+    const title = document.getElementById('bankModalTitle');
+    const qrContainer = document.getElementById('bankModalQr');
+    const qrImg = document.getElementById('bankModalImg');
+    const text = document.getElementById('bankModalText');
+    if (!overlay || !title || !qrContainer || !qrImg || !text) return;
 
-// Acción: Descargar ZIP (Para planes de $7)
-function triggerDownload() {
-    // Apuntamos al archivo zip alojado en la carpeta del proyecto.
-    // Ejemplo: "../arbol/arbol.zip"
-    const zipUrl = `../${folder}/${folder}.zip`;
-    
-    const a = document.createElement('a');
-    a.href = zipUrl;
-    a.download = `${folder}_corazoncodigo.zip`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    title.textContent = data.title;
+    if (data.qr) {
+        qrImg.src = data.qr;
+        qrContainer.style.display = 'block';
+    } else {
+        qrContainer.style.display = 'none';
+    }
+    text.innerHTML = `<div class="bank-text-modal">${data.text}</div>`;
+    overlay.style.display = 'flex';
 }
 
-// Acción: Ir a WhatsApp (Para planes menores Internacionales)
-function triggerWspClaim() {
-    const phone = "00000000000"; 
-    let textBody = `¡Hola! Acabo de hacer el pago con Tarjeta de Crédito 💳 (Internacional) exitosamente a través de la web pasarela.%0A%0A`;
-    textBody += `*👉 MI ORDEN YA PAGADA:*%0A`;
-    textBody += `- Plantilla: ${template}%0A`;
-    textBody += `- Plan Comprado: ${plan}%0A`;
-    textBody += `%0AEnvíame el link apenas puedas generarlo con mis detalles y avísame para mandarte las fotos modificables correspondientes al plan. Gracias!`;
-    
-    window.open(`https://wa.me/${phone}?text=${textBody}`, '_blank');
+function closeBankModal(e) {
+    const overlay = document.getElementById('bankModalOverlay');
+    if (!overlay) return;
+    if (!e || e.target.id === 'bankModalOverlay' || e.target.classList.contains('bank-modal-close') || e.target.tagName === 'BUTTON') {
+        overlay.style.display = 'none';
+    }
+}
+
+async function markOrderPaid(method) {
+    if (!orderId || !db) return;
+    try {
+        await db.from('orders')
+            .update({ status: 'paid', payment_method: method })
+            .eq('id', orderId);
+    } catch (e) {
+        console.warn('[Pasarela] No se pudo actualizar estado de orden:', e?.message || e);
+    }
+}
+
+async function confirmPayment(method) {
+    await markOrderPaid(method);
+    const msg = encodeURIComponent(
+        `Hola CorazónCódigo! Ya hice el pago de mi pedido.\n\nID: ${orderId || 'N/A'}\nPlantilla: ${template}\nPlan: ${plan}\nMétodo: ${method}\n\nTe envío el comprobante.`
+    );
+    window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+}
+
+window.showBankModal = showBankModal;
+window.closeBankModal = closeBankModal;
+window.confirmPayment = confirmPayment;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPasarela);
+} else {
+    initPasarela();
 }
