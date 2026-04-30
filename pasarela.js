@@ -28,6 +28,13 @@ function initPasarela() {
     if (lblPlan) lblPlan.textContent = plan;
     if (lblOrderId) lblOrderId.textContent = orderId ? orderId.substring(0, 8).toUpperCase() : 'N/A';
 
+    // Actualizar links de PayPhone desde CONFIG si existe
+    if (typeof CONFIG !== 'undefined' && CONFIG.payphoneLink) {
+        document.querySelectorAll('.btn-payphone').forEach(btn => {
+            btn.href = CONFIG.payphoneLink;
+        });
+    }
+
     const btnTabEcuador = document.getElementById('btnTabEcuador');
     const btnTabMundo = document.getElementById('btnTabMundo');
     if (btnTabEcuador) btnTabEcuador.addEventListener('click', () => setTab('ec'));
@@ -109,10 +116,16 @@ async function markOrderPaid(method) {
 
 async function confirmPayment(method) {
     await markOrderPaid(method);
-    const msg = encodeURIComponent(
-        `Hola CorazónCódigo! Ya hice el pago de mi pedido.\n\nID: ${orderId || 'N/A'}\nPlantilla: ${template}\nPlan: ${plan}\nMétodo: ${method}\n\nTe envío el comprobante.`
-    );
-    window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+    
+    let msg = "";
+    if (typeof CONFIG !== 'undefined' && typeof CONFIG.paymentMsg === 'function') {
+        msg = CONFIG.paymentMsg(orderId || 'N/A', 'Cliente', plan);
+        msg += `\nMétodo: ${method}`;
+    } else {
+        msg = `Hola CorazónCódigo! Ya hice el pago de mi pedido.\n\nID: ${orderId || 'N/A'}\nPlantilla: ${template}\nPlan: ${plan}\nMétodo: ${method}\n\nTe envío el comprobante.`;
+    }
+
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 window.showBankModal = showBankModal;

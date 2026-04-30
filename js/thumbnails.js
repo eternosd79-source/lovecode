@@ -134,29 +134,36 @@ function generateThumb(id) {
 }
 
 /**
- * Inyecta thumbnails canvas en todas las tarjetas del catálogo
+ * Inyecta thumbnails canvas en todas las tarjetas del catálogo con Lazy Loading
  */
 function injectThumbnails() {
     const cards = document.querySelectorAll('.product-card');
-    cards.forEach(card => {
-        const buyBtn = card.querySelector('.btn-comprar[data-id], .btn-preview[data-id]');
-        const previewBtn = card.querySelector('.btn-preview[data-id]');
-        const id = (previewBtn || buyBtn)?.getAttribute('data-id');
-        if (!id) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const card = entry.target;
+                const buyBtn = card.querySelector('.btn-comprar[data-id], .btn-preview[data-id], .btn-qr-direct[data-id]');
+                const previewBtn = card.querySelector('.btn-preview[data-id]');
+                const id = (previewBtn || buyBtn)?.getAttribute('data-id');
+                
+                if (id) {
+                    const cardImage = card.querySelector('.card-image');
+                    if (cardImage && !cardImage.querySelector('.card-thumb-canvas')) {
+                        const canvas = generateThumb(id);
+                        if (canvas) {
+                            canvas.classList.add('card-thumb-canvas');
+                            canvas.setAttribute('aria-hidden', 'true');
+                            cardImage.appendChild(canvas);
+                        }
+                    }
+                }
+                observer.unobserve(card);
+            }
+        });
+    }, { rootMargin: '100px' });
 
-        const cardImage = card.querySelector('.card-image');
-        if (!cardImage) return;
-
-        // Evitar duplicados
-        if (cardImage.querySelector('.card-thumb-canvas')) return;
-
-        const canvas = generateThumb(id);
-        if (!canvas) return;
-
-        canvas.classList.add('card-thumb-canvas');
-        canvas.setAttribute('aria-hidden', 'true');
-        cardImage.appendChild(canvas);
-    });
+    cards.forEach(card => observer.observe(card));
 }
 
 /**

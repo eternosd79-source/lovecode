@@ -85,54 +85,38 @@ document.addEventListener('DOMContentLoaded', () => {
         // Crear overlay
         const overlay = document.createElement('div');
         overlay.id = '_modalLinkShare';
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;';
+        overlay.className = 'share-modal-overlay';
 
         overlay.innerHTML = `
-            <div style="
-                background:#0f0f0f;
-                border:2px solid #10b981;
-                border-radius:20px;
-                padding:32px 28px 28px;
-                width:min(460px,100%);
-                box-shadow:0 24px 60px rgba(0,0,0,0.9);
-                position:relative;
-                text-align:center;
-                animation:_su .3s cubic-bezier(.34,1.56,.64,1);
-            ">
-            <style>@keyframes _su{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}</style>
+            <div class="share-modal-box">
+                <!-- Cerrar -->
+                <button id="_mClose" class="share-modal-close">✕</button>
 
-            <!-- Cerrar -->
-            <button id="_mClose" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#666;font-size:1.4rem;cursor:pointer;">✕</button>
+                <!-- Ícono -->
+                <div class="share-modal-icon-wrapper">
+                    <i class="fa-solid fa-link"></i>
+                </div>
 
-            <!-- Ícono -->
-            <div style="width:64px;height:64px;background:rgba(16,185,129,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-                <i class="fa-solid fa-link" style="font-size:1.6rem;color:#10b981;"></i>
-            </div>
+                <h3 class="share-modal-title">Tu link gratuito está listo 🎁</h3>
+                <p class="share-modal-subtitle">${name}</p>
 
-            <h3 style="margin:0 0 4px;color:#fff;font-size:1.15rem;font-weight:700;">Tu link gratuito está listo 🎁</h3>
-            <p style="margin:0 0 22px;color:#666;font-size:0.85rem;">${name}</p>
+                <!-- Input + Copiar -->
+                <div class="share-modal-input-group">
+                    <input id="_mInp" type="text" value="${fullUrl}" readonly class="share-modal-input" onclick="this.select();">
+                    <button id="_mCopy" class="share-modal-copy-btn">
+                        <i class="fa-solid fa-copy"></i> Copiar
+                    </button>
+                </div>
 
-            <!-- Input + Copiar -->
-            <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;">
-                <input id="_mInp" type="text" value="${fullUrl}" readonly
-                    style="flex:1;background:#181818;border:1px solid #2e2e2e;border-radius:10px;padding:11px 13px;color:#ccc;font-size:0.78rem;outline:none;cursor:pointer;text-overflow:ellipsis;"
-                    onclick="this.select();"
-                >
-                <button id="_mCopy"
-                    style="background:#10b981;border:none;color:#fff;padding:11px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;">
-                    <i class="fa-solid fa-copy"></i> Copiar
-                </button>
-            </div>
+                <!-- WhatsApp -->
+                <a id="_mWA"
+                    href="https://wa.me/?text=${encodeURIComponent('Mira este regalo digital 💌 ' + fullUrl)}"
+                    target="_blank" rel="noopener"
+                    class="share-modal-wa-btn">
+                    <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i> Enviar por WhatsApp
+                </a>
 
-            <!-- WhatsApp -->
-            <a id="_mWA"
-                href="https://wa.me/?text=${encodeURIComponent('Mira este regalo digital 💌 ' + fullUrl)}"
-                target="_blank" rel="noopener"
-                style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;text-decoration:none;padding:13px;border-radius:10px;font-weight:700;font-size:0.9rem;margin-bottom:12px;">
-                <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i> Enviar por WhatsApp
-            </a>
-
-            <p style="color:#3a3a3a;font-size:0.72rem;margin:0;">Toca el link para seleccionarlo · Cierra al copiar</p>
+                <p class="share-modal-footer-text">Toca el link para seleccionarlo · Cierra al copiar</p>
             </div>
         `;
 

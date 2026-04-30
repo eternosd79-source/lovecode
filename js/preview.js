@@ -30,13 +30,26 @@ function attachCatalogListeners() {
     // Vista Previa
     document.querySelectorAll('.btn-preview').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cargando...';
+            btn.disabled = true;
+
             let sid  = e.target.closest('button').getAttribute('data-id');
             let data = catalogData.find(x => x.id === sid);
             activePreviewModel = data;
 
             if (prevTitle)       prevTitle.innerText = "Vista Previa: " + data.name;
             if (prevOriginalText) prevOriginalText.innerText = data.textRef || '';
-            if (previewIframe)   previewIframe.src = window.SITE_BASE_URL + data.path.replace("./", "");
+            
+            if (previewIframe) {
+                previewIframe.onload = () => {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                };
+                // Limpiar ../ y ./ para asegurar que la ruta sea relativa a la raíz
+                const cleanPath = data.path.replace(/^(\.\.\/|\.\/)+/, "");
+                previewIframe.src = window.SITE_BASE_URL + cleanPath;
+            }
 
             if (btnPreviewToBuy) {
                 if (data.badge.includes('Gratis')) {

@@ -146,6 +146,12 @@ if (window.loveCodeData && window.loveCodeData.fecha) {
     window.updateChronometerDate(window.loveCodeData.fecha);
 }
 
+// --- Integración con CC_Core ---
+document.addEventListener('cc:started', (e) => {
+    console.log("Experiencia iniciada con datos:", e.detail);
+    // Podríamos disparar alguna animación extra aquí
+});
+
 function actualizarCronometro() {
     const ahora = new Date();
     let diferencia = ahora - fechaInicio;

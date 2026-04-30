@@ -1,507 +1,161 @@
 /**
- * CorazónCódigo - Personalizador Universal
- * Este script lee parámetros de la URL y personaliza la animación.
- * Soporta: 
- *   ?para=Nombre (Personalización directa por URL)
- *   ?orderId=ID (Carga datos desde Supabase)
+ * CorazónCódigo - Personalizador Universal v2.0 (Powered by CC_Core)
+ * Este script actúa como puente entre el SDK central y las experiencias.
  */
-(function() {
-    const nativeAlert = window.alert.bind(window);
-    const nativeConfirm = window.confirm.bind(window);
-    let managedAudio = null;
 
-    // 0. Crear pantalla de carga y sistema de modales elegante inmediatamente
-    const modalCSS = `
-        <style>
-            @keyframes lc-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-            @keyframes lc-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
-            .lc-modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000000; display:flex; justify-content:center; align-items:center; opacity:0; visibility:hidden; transition:all 0.3s ease; backdrop-filter: blur(5px); }
-            .lc-start-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,0,5,0.9); z-index:999998; display:none; justify-content:center; align-items:center; flex-direction:column; cursor:pointer; opacity:1; transition: opacity 0.6s ease; backdrop-filter: blur(8px); }
-            .lc-start-btn { background: linear-gradient(45deg, #ff2d75, #ff4b8b); color:white; border:none; padding:18px 35px; font-size:1.2rem; border-radius:30px; cursor:pointer; font-family:sans-serif; font-weight:bold; box-shadow: 0 10px 30px rgba(255,45,117,0.4); animation: lc-pulse 2s infinite; pointer-events:none; }
-            .lc-modal-overlay.active { opacity:1; visibility:visible; }
-            .lc-modal-content { background:#0f0f12; border:1px solid #06b6d4; padding:30px; border-radius:16px; max-width:350px; width:90%; text-align:center; transform:scale(0.8); transition:all 0.3s ease; box-shadow: 0 0 20px rgba(6,182,212,0.2); }
-            .lc-modal-overlay.active .lc-modal-content { transform:scale(1); }
-            .lc-modal-icon { font-size:3rem; color:#06b6d4; margin-bottom:15px; }
-            .lc-modal-title { color:white; font-family:sans-serif; margin-bottom:10px; font-size:1.2rem; }
-            .lc-modal-text { color:#aaa; font-family:sans-serif; font-size:0.9rem; margin-bottom:25px; line-height:1.4; }
-            .lc-modal-btns { display:flex; gap:10px; }
-            .lc-modal-btn { flex:1; padding:12px; border-radius:8px; border:none; cursor:pointer; font-weight:bold; font-family:sans-serif; transition: opacity 0.2s; }
-            .lc-modal-btn-ok { background:#06b6d4; color:#000; }
-            .lc-modal-btn-cancel { background:rgba(255,255,255,0.1); color:white; }
-            .lc-modal-btn:hover { opacity:0.8; }
-        </style>
-    `;
+(async function() {
+    'use strict';
 
-    const loadingHTML = `
-        <div id="corazoncodigo-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#050005; z-index:999999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.8s ease;">
-            <div style="width:50px; height:50px; border:3px solid rgba(255,255,255,0.1); border-top:3px solid #ff2d75; border-radius:50%; animation: lc-spin 1s linear infinite;"></div>
-            <p style="color:white; font-family:sans-serif; margin-top:15px; letter-spacing:2px; font-size:0.8rem; opacity:0.7;">PREPARANDO TU REGALO...</p>
-        </div>
-        <div id="corazoncodigo-start-overlay" class="lc-start-overlay">
-            <button class="lc-start-btn">Toca para Abrir tu Regalo ✨</button>
-            <p style="color:white; margin-top:20px; font-family:sans-serif; opacity:0.7; font-size: 0.9rem; letter-spacing:1px;">Enciende la magia y el sonido</p>
-        </div>
-        <div id="lc-custom-modal" class="lc-modal-overlay">
-            <div class="lc-modal-content">
-                <div class="lc-modal-icon">?</div>
-                <h3 class="lc-modal-title" id="lc-modal-title">¿Continuar?</h3>
-                <p class="lc-modal-text" id="lc-modal-text"></p>
-                <div class="lc-modal-btns">
-                    <button class="lc-modal-btn lc-modal-btn-cancel" id="lc-modal-btn-cancel" style="display:none;">Cancelar</button>
-                    <button class="lc-modal-btn lc-modal-btn-ok" id="lc-modal-btn-ok">Aceptar</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    if (document.body) {
-        document.body.insertAdjacentHTML('afterbegin', modalCSS + loadingHTML);
-    } else {
-        document.addEventListener('DOMContentLoaded', () => {
-            document.body.insertAdjacentHTML('afterbegin', modalCSS + loadingHTML);
-        });
-    }
-
-    // --- OVERRIDE ALERT Y CONFIRM ---
-    window.alert = function(msg) {
-        const modal = document.getElementById('lc-custom-modal');
-        if (!modal) {
-            nativeAlert(msg);
-            return;
-        }
-        document.getElementById('lc-modal-title').innerText = "Aviso";
-        document.getElementById('lc-modal-text').innerText = msg;
-        document.getElementById('lc-modal-btn-cancel').style.display = 'none';
-        document.getElementById('lc-modal-btn-ok').onclick = () => modal.classList.remove('active');
-        modal.classList.add('active');
-    };
-    // Mantener comportamiento síncrono nativo evita romper código legado.
-    window.confirm = function(msg) {
-        return nativeConfirm(msg);
-    };
-
-    const supabaseUrl = 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
-    const supabaseKey = 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc';
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const para = urlParams.get('para');
-    // Soportar ambos parámetros: ?id= (tabla Pedidos/token) y ?orderId= (tabla orders/UUID)
-    const orderId = urlParams.get('orderId') || urlParams.get('id');
-    const directMsg = urlParams.get('msg');
-    const directDate = urlParams.get('fecha');
-    const directMusic = urlParams.get('musica');
-    let mStart = urlParams.get('mStart');
-    let mDur = urlParams.get('mDur');
-
-    // Soporte para fotos directas por URL (foto1, foto2, etc.)
-    const directPhotos = [];
-    for (let i = 1; i <= 10; i++) {
-        const f = urlParams.get(`foto${i}`);
-        if (f) directPhotos.push(f);
-    }
-
-    function removeLoader() {
-        const loader = document.getElementById('corazoncodigo-loader');
-        if (loader) {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-            }, 800);
-        }
-    }
-
-    // Espera activa hasta que la librería de Supabase esté disponible en la página
-    function waitForSupabase(timeout = 8000) {
+    // 1. Carga dinámica del SDK si no está presente
+    async function ensureCore() {
+        if (window.CC_Core) return window.CC_Core;
+        
         return new Promise((resolve) => {
-            if (typeof supabase !== 'undefined' && supabase.createClient) {
-                return resolve(true);
-            }
-            const start = Date.now();
-            const interval = setInterval(() => {
-                if (typeof supabase !== 'undefined' && supabase.createClient) {
-                    clearInterval(interval);
-                    resolve(true);
-                } else if (Date.now() - start > timeout) {
-                    clearInterval(interval);
-                    console.warn('⚠️ Supabase no cargó a tiempo. Modo sin base de datos.');
-                    resolve(false);
-                }
-            }, 100);
+            const script = document.createElement('script');
+            script.src = '../js/cc-core.js';
+            script.onload = () => resolve(window.CC_Core);
+            script.onerror = () => {
+                console.error("CC_Core could not be loaded. Falling back to legacy mode.");
+                resolve(null);
+            };
+            document.head.appendChild(script);
         });
     }
 
+    const Core = await ensureCore();
+
+    // 2. Lógica de Personalización
     async function applyPersonalization() {
-        try {
-            let customData = {
-                para: para,
-                mensaje: directMsg,
-                fecha: directDate,
-                fotos: [],
-                musica: directMusic
-            };
+        if (!Core) return;
 
-            const supabaseReady = await waitForSupabase();
-            if (orderId && supabaseReady) {
-                try {
-                    const db = supabase.createClient(supabaseUrl, supabaseKey);
+        // Mostrar Loader y Pantalla de Inicio
+        const data = await Core.loadData();
+        window.ccData = data; // Mantener compatibilidad con scripts de plantillas
 
-                    // 1. Buscar en tabla 'Pedidos' por token — solo columnas existentes
-                    let encontrado = false;
-                    try {
-                        const { data: pedido, error: errPed } = await db
-                            .from('Pedidos')
-                            .select('token, tipo_plantilla, mensaje')
-                            .eq('token', orderId)
-                            .maybeSingle();
+        // --- Mapeo de Datos a UI ---
+        _applyTexts(data);
+        _applyMultimedia(data);
+        _applyPhotos(data);
+        _applyFloatingImage(data);
 
-                        if (pedido && !errPed) {
-                            encontrado = true;
-                            if (pedido.mensaje) customData.mensaje = pedido.mensaje;
-                            console.log('✅ Pedido en Pedidos:', pedido.token, '| Plantilla:', pedido.tipo_plantilla);
-                        }
-                    } catch (e) { /* Pedidos sin acceso — continuar */ }
-
-                    // 2. Si no encontró en Pedidos, buscar en 'orders' (sistema oficial)
-                    if (!encontrado) {
-                        try {
-                            let order = null;
-                            let errOrd = null;
-
-                            const safeResult = await db.rpc('get_order_safe', { p_id: orderId });
-                            if (!safeResult.error) {
-                                order = Array.isArray(safeResult.data) ? safeResult.data[0] : safeResult.data;
-                            } else {
-                                const byIdResult = await db.rpc('get_order_by_id', { p_id: orderId });
-                                if (!byIdResult.error) {
-                                    order = Array.isArray(byIdResult.data) ? byIdResult.data[0] : byIdResult.data;
-                                } else {
-                                    const bySearch = await db.rpc('search_order_by_id', { search_term: String(orderId) });
-                                    if (!bySearch.error) {
-                                        order = Array.isArray(bySearch.data) ? bySearch.data[0] : bySearch.data;
-                                    } else {
-                                        errOrd = bySearch.error;
-                                    }
-                                }
-                            }
-
-                            if (order && !errOrd) {
-                                encontrado = true;
-                                customData.para    = order.target_name    || customData.para;
-                                customData.mensaje = order.custom_message || customData.mensaje;
-                                customData.fecha   = order.custom_date    || customData.fecha;
-                                customData.fotos   = order.photo_urls     || [];
-                                customData.musica  = order.music_url      || customData.musica;
-
-                                if (order.music_slice) {
-                                    mStart = order.music_slice.start    !== undefined ? order.music_slice.start    : mStart;
-                                    mDur   = order.music_slice.duration !== undefined ? order.music_slice.duration : mDur;
-                                }
-                                if (order.dynamic_texts) {
-                                    for (const [key, value] of Object.entries(order.dynamic_texts)) {
-                                        const elById = document.getElementById(key);
-                                        if (elById) elById.innerText = value;
-                                        document.querySelectorAll(`.${key}`).forEach(el => el.innerText = value);
-                                    }
-                                }
-                                console.log('✅ Pedido en orders:', orderId);
-                            }
-                        } catch (e) { /* orders no existe — continuar */ }
-                    }
-
-                    if (!encontrado) console.warn('⚠️ No se encontró pedido con ID:', orderId);
-                } catch (e) { console.error('Error Supabase:', e); }
-            }
-
-            window.ccData = customData;
-
-            if (customData.para) {
-                const elements = ['loveText', 'cl1', 'phraseTop', 'mainTitle', 'targetName', 'msgLove'];
-                elements.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.innerText = customData.para;
-                });
-                document.querySelectorAll('.personalizar-nombre, .target-name, .title').forEach(el => {
-                    if (el.innerText.length < 50) el.innerText = customData.para;
-                });
-            }
-
-            if (customData.mensaje) {
-                const frases = customData.mensaje.split('\n').filter(f => f.trim() !== "");
-                if (typeof pairs !== 'undefined' && frases.length > 0) {
-                    window.pairs = frases.map(f => ({ top: f, bot: "" }));
-                }
-                const msgEls = ['heartCaption', 'final-verse', 'intro-sub', 'phraseBot', 'heart-caption'];
-                msgEls.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.innerText = customData.mensaje;
-                });
-                document.querySelectorAll('.personalizar-mensaje, .message, .poem-container p, .dedicatoria').forEach(el => {
-                    el.innerText = customData.mensaje;
-                });
-            }
-
-            if (customData.fecha) {
-                if (typeof window.updateChronometerDate === 'function') {
-                    window.updateChronometerDate(customData.fecha);
-                }
-                document.querySelectorAll('.fecha-aniversario, .date-display').forEach(el => {
-                    el.innerText = customData.fecha;
-                });
-            }
-
-            // 4. Aplicar Textos Genéricos (Cualquier parámetro que empiece con txt_)
-            for (const [key, value] of urlParams.entries()) {
-                if (key.startsWith('txt_')) {
-                    const targetId = key.replace('txt_', '');
-                    console.log(`Buscando elemento para personalización dinámica: ${targetId}`);
-                    
-                    // Buscar por ID
-                    const elById = document.getElementById(targetId);
-                    if (elById) {
-                        elById.innerText = value;
-                        continue;
-                    }
-
-                    // Buscar por Clase
-                    const elsByClass = document.querySelectorAll(`.${targetId}`);
-                    if (elsByClass.length > 0) {
-                        elsByClass.forEach(el => el.innerText = value);
-                        continue;
-                    }
-
-                    // Buscar por Atributo Name (útil para inputs si los hubiera)
-                    const elsByName = document.querySelectorAll(`[name="${targetId}"]`);
-                    if (elsByName.length > 0) {
-                        elsByName.forEach(el => {
-                            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = value;
-                            else el.innerText = value;
-                        });
-                    }
-                }
-            }
-
-            // 5. Aplicar Música (Inyectar Audio)
-            if (customData.musica && String(customData.musica).trim() !== '' && String(customData.musica) !== 'null') {
-                const MUSIC_BUCKET_BASE = 'https://qmnbcmioylgmcbzqrjiv.supabase.co/storage/v1/object/public/music_library/';
-                let resolvedMusicUrl = String(customData.musica).trim();
-                
-                // Si no es una URL absoluta, limpiar y resolver contra Supabase
-                if (resolvedMusicUrl && !/^https?:\/\//i.test(resolvedMusicUrl)) {
-                    // Limpiar prefijos de navegación como ../ o ./ y slashes iniciales
-                    const cleanName = resolvedMusicUrl
-                        .replace(/^(\.\.\/|\.\/)+/, '') // Quita ../ o ./ repetidos al inicio
-                        .replace(/^\/+/, '');           // Quita slashes iniciales
-                    
-                    resolvedMusicUrl = MUSIC_BUCKET_BASE + encodeURIComponent(cleanName).replace(/%2F/g, '/');
-                }
-
-                console.log("Cargando música personalizada:", resolvedMusicUrl);
-
-                let audio = new Audio();
-                managedAudio = audio;
-                audio.loop = false; 
-                audio.volume = 1.0;
-                audio.crossOrigin = "anonymous"; // Importante para evitar problemas de CORS al procesar el audio
-
-                const startS = parseFloat(mStart) || 0;
-                const durS = parseFloat(mDur) || 0;
-                const endS = startS + durS;
-
-                const setStartTime = () => {
-                    if (startS > 0) audio.currentTime = startS;
-                };
-
-                // Carga optimizada y anti-fallos (Blob proxy bypasses un-seekable servers)
-                fetch(resolvedMusicUrl)
-                    .then(res => res.blob())
-                    .then(blob => {
-                        const objectUrl = URL.createObjectURL(blob);
-                        audio.src = objectUrl;
-                        audio.addEventListener('ended', () => URL.revokeObjectURL(objectUrl), { once: true });
-                        audio.load();
-                    })
-                    .catch(() => {
-                        audio.src = resolvedMusicUrl; // Fallback
-                        audio.load();
-                    });
-
-                if (audio.readyState >= 1) {
-                    setStartTime();
-                } else {
-                    audio.addEventListener('loadedmetadata', setStartTime);
-                }
-
-                document.addEventListener('click', () => {
-                    audio.play().catch(e => console.log("Audio bloqueado:", e));
-                }, { once: true });
-
-                // Recorte exacto: La música se DETIENE al terminar el segmento seleccionado
-                audio.addEventListener('timeupdate', () => {
-                    if (durS > 0 && audio.currentTime >= endS) {
-                        audio.pause();
-                    }
-                });
-            }
-
-            // 6. Aplicar Fotos
-            // Combinar fotos de Supabase con fotos directas por URL
-            const allPhotos = [...customData.fotos, ...directPhotos];
-
-            if (allPhotos.length > 0) {
-                console.log("Inyectando fotos personalizadas:", allPhotos.length);
-                
-                // Selectores de imagen estándar
-                const imgSelectors = [
-                    '.user-photo', 
-                    '.couple-photo', 
-                    '.dynamic-img', 
-                    '.photo-slot', 
-                    'img[src*="thumb.png"]',
-                    'img[src*="foto.jpg"]',
-                    'img[src*="personaje.png"]',
-                    '#img-personajes',
-                    '#userPhoto'
-                ];
-
-                const imgElements = document.querySelectorAll(imgSelectors.join(', '));
-                
-                imgElements.forEach((img, idx) => {
-                    // Si tenemos suficientes fotos, las asignamos una a una. 
-                    // Si no, repetimos la última o la primera.
-                    const photoUrl = allPhotos[idx % allPhotos.length];
-                    if (photoUrl) {
-                        img.src = photoUrl;
-                        // Quitar clases de error si existieran
-                        img.classList.remove('no-photo');
-                        if (img.parentElement) img.parentElement.classList.remove('no-photo');
-                    }
-                });
-
-                // Soporte para fondos (Background Images)
-                const bgSelectors = ['.user-photo-bg', '.photo-bg', '.dynamic-bg'];
-                const bgElements = document.querySelectorAll(bgSelectors.join(', '));
-                bgElements.forEach((el, idx) => {
-                    const photoUrl = allPhotos[idx % allPhotos.length];
-                    if (photoUrl) {
-                        el.style.backgroundImage = `url('${photoUrl}')`;
-                        el.style.backgroundSize = 'cover';
-                        el.style.backgroundPosition = 'center';
-                    }
-                });
-            }
-
-            // 7. Aplicar Foto Flotante Global (Remplaza textos)
-            // Se lee de Supabase (dynamic_texts) o de los URLSearchParams
-            const orderDyn = window.ccData && window.ccData.orderData ? window.ccData.orderData.dynamic_texts : null;
-            const tempOrder = typeof order !== 'undefined' ? order : null;
-            const dynSource = (tempOrder && tempOrder.dynamic_texts) ? tempOrder.dynamic_texts : null;
-            
-            const flImgUrl = urlParams.get('flImg') || (dynSource && dynSource.flImg);
-            
-            if (flImgUrl && flImgUrl.trim() !== '') {
-                console.log("Inyectando Foto Flotante:", flImgUrl);
-                const flS = urlParams.get('flS') || (dynSource && dynSource.flS) || 40;
-                const flX = urlParams.get('flX') || (dynSource && dynSource.flX) || 50;
-                const flY = urlParams.get('flY') || (dynSource && dynSource.flY) || 50;
-                const flT = urlParams.get('flT') || urlParams.get('flTime') || (dynSource && dynSource.flT) || 0;
-                
-                const flImgNode = document.createElement('img');
-                flImgNode.src = flImgUrl;
-                flImgNode.style.position = 'fixed';
-                flImgNode.style.left = flX + '%';
-                flImgNode.style.top = flY + '%';
-                // Usamos vmin para que el tamaño coincida EXACTAMENTE con la lógica del editor (Math.min(canvasW, canvasH))
-                flImgNode.style.width = flS + 'vmin';
-                flImgNode.style.height = flS + 'vmin';
-                flImgNode.style.transform = 'translate(-50%, -50%)';
-                flImgNode.style.zIndex = '999999';
-                flImgNode.style.pointerEvents = 'auto'; 
-                flImgNode.style.borderRadius = '15px';
-                flImgNode.style.boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
-                flImgNode.style.border = '2px solid rgba(255,255,255,0.2)';
-                flImgNode.style.objectFit = 'contain'; // Contener la imagen para mostrarla completa sin recortes
-                flImgNode.style.transition = 'opacity 1s ease-in-out';
-                flImgNode.style.opacity = '0';
-                
-                document.body.appendChild(flImgNode);
-
-                // Aparecer imagen suavemente según el tiempo flT
-                const delayMs = parseFloat(flT) * 1000;
-                setTimeout(() => {
-                    flImgNode.style.opacity = '1';
-                }, delayMs);
-                
-                // Ocultar textos base porque la premisa es "Reemplaza los textos"
-                document.querySelectorAll('.poem-container, .dynamic-text, .dedicatoria, .message-box').forEach(el => el.style.opacity = '0');
-            }
-            
-        } catch (err) {
-            console.error("Error en personalización:", err);
-        } finally {
-            setTimeout(() => {
-                const isLivePreview = urlParams.get('editorLivePreview') === 'true';
-                const startOverlay = document.getElementById('corazoncodigo-start-overlay');
-                
-                if (isLivePreview) {
-                    // Modo editor: ocultar todo de inmediato y simular clic para arrancar el CSS
-                    if (startOverlay) startOverlay.style.display = 'none';
-                    removeLoader();
-                    // Simular clic en body para iniciar cualquier animación nativa sin afectar audio (se recomienda silenciar si se puede)
-                    if (managedAudio) managedAudio.muted = true;
-                    setTimeout(() => document.body.click(), 100);
-                } else {
-                    // Flujo normal de regalo web
-                    if (startOverlay) {
-                        startOverlay.style.display = 'flex';
-                        startOverlay.addEventListener('click', () => {
-                            startOverlay.style.opacity = '0';
-                            setTimeout(() => {
-                                if (startOverlay.parentNode) startOverlay.parentNode.removeChild(startOverlay);
-                            }, 600);
-                        });
-                    }
-                    removeLoader();
-                }
-            }, 600);
-        }
+        // --- Finalizar Carga ---
+        Core.hideLoader();
+        Core.showStartOverlay(() => {
+            if (window.ccAudio) window.ccAudio.play();
+            // Disparar evento de inicio para la plantilla
+            document.dispatchEvent(new CustomEvent('cc:started', { detail: data }));
+        });
     }
 
-    // Seguridad extra: Si después de 5 segundos el loader sigue ahí, quitarlo a la fuerza
-    setTimeout(removeLoader, 5000);
+    function _applyTexts(data) {
+        const para = data.target_name || data.para;
+        const mensaje = data.custom_message || data.mensaje;
+        const fecha = data.custom_date || data.fecha;
 
+        if (para) {
+            const ids = ['loveText', 'cl1', 'phraseTop', 'mainTitle', 'targetName', 'msgLove'];
+            ids.forEach(id => { const el = document.getElementById(id); if (el) el.innerText = para; });
+            document.querySelectorAll('.personalizar-nombre, .target-name, .title').forEach(el => {
+                if (el.innerText.length < 50) el.innerText = para;
+            });
+        }
+
+        if (mensaje) {
+            const frases = mensaje.split('\n').filter(f => f.trim() !== "");
+            if (typeof window.pairs !== 'undefined' && frases.length > 0) {
+                window.pairs = frases.map(f => ({ top: f, bot: "" }));
+            }
+            const msgEls = ['heartCaption', 'final-verse', 'intro-sub', 'phraseBot', 'heart-caption'];
+            msgEls.forEach(id => { const el = document.getElementById(id); if (el) el.innerText = mensaje; });
+            document.querySelectorAll('.personalizar-mensaje, .message, .poem-container p, .dedicatoria').forEach(el => {
+                el.innerText = mensaje;
+            });
+        }
+
+        if (fecha) {
+            if (typeof window.updateChronometerDate === 'function') {
+                window.updateChronometerDate(fecha);
+            }
+            document.querySelectorAll('.fecha-aniversario, .date-display').forEach(el => {
+                el.innerText = fecha;
+            });
+        }
+
+        // Parámetros dinámicos txt_
+        const params = Core.getParams();
+        Object.keys(params).forEach(key => {
+            if (key.startsWith('txt_')) {
+                const targetId = key.replace('txt_', '');
+                const el = document.getElementById(targetId) || document.querySelector(`.${targetId}`);
+                if (el) el.innerText = params[key];
+            }
+        });
+    }
+
+    function _applyMultimedia(data) {
+        const musicUrl = data.music_url || data.musica;
+        if (!musicUrl) return;
+
+        let resolvedUrl = musicUrl;
+        if (!/^https?:\/\//i.test(resolvedUrl)) {
+            const MUSIC_BASE = 'https://qmnbcmioylgmcbzqrjiv.supabase.co/storage/v1/object/public/music_library/';
+            resolvedUrl = MUSIC_BASE + encodeURIComponent(resolvedUrl.replace(/^(\.\.\/|\.\/)+/, '')).replace(/%2F/g, '/');
+        }
+
+        const start = data.music_start || data.mStart || 0;
+        const duration = data.music_duration || data.mDur || 30;
+
+        window.ccAudio = Core.setupAudio(resolvedUrl, start, duration);
+    }
+
+    function _applyPhotos(data) {
+        const photos = data.photo_urls || data.fotos || [];
+        if (photos.length === 0) return;
+
+        const imgSelectors = ['.user-photo', '.couple-photo', '.dynamic-img', '.photo-slot', 'img[src*="thumb.png"]', 'img[src*="foto.jpg"]'];
+        const imgElements = document.querySelectorAll(imgSelectors.join(', '));
+        
+        imgElements.forEach((img, idx) => {
+            const url = photos[idx % photos.length];
+            if (url) img.src = url;
+        });
+
+        const bgSelectors = ['.user-photo-bg', '.photo-bg', '.dynamic-bg'];
+        document.querySelectorAll(bgSelectors.join(', ')).forEach((el, idx) => {
+            const url = photos[idx % photos.length];
+            if (url) {
+                el.style.backgroundImage = `url('${url}')`;
+                el.style.backgroundSize = 'cover';
+            }
+        });
+    }
+
+    function _applyFloatingImage(data) {
+        const params = Core.getParams();
+        const flImgUrl = params.flImg || (data.dynamic_texts && data.dynamic_texts.flImg);
+        if (!flImgUrl) return;
+
+        const flImgNode = document.createElement('img');
+        flImgNode.src = flImgUrl;
+        flImgNode.className = 'cc-floating-image';
+        flImgNode.style.cssText = `
+            position: fixed; z-index: 999999; object-fit: contain; border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.2);
+            left: ${params.flX || 50}%; top: ${params.flY || 50}%; width: ${params.flS || 40}vmin;
+            height: ${params.flS || 40}vmin; transform: translate(-50%, -50%);
+            opacity: 0; transition: opacity 1s ease;
+        `;
+        document.body.appendChild(flImgNode);
+        setTimeout(() => flImgNode.style.opacity = '1', (params.flT || 0) * 1000);
+        
+        document.querySelectorAll('.poem-container, .dynamic-text, .dedicatoria').forEach(el => el.style.opacity = '0');
+    }
+
+    // --- Ejecución ---
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', applyPersonalization);
     } else {
         applyPersonalization();
     }
-    // -------------------------------------------------------
-    // 8. ESCUCHA DE MENSAJES (Sincronización de Tiempo Iframe / Scrub)
-    // -------------------------------------------------------
-    window.addEventListener('message', function(e) {
-        if (e.data && e.data.type === 'CORAZON_SCRUB_TIME') {
-            console.log("Scrubbing template a: " + e.data.timeSeconds + "s");
-            // Pausar y Adelantar animaciones CSS (Web Animations API)
-            // Esto buscará CUALQUIER animación CSS que se esté reproduciendo en pantalla y la adelantará
-            if (typeof document.getAnimations === 'function') {
-                document.getAnimations().forEach(anim => {
-                    const timeMs = e.data.timeSeconds * 1000;
-                    anim.currentTime = timeMs;
-                    anim.pause(); // Pausamos para que puedan ver exactamente el momento
-                });
-            }
-            
-            // Pausar y Adelantar media (Videos / Audios si la plantilla tiene)
-            document.querySelectorAll('video, audio').forEach(media => {
-                if (media.duration && !isNaN(media.duration)) {
-                    media.currentTime = Math.min(e.data.timeSeconds, media.duration);
-                    media.pause();
-                } else {
-                    // Si aún no carga pero sabemos a donde saltar
-                    media.currentTime = e.data.timeSeconds;
-                    media.pause();
-                }
-            });
-        }
-    });
 
 })();

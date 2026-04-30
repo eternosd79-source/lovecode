@@ -141,7 +141,11 @@ function goToNextStep()    { if (currentStep < totalSteps) { currentStep++; upda
 
 function updateWizardUI() {
     steps.forEach((step, idx) => {
-        step.classList.toggle('active', idx === currentStep - 1);
+        const isActive = idx === currentStep - 1;
+        step.classList.toggle('active', isActive);
+        if (isActive) {
+            step.style.animation = 'wizard-slide-in 0.4s ease forwards';
+        }
     });
     dots.forEach((dot, idx) => {
         dot.classList.toggle('active', idx <= currentStep - 1);
@@ -168,7 +172,8 @@ if (btnPreviewCustom) {
     btnPreviewCustom.addEventListener('click', () => {
         if (!activeTemplateInfo) return;
         const dateVal = document.getElementById('inpDate') ? document.getElementById('inpDate').value : "";
-        let finalPath = activeTemplateInfo.path;
+        // Limpiar ../ y ./ para asegurar que la ruta sea relativa a la raíz
+        let finalPath = activeTemplateInfo.path.replace(/^(\.\.\/|\.\/)+/, "");
         let params = new URLSearchParams();
 
         if (activeTemplateInfo.editableTexts) {

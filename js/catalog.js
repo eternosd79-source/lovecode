@@ -2,7 +2,7 @@ const catalogData = [
     { 
         id: "arbol", 
         name: "Árbol Flores Doradas", 
-        path: "../arbol/index.html", 
+        path: "arbol/index.html", 
         icon: "fa-leaf", 
         color: "#1f0814", 
         badge: "Premium", 
@@ -20,7 +20,7 @@ const catalogData = [
     { 
         id: "agencia", 
         name: "Agencia de Osos", 
-        path: "../agencia/index.html", 
+        path: "agencia/index.html", 
         icon: "fa-film", 
         color: "#0b0006", 
         badge: "Suite 3 Actos", 
@@ -40,7 +40,7 @@ const catalogData = [
     { 
         id: "burbujas", 
         name: "Razones en Burbujas", 
-        path: "../burbujas/index.html", 
+        path: "burbujas/index.html", 
         icon: "fa-soap", 
         color: "#00131c", 
         badge: "Interactivo", 
@@ -61,7 +61,7 @@ const catalogData = [
     { 
         id: "boulevard", 
         name: "Boulevard Pareja", 
-        path: "../Boulevard_Pareja/index.html", 
+        path: "Boulevard_Pareja/index.html", 
         icon: "fa-car", 
         color: "#080808", 
         badge: "Cinemático", 
@@ -80,7 +80,7 @@ const catalogData = [
     { 
         id: "matrix", 
         name: "Lluvia Matrix", 
-        path: "../matrix/index.html", 
+        path: "matrix/index.html", 
         icon: "fa-desktop", 
         color: "#1a0515", 
         badge: "Hacker", 
@@ -97,7 +97,7 @@ const catalogData = [
     {
         id: "latido",
         name: "Corazón Latido Ruby",
-        path: "../latido/index.html",
+        path: "latido/index.html",
         icon: "fa-heart-pulse",
         color: "#1a0505",
         badge: "Gratis (24h)",
@@ -114,7 +114,7 @@ const catalogData = [
     {
         id: "osos",
         name: "Osito Tirador",
-        path: "../osos/index.html",
+        path: "osos/index.html",
         icon: "fa-gun",
         color: "#050011",
         badge: "Divertido",
@@ -129,7 +129,7 @@ const catalogData = [
     {
         id: "unidos",
         name: "Corazones Unidos",
-        path: "../unidos/index.html",
+        path: "unidos/index.html",
         icon: "fa-magnet",
         color: "#03001c",
         badge: "Físicas",
@@ -144,7 +144,7 @@ const catalogData = [
     {
         id: "libro",
         name: "Libro 3D",
-        path: "../libro/index.html",
+        path: "libro/index.html",
         icon: "fa-book-open",
         color: "#0a0a0a",
         badge: "3D CSS",
@@ -164,7 +164,7 @@ const catalogData = [
     {
         id: "carta",
         name: "Carta Digital",
-        path: "../carta/index.html",
+        path: "carta/index.html",
         icon: "fa-envelope-open-text",
         color: "#1e1e1e",
         badge: "Tradicional",
@@ -181,7 +181,7 @@ const catalogData = [
     {
         id: "arcade",
         name: "Corazón Galáctico",
-        path: "../arcade/index.html",
+        path: "arcade/index.html",
         icon: "fa-gamepad",
         color: "#0a0a0a",
         badge: "Interactivo",
@@ -201,7 +201,7 @@ const catalogData = [
     {
         id: "codeheart",
         name: "Código de Amor",
-        path: "../codeheart/index.html",
+        path: "codeheart/index.html",
         icon: "fa-code",
         color: "#0d0d0d",
         badge: "Hacker",
@@ -217,7 +217,7 @@ const catalogData = [
     {
         id: "cometa",
         name: "Estrella Fugaz",
-        path: "../cometa/index.html",
+        path: "cometa/index.html",
         icon: "fa-meteor",
         color: "#030A1A",
         badge: "Gratis (24h)",
@@ -232,7 +232,7 @@ const catalogData = [
     {
         id: "corazon",
         name: "Corazón Partículas",
-        path: "../corazon/index.html",
+        path: "corazon/index.html",
         icon: "fa-heart",
         color: "#000",
         badge: "Premium",
@@ -246,7 +246,7 @@ const catalogData = [
     {
         id: "corazon3d",
         name: "Corazón 3D Giratorio",
-        path: "../corazon3d/index.html",
+        path: "corazon3d/index.html",
         icon: "fa-heart",
         color: "#1c0000",
         badge: "Gratis (24h)",
@@ -262,7 +262,7 @@ const catalogData = [
     {
         id: "cristal",
         name: "Cristal Mágico",
-        path: "../cristal/index.html",
+        path: "cristal/index.html",
         icon: "fa-gem",
         color: "#0a001a",
         badge: "Interactivo",
@@ -277,7 +277,7 @@ const catalogData = [
     {
         id: "cupido",
         name: "Flecha de Cupido",
-        path: "../cupido/index.html",
+        path: "cupido/index.html",
         icon: "fa-arrow-right",
         color: "#1a0000",
         badge: "Divertido",
@@ -292,7 +292,7 @@ const catalogData = [
     {
         id: "espacio",
         name: "Viaje Espacial",
-        path: "../espacio/index.html",
+        path: "espacio/index.html",
         icon: "fa-rocket",
         color: "#000011",
         badge: "Cinemático",
@@ -307,7 +307,7 @@ const catalogData = [
     {
         id: "estrellas",
         name: "Cielo Estrellado",
-        path: "../estrellas/index.html",
+        path: "estrellas/index.html",
         icon: "fa-star",
         color: "#010114",
         badge: "Interactivo",
@@ -322,7 +322,7 @@ const catalogData = [
     {
         id: "flores",
         name: "Ramo de Flores",
-        path: "../flores/index.html",
+        path: "flores/index.html",
         icon: "fa-seedling",
         color: "#061A0C",
         badge: "Naturaleza",
@@ -336,7 +336,7 @@ const catalogData = [
     {
         id: "formando",
         name: "Formando el Corazón",
-        path: "../formando/index.html",
+        path: "formando/index.html",
         icon: "fa-puzzle-piece",
         color: "#1a1a1a",
         badge: "Interactivo",
@@ -351,7 +351,7 @@ const catalogData = [
     {
         id: "galaxia",
         name: "Galaxia Solar",
-        path: "../galaxia/index.html",
+        path: "galaxia/index.html",
         icon: "fa-sun",
         color: "#001122",
         badge: "360°",
@@ -365,7 +365,7 @@ const catalogData = [
     {
         id: "gatos",
         name: "Gatos Románticos",
-        path: "../gatos/index.html",
+        path: "gatos/index.html",
         icon: "fa-cat",
         color: "#05001a",
         badge: "Divertido",
@@ -379,7 +379,7 @@ const catalogData = [
     {
         id: "hacker",
         name: "Hacker de Amor",
-        path: "../hacker/index.html",
+        path: "hacker/index.html",
         icon: "fa-user-secret",
         color: "#000",
         badge: "Hacker",
@@ -394,7 +394,7 @@ const catalogData = [
     {
         id: "jardin",
         name: "Jardín de Luces",
-        path: "../jardin/index.html",
+        path: "jardin/index.html",
         icon: "fa-tree",
         color: "#001a0a",
         badge: "Cinemático",
@@ -409,7 +409,7 @@ const catalogData = [
     {
         id: "monitor",
         name: "Monitor Cardíaco",
-        path: "../monitor/index.html",
+        path: "monitor/index.html",
         icon: "fa-heart-pulse",
         color: "#1a0505",
         badge: "Clásico",
@@ -425,7 +425,7 @@ const catalogData = [
     {
         id: "neon",
         name: "Letrero Neón",
-        path: "../neon/index.html",
+        path: "neon/index.html",
         icon: "fa-bolt",
         color: "#110011",
         badge: "Gratis (24h)",
@@ -439,7 +439,7 @@ const catalogData = [
     {
         id: "poema",
         name: "Poema Escrito",
-        path: "../poema/index.html",
+        path: "poema/index.html",
         icon: "fa-pen-nib",
         color: "#1a1a1a",
         badge: "Premium",
@@ -454,7 +454,7 @@ const catalogData = [
     {
         id: "ruleta",
         name: "Ruleta de Citas",
-        path: "../ruleta/index.html",
+        path: "ruleta/index.html",
         icon: "fa-compact-disc",
         color: "#220505",
         badge: "Juego",
@@ -472,7 +472,7 @@ const catalogData = [
     {
         id: "ventana",
         name: "Ventana al Cielo",
-        path: "../ventana/index.html",
+        path: "ventana/index.html",
         icon: "fa-window-maximize",
         color: "#000a1a",
         badge: "Cinemático",
@@ -486,7 +486,7 @@ const catalogData = [
     {
         id: "vibrante",
         name: "Corazón Fuego",
-        path: "../vibrante/index.html",
+        path: "vibrante/index.html",
         icon: "fa-fire-flame-curved",
         color: "#000000",
         badge: "Partículas",
@@ -521,7 +521,7 @@ function renderCatalog(filter = 'all') {
             <div class="card-image ${isPremium ? 'premium-bg' : ''}" style="background-color: ${item.color};">
                 ${isPremium ? '<div class="crown-badge"><i class="fa-solid fa-crown"></i></div>' : ''}
                 <i class="fa-solid ${item.icon} screen-icon"></i>
-                <img src="../${item.id}/thumb.png" alt="${item.name}" class="card-thumb" onerror="this.style.opacity='0'">
+                <img src="${item.id}/thumb.png" alt="${item.name}" class="card-thumb" onerror="this.style.opacity='0'">
                 <span class="preview-badge" style="z-index:2">${item.badge}</span>
             </div>
             <div class="card-body">

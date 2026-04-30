@@ -3,13 +3,20 @@
 // BASE URL DYNAMICS (FIXES GITHUB PAGES TRAILING SLASH)
 // ============================================================
 function getBaseAppUrl() {
+    // Intentar obtener la URL base de forma absoluta y limpia
     let url = window.location.href.split('?')[0].split('#')[0];
-    if (url.endsWith('.html')) {
+    
+    // Si termina en un archivo (ej: index.html), lo eliminamos para quedarnos con el directorio
+    if (url.match(/\/[^\/]+\.[^\/]+$/)) {
         url = url.substring(0, url.lastIndexOf('/'));
     }
+    
+    // Asegurar que termine en slash
     if (!url.endsWith('/')) {
         url += '/';
     }
+    
+    console.log("CC_Core: SITE_BASE_URL detectado como:", url);
     return url;
 }
 window.SITE_BASE_URL = getBaseAppUrl();
@@ -24,6 +31,7 @@ let db = null;
 
 const CONFIG = {
     whatsappNumber: "593990480389",
+    payphoneLink: "https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw",
     supportMsg: "Hola CorazónCódigo! Tengo una pregunta antes de comprar.",
     paymentMsg: (id, name, plan) =>
         `Hola CorazónCódigo! He realizado el pago de mi pedido:\n\nID: [${id}]\nCliente: [${name}]\nPlan: [${plan}]\n\nAdjunto el comprobante de transferencia. 💖`
