@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Información Bancaria</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #0a0a0a; 
+            color: white; 
+            padding: 20px; 
+        }
+        .test-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #1a1a2e; 
+            padding: 30px; 
+            border-radius: 15px; 
+        }
+        .btn-test { 
+            background: #22d3ee; 
+            color: #000; 
+            border: none; 
+            padding: 15px 30px; 
+            margin: 10px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 16px;
+            width: 100%;
+        }
+        .btn-test:hover { background: #06b6d4; }
+        .info-box { 
+            background: rgba(255,255,255,0.1); 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin: 15px 0; 
+            display: none;
+        }
+        .info-box.active { display: block; }
+        .bank-title { 
+            color: #22d3ee; 
+            font-size: 20px; 
+            font-weight: bold; 
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🏦 Test de Información Bancaria</h1>
+        <p>Haz clic en cada botón para ver la información bancaria completa:</p>
+        
+        <button class="btn-test" onclick="mostrarInfo('pichincha')">🏦 Banco Pichincha</button>
+        <div id="info-pichincha" class="info-box">
+            <div class="bank-title">BANCO PICHINCHA</div>
+            <strong>Tipo de Cuenta:</strong> Cuenta de Ahorros<br>
+            <strong>Número de Cuenta:</strong> 20005033691<br>
+            <strong>Titular:</strong> DENNIS ALBERTO VILLAGRAN CABRERA<br>
+            <strong>Cédula/RUC:</strong> 1720384161<br>
+            <strong>Correo:</strong> dennisvillagran16pin@gmail.com<br>
+            <strong>Celular:</strong> 0990480389<br><br>
+            <strong>📋 INSTRUCCIONES:</strong><br>
+            1. Abre tu app del Banco Pichincha<br>
+            2. Selecciona "Transferir"<br>
+            3. Ingresa el número: 20005033691<br>
+            4. Confirma el titular: DENNIS ALBERTO VILLAGRAN CABRERA<br>
+            5. Realiza la transferencia<br><br>
+            <em>💡 Una vez realizado el pago, haz clic en "Ya pagué, enviar comprobante"</em>
+        </div>
+
+        <button class="btn-test" onclick="mostrarInfo('loja')">🏦 Banco de Loja</button>
+        <div id="info-loja" class="info-box">
+            <div class="bank-title">BANCO DE LOJA</div>
+            <strong>Tipo de Cuenta:</strong> Cuenta de Ahorros<br>
+            <strong>Número de Cuenta:</strong> 20005033691<br>
+            <strong>Titular:</strong> DENNIS ALBERTO VILLAGRAN CABRERA<br>
+            <strong>Cédula/RUC:</strong> 1720384161<br>
+            <strong>Correo:</strong> dennisvillagran16pin@gmail.com<br>
+            <strong>Celular:</strong> 0990480389<br><br>
+            <strong>📋 INSTRUCCIONES:</strong><br>
+            1. Abre tu app del Banco de Loja<br>
+            2. Selecciona "Transferencias"<br>
+            3. Ingresa el número: 20005033691<br>
+            4. Confirma el titular: DENNIS ALBERTO VILLAGRAN CABRERA<br>
+            5. Realiza la transferencia<br><br>
+            <em>💡 Una vez realizado el pago, haz clic en "Ya pagué, enviar comprobante"</em>
+        </div>
+
+        <button class="btn-test" onclick="mostrarInfo('produbanco')">🏦 Produbanco</button>
+        <div id="info-produbanco" class="info-box">
+            <div class="bank-title">PRODUBANCO</div>
+            <strong>Tipo de Cuenta:</strong> Cuenta de Ahorros<br>
+            <strong>Número de Cuenta:</strong> 20005033691<br>
+            <strong>Titular:</strong> DENNIS ALBERTO VILLAGRAN CABRERA<br>
+            <strong>Cédula/RUC:</strong> 1720384161<br>
+            <strong>Correo:</strong> dennisvillagran16pin@gmail.com<br>
+            <strong>Celular:</strong> 0990480389<br><br>
+            <strong>📋 INSTRUCCIONES:</strong><br>
+            1. Abre tu app de Produbanco<br>
+            2. Selecciona "Pagar y Transferir"<br>
+            3. Ingresa el número: 20005033691<br>
+            4. Confirma el titular: DENNIS ALBERTO VILLAGRAN CABRERA<br>
+            5. Realiza la transferencia<br><br>
+            <em>💡 Una vez realizado el pago, haz clic en "Ya pagué, enviar comprobante"</em>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(34, 211, 238, 0.1); border-radius: 10px;">
+            <h3>✅ Verificación de Pasarela</h3>
+            <p>Si esta página funciona correctamente, la información bancaria está lista. Ahora prueba la pasarela completa:</p>
+            <button class="btn-test" style="background: #25d366; color: white;" onclick="window.open('pasarela.html?orderId=12345678-1234-1234-1234-123456789012&plan=Básico&template=Árbol', '_blank')">
+                🚀 Abrir Pasarela Completa
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function mostrarInfo(banco) {
+            // Ocultar todas las cajas de información
+            document.querySelectorAll('.info-box').forEach(box => {
+                box.classList.remove('active');
+            });
+            
+            // Mostrar la información del banco seleccionado
+            const infoBox = document.getElementById('info-' + banco);
+            if (infoBox) {
+                infoBox.classList.add('active');
+                console.log('Mostrando información para:', banco);
+            }
+        }
+
+        // Mostrar información del primer banco por defecto
+        window.addEventListener('load', () => {
+            mostrarInfo('pichincha');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Pasarela - CorazónCódigo</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #0a0a0a; 
+            color: white; 
+            padding: 20px; 
+        }
+        .test-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #1a1a2e; 
+            padding: 30px; 
+            border-radius: 15px; 
+        }
+        .test-button { 
+            background: #22d3ee; 
+            color: #000; 
+            border: none; 
+            padding: 12px 24px; 
+            margin: 10px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+        }
+        .test-button:hover { background: #06b6d4; }
+        .status { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border-radius: 5px; 
+            background: rgba(255,255,255,0.1); 
+        }
+        .success { background: rgba(34, 197, 94, 0.2); }
+        .error { background: rgba(239, 68, 68, 0.2); }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test de Pasarela de Pago</h1>
+        <p>Esta página te permite probar todas las funcionalidades de la pasarela de pago:</p>
+        
+        <h3>1. Test con diferentes parámetros:</h3>
+        <button class="test-button" onclick="testWithParams()">Test con parámetros de ejemplo</button>
+        <button class="test-button" onclick="testWithoutParams()">Test sin parámetros</button>
+        
+        <h3>2. Test directo a la pasarela:</h3>
+        <button class="test-button" onclick="window.open('pasarela.html?orderId=12345678-1234-1234-1234-123456789012&plan=Básico%20(%241.50)&template=Árbol%20Flores%20Doradas', '_blank')">Abrir Pasarela con datos</button>
+        <button class="test-button" onclick="window.open('pasarela.html', '_blank')">Abrir Pasarela vacía</button>
+        
+        <div id="status" class="status"></div>
+        
+        <h3>✅ Checklist de funcionalidades reparadas:</h3>
+        <ul>
+            <li>✅ Resumen del pedido (ID, Plantilla, Plan) - Ahora muestra datos correctamente</li>
+            <li>✅ Botones de información bancaria - Modal funcional con datos bancarios</li>
+            <li>✅ Botón de WhatsApp - Abre WhatsApp con mensaje prellenado</li>
+            <li>✅ Botón Resto del Mundo - Cambia entre pestañas correctamente</li>
+            <li>✅ Manejo de errores - Si faltan imágenes QR, muestra mensaje informativo</li>
+            <li>✅ Logging mejorado - Ahora hay console.log para debugging</li>
+        </ul>
+        
+        <h3>📝 Notas importantes:</h3>
+        <ul>
+            <li>Las imágenes QR (qrPichincha.png, qrLoja.png) no existen - el sistema maneja esto gracefully</li>
+            <li>El sistema intenta obtener datos de localStorage si no hay parámetros URL</li>
+            <li>Todos los botones tienen doble event listener (onclick + addEventListener) para máxima compatibilidad</li>
+            <li>El código mantiene la estructura original sin eliminar funcionalidad existente</li>
+        </ul>
+    </div>
+
+    <script>
+        function updateStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.innerHTML = message;
+            status.className = 'status ' + (isError ? 'error' : 'success');
+        }
+
+        function testWithParams() {
+            const params = new URLSearchParams({
+                orderId: '12345678-1234-1234-1234-123456789012',
+                plan: 'Básico ($1.50)',
+                template: 'Árbol Flores Doradas'
+            });
+            window.open(`pasarela.html?${params.toString()}`, '_blank');
+            updateStatus('✅ Abriendo pasarela con parámetros de prueba');
+        }
+
+        function testWithoutParams() {
+            // Simular datos en localStorage
+            localStorage.setItem('lastOrderId', '87654321-4321-4321-4321-210987654321');
+            window.open('pasarela.html', '_blank');
+            updateStatus('✅ Abriendo pasarela sin parámetros (usará localStorage)');
+        }
+
+        // Verificar que el archivo pasarela.js existe
+        fetch('pasarela.js')
+            .then(response => {
+                if (response.ok) {
+                    updateStatus('✅ Archivo pasarela.js encontrado y accesible');
+                } else {
+                    updateStatus('❌ Error: No se encuentra pasarela.js', true);
+                }
+            })
+            .catch(error => {
+                updateStatus('❌ Error verificando pasarela.js: ' + error.message, true);
+            });
+    </script>
+</body>
+</html>

@@ -43,6 +43,35 @@
         .btn-revoke:hover { opacity: .8; }
 
         /* ── Promo generator ── */
+        .admin-catalog-card {
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-width: 120px;
+            height: 80px;
+        }
+        .admin-catalog-card.selected {
+            border-color: var(--accent-purple);
+            opacity: 1;
+            background-color: rgba(192,38,211,0.1);
+        }
+        .admin-catalog-card:not(.selected) {
+            opacity: 0.6;
+        }
+        .admin-catalog-card span {
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-align: center;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
         #promoTemplateSelect { background-color: #fff !important; color: #000 !important; border: 2px solid var(--accent-cyan); height: 45px; font-weight: bold; }
         #promoTemplateSelect option { background-color: #fff !important; color: #000 !important; }
 
@@ -686,14 +715,12 @@
             window.selectedPromoTemplateId = catalogData[0].id; // default
             adminCatalog.innerHTML = catalogData.map(item => {
                 const bg = item.preview ? `url('${item.preview}')` : 'none';
-                return `<div class="admin-catalog-card" data-id="${item.id}" onclick="selectAdminCatalogCard('${item.id}')" style="
-                    min-width: 140px; height: 100px; border-radius: 12px; cursor: pointer;
-                    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), ${bg} center/cover;
-                    border: 2px solid ${item.id === window.selectedPromoTemplateId ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)'};
-                    display: flex; flex-direction: column; justify-content: flex-end; padding: 10px;
-                    opacity: ${item.id === window.selectedPromoTemplateId ? '1' : '0.5'}; transition: all 0.2s;
-                ">
-                    <span style="font-weight:700;font-size:0.75rem;text-align:center;color:white;text-shadow:0 2px 4px rgba(0,0,0,0.8);">${item.name}</span>
+                const isSelected = item.id === window.selectedPromoTemplateId;
+                return `<div class="admin-catalog-card ${isSelected ? 'selected' : ''}" 
+                             data-id="${item.id}" 
+                             onclick="selectAdminCatalogCard('${item.id}')" 
+                             style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), ${bg} center/cover;">
+                    <span>${item.name}</span>
                 </div>`;
             }).join('');
         }
@@ -764,8 +791,7 @@
         window.selectedPromoTemplateId = id;
         document.querySelectorAll('.admin-catalog-card').forEach(card => {
             const isSelected = card.getAttribute('data-id') === id;
-            card.style.borderColor = isSelected ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)';
-            card.style.opacity = isSelected ? '1' : '0.5';
+            card.classList.toggle('selected', isSelected);
         });
     }
 

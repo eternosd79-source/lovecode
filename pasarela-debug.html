@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasarela de Pago Debug | CorazónCódigo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-cyan: #22d3ee;
+            --accent-pink: #f472b6;
+            --accent-purple: #c026d3;
+            --accent-fuchsia: #d946ef;
+            --bg: #05050a;
+            --card-bg: #0d0d1a;
+            --border: rgba(255,255,255,0.08);
+            --color-dim: #94a3b8;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh;
+        }
+
+        .payment-container {
+            width: 100%; max-width: 960px;
+            padding: 40px; box-sizing: border-box;
+            background: var(--card-bg);
+            border-radius: 28px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .header-pay { text-align: center; margin-bottom: 40px; }
+        .header-pay h2 { color: white; margin: 0; font-size: 2rem; display:flex; align-items:center; justify-content:center; gap:12px; font-weight: 700; }
+        .header-pay h2 i { color: var(--accent-cyan); }
+        .header-pay p { color: var(--color-dim); font-size: 1rem; margin-top: 8px; }
+
+        .payment-layout {
+            display: flex; gap: 40px; align-items: flex-start;
+        }
+
+        .payment-sidebar {
+            flex: 1; display: flex; flex-direction: column; gap: 24px; min-width: 300px;
+        }
+
+        .payment-main {
+            flex: 1.2; display: flex; flex-direction: column; gap: 24px;
+            border-left: 1px solid var(--border);
+            padding-left: 40px; min-width: 340px;
+        }
+
+        .order-summary {
+            background: rgba(255,255,255,0.02); border-radius: 20px; padding: 24px;
+            border: 1px dashed rgba(255,255,255,0.1); text-align: left;
+        }
+        .order-summary h4 { margin: 0 0 16px 0; font-size: 0.9rem; color: var(--accent-pink); text-transform: uppercase; letter-spacing: 1.5px;}
+        .order-summary span { display: block; color: #ccc; font-size: 0.95rem; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 12px;}
+        .order-summary b { color: var(--accent-cyan); font-family: 'Fira Code', monospace; float: right; }
+
+        .promo-section {
+            padding: 24px; background: rgba(192,38,211,0.06); border: 1px solid rgba(192,38,211,0.15); border-radius: 20px;
+        }
+        .promo-section label { display: block; color: #fff; font-size: 0.9rem; font-weight: 600; margin-bottom: 15px; }
+
+        .payment-tabs { display:flex; gap:12px; }
+        .btn-pay-tab { 
+            flex:1; border: 1px solid var(--border); border-radius:12px; padding:14px; 
+            background:rgba(255,255,255,0.03); color:#888; cursor:pointer; font-weight:600; 
+            transition: all 0.3s ease;
+        }
+        .btn-pay-tab.active { 
+            background: var(--accent-cyan); color:#fff; border-color: var(--accent-cyan);
+            box-shadow: 0 10px 20px rgba(34, 211, 238, 0.2);
+        }
+
+        .bank-selector { display:flex; flex-direction:column; gap:12px; }
+        .btn-bank { 
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: #ddd; 
+            padding: 18px 20px; border-radius: 14px; cursor: pointer; text-align: left; 
+            transition: all 0.3s; font-size:1rem; display: flex; align-items: center; justify-content: space-between;
+        }
+        .btn-bank:hover { 
+            background: rgba(34, 211, 238, 0.08); border-color: var(--accent-cyan); color: white;
+            transform: translateX(5px);
+        }
+
+        .btn-primary {
+            display:flex; align-items:center; justify-content:center; gap:10px;
+            width:100%; border:none; border-radius:14px; padding:18px; cursor:pointer;
+            font-weight:700; transition: all 0.3s ease; font-size: 1rem;
+        }
+        .btn-payphone { 
+            background: #ff5722; color:#fff; text-decoration:none; margin-top: 10px;
+        }
+        .btn-payphone:hover { 
+            background: #f44336; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,87,34,0.3);
+        }
+        .btn-whatsapp { 
+            background: #25d366; color:#fff; margin-top: 15px;
+        }
+        .btn-whatsapp:hover { 
+            background: #1ebe56; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37,211,102,0.3);
+        }
+
+        .bank-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 999999;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        .bank-modal-content {
+            background: #0d0d1a; border: 1px solid var(--accent-cyan);
+            padding: 40px; border-radius: 24px; min-width: 320px; max-width: 90%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9); position: relative;
+            text-align: center; color: white;
+        }
+        .bank-modal-close {
+            position: absolute; top: 15px; right: 20px; font-size: 28px;
+            color: #666; cursor: pointer; transition: 0.3s;
+        }
+        .bank-modal-close:hover { color: white; }
+        .bank-text-modal { font-size: 0.95rem; line-height: 1.6; color: #ccc; text-align: left; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 16px; margin-top: 20px;}
+        .bank-text-modal strong { color: var(--accent-fuchsia); font-size: 1.1rem; display: block; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;}
+
+        .debug-info {
+            position: fixed; top: 10px; right: 10px; 
+            background: rgba(0,0,0,0.8); color: #00ff00; 
+            padding: 10px; border-radius: 5px; font-family: monospace; 
+            font-size: 12px; max-width: 300px; z-index: 999999;
+        }
+
+        @media (max-width: 900px) {
+            .payment-container { padding: 30px; margin: 10px; }
+            .payment-layout { flex-direction: column; gap: 30px; }
+            .payment-main { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 30px; min-width: 100%; }
+            .payment-sidebar { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="debug-info" id="debugInfo">
+        DEBUG: Cargando...
+    </div>
+
+    <div class="payment-container" id="formContainer">
+        <div class="header-pay">
+            <h2><i class="fa-solid fa-shield-check"></i> Pasarela de Pago (DEBUG)</h2>
+            <p>Versión de depuración para identificar problemas</p>
+        </div>
+
+        <div class="payment-layout">
+            <!-- COLUMNA IZQUIERDA: RESUMEN + CUPÓN -->
+            <div class="payment-sidebar">
+                <div class="order-summary">
+                    <h4>Resumen del Pedido</h4>
+                    <span>ID Orden: <b id="lblOrderId">...</b></span>
+                    <span>Plantilla: <b id="lblPlantilla">...</b></span>
+                    <span>Plan: <b id="lblPlan">...</b></span>
+                </div>
+
+                <div class="promo-section">
+                    <label>
+                        <i class="fa-solid fa-gift" style="color: var(--accent-purple);"></i> ¿Tienes un código de regalo?
+                    </label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="inpPromoCode" placeholder="Ingresa tu código..." 
+                            style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: #fff; outline: none; font-size: 0.9rem;">
+                        <button id="btnApplyPromo" class="btn-primary" style="width: auto; padding: 0 20px; background: var(--accent-purple); border-radius: 12px; font-size: 0.9rem;">
+                            Validar
+                        </button>
+                    </div>
+                    <p id="promoCodeMsg" style="display: none; margin: 10px 0 0; font-size: 0.8rem; font-weight: 600;"></p>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: BANCOS / PAGOS -->
+            <div class="payment-main">
+                <div class="payment-tabs">
+                    <button class="btn-pay-tab active" id="btnTabEcuador">🇪🇨 Solo Ecuador</button>
+                    <button class="btn-pay-tab" id="btnTabMundo">🌍 Resto del Mundo</button>
+                </div>
+
+                <!-- SECCIÓN ECUADOR -->
+                <div class="payment-content" id="payEcuador" style="display:block;">
+                    <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:15px;">Selecciona tu banco para ver cuenta y QR:</p>
+                    <div class="bank-selector">
+                        <button class="btn-bank" id="btnPichincha"><span>🏦 Banco Pichincha</span><i class="fa-solid fa-chevron-right"></i></button>
+                        <button class="btn-bank" id="btnLoja"><span>🏦 Banco de Loja</span><i class="fa-solid fa-chevron-right"></i></button>
+                        <button class="btn-bank" id="btnProdubanco"><span>🏦 Produbanco</span><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+
+                    <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-primary btn-payphone">
+                        <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone
+                    </a>
+
+                    <button class="btn-primary btn-whatsapp" id="btnWhatsAppEc">
+                        <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
+                    </button>
+                </div>
+
+                <!-- SECCIÓN RESTO DEL MUNDO -->
+                <div class="payment-content" id="payMundo" style="display:none;">
+                    <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:15px;">Pago internacional con tarjeta:</p>
+                    <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-primary btn-payphone">
+                        <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone (Internacional)
+                    </a>
+                    <div class="qr-box" style="background: white; padding: 10px; border-radius: 10px; margin: 20px auto; max-width: 180px;">
+                        <span style="font-size: 0.75rem; color: #333; font-weight: 600;">Escanea con tu celular</span>
+                        <img src="PayPhone.jpeg" alt="QR PayPhone" style="width: 100%; height: auto; display: block; margin-top: 10px;">
+                    </div>
+                    <button class="btn-primary btn-whatsapp" id="btnWhatsAppMundo">
+                        <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bank-modal-overlay" id="bankModalOverlay">
+            <div class="bank-modal-content">
+                <span class="bank-modal-close" id="bankModalClose">&times;</span>
+                <h3 id="bankModalTitle" style="margin-top:0; color:white; font-size: 1.5rem;">Datos del Banco</h3>
+                <div id="bankModalQr" class="qr-box" style="display:none; max-width: 200px; margin: 20px auto; background: white; padding: 10px; border-radius: 10px;">
+                    <img id="bankModalImg" src="" alt="QR Banco" style="width: 100%; height: auto; display: block;">
+                </div>
+                <div id="bankModalText"></div>
+                <button class="btn-primary" style="margin-top:30px; background: var(--accent-cyan);" id="btnCloseModal">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DEBUG: Función para mostrar información en la esquina
+        function updateDebug(message) {
+            const debugEl = document.getElementById('debugInfo');
+            if (debugEl) {
+                debugEl.innerHTML = 'DEBUG: ' + message;
+                console.log('DEBUG:', message);
+            }
+        }
+
+        // Datos de los bancos
+        const bankDataInfo = {
+            pichincha: {
+                title: 'Banco Pichincha',
+                qr: 'qrPichincha.png',
+                text: '<strong>Banco Pichincha</strong><br>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificación: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389<br><br><em>Nota: El código QR estará disponible próximamente. Mientras tanto, puedes realizar la transferencia directamente con los datos proporcionados.</em>'
+            },
+            loja: {
+                title: 'Banco de Loja',
+                qr: 'qrLoja.png',
+                text: '<strong>Banco de Loja</strong><br>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificación: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389<br><br><em>Nota: El código QR estará disponible próximamente. Mientras tanto, puedes realizar la transferencia directamente con los datos proporcionados.</em>'
+            },
+            produbanco: {
+                title: 'Produbanco',
+                qr: null,
+                text: '<strong>Produbanco</strong><br>Tipo: CUENTA Ahorros<br>Número cuenta: 20005033691<br>Nombre: DENNIS ALBERTO VILLAGRAN<br>RUC/Identificación: 1720384161<br>Correo: dennisvillagran16pin@gmail.com<br>Celular: 0990480389<br><br><em>Nota: Este banco no dispone de código QR. Realiza la transferencia directamente con los datos proporcionados.</em>'
+            }
+        };
+
+        // Función para cambiar pestañas
+        function setTab(tab) {
+            updateDebug('Cambiando a pestaña: ' + tab);
+            
+            const btnEc = document.getElementById('btnTabEcuador');
+            const btnWw = document.getElementById('btnTabMundo');
+            const ec = document.getElementById('payEcuador');
+            const ww = document.getElementById('payMundo');
+
+            if (!btnEc || !btnWw || !ec || !ww) {
+                updateDebug('ERROR: No se encontraron elementos de pestañas');
+                return;
+            }
+
+            if (tab === 'ec') {
+                btnEc.classList.add('active');
+                btnWw.classList.remove('active');
+                ec.style.display = 'block';
+                ww.style.display = 'none';
+                updateDebug('Mostrando sección Ecuador');
+            } else {
+                btnEc.classList.remove('active');
+                btnWw.classList.add('active');
+                ec.style.display = 'none';
+                ww.style.display = 'block';
+                updateDebug('Mostrando sección Resto del Mundo');
+            }
+        }
+
+        // Función para mostrar modal de banco
+        function showBankModal(bankId) {
+            updateDebug('Abriendo modal para: ' + bankId);
+            const data = bankDataInfo[bankId];
+            if (!data) {
+                updateDebug('ERROR: No hay datos para banco: ' + bankId);
+                return;
+            }
+
+            const overlay = document.getElementById('bankModalOverlay');
+            const title = document.getElementById('bankModalTitle');
+            const qrContainer = document.getElementById('bankModalQr');
+            const qrImg = document.getElementById('bankModalImg');
+            const text = document.getElementById('bankModalText');
+
+            if (overlay && title && qrContainer && qrImg && text) {
+                title.textContent = data.title;
+                if (data.qr) {
+                    qrImg.src = data.qr;
+                    qrImg.onerror = () => {
+                        updateDebug('No se pudo cargar QR: ' + data.qr);
+                        qrContainer.style.display = 'none';
+                    };
+                    qrContainer.style.display = 'block';
+                } else {
+                    qrContainer.style.display = 'none';
+                }
+                text.innerHTML = '<div class="bank-text-modal">' + data.text + '</div>';
+                overlay.style.display = 'flex';
+                updateDebug('Modal mostrado para: ' + data.title);
+            } else {
+                updateDebug('ERROR: No se encontraron elementos del modal');
+            }
+        }
+
+        // Función para cerrar modal
+        function closeBankModal() {
+            const overlay = document.getElementById('bankModalOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+                updateDebug('Modal cerrado');
+            }
+        }
+
+        // Función para confirmar pago
+        function confirmPayment(method) {
+            updateDebug('Confirmando pago con método: ' + method);
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            let orderId = urlParams.get('orderId');
+            const plan = urlParams.get('plan') || 'Básico';
+            
+            if (!orderId) {
+                orderId = localStorage.getItem('lastOrderId');
+                if (!orderId) {
+                    const lblOrderId = document.getElementById('lblOrderId');
+                    if (lblOrderId && lblOrderId.textContent !== '...' && lblOrderId.textContent !== 'CARGANDO...' && lblOrderId.textContent !== 'N/A') {
+                        orderId = lblOrderId.textContent;
+                    }
+                }
+            }
+            
+            const waNumber = '593990480389';
+            const msg = 'Hola CorazónCódigo! Ya hice el pago de mi pedido.\n\nID: ' + (orderId || 'N/A') + '\nPlan: ' + decodeURIComponent(plan) + '\nMétodo: ' + method + '\n\nTe envío el comprobante. 💖';
+            
+            updateDebug('Abriendo WhatsApp...');
+            const waUrl = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg);
+            window.open(waUrl, '_blank');
+        }
+
+        // Inicialización
+        function initPasarela() {
+            updateDebug('Iniciando pasarela...');
+            
+            // Obtener parámetros URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            const plan = urlParams.get('plan') || 'Básico';
+            const template = urlParams.get('template') || urlParams.get('tpl') || 'Desconocida';
+
+            updateDebug('Parámetros: ' + JSON.stringify({orderId, plan, template}));
+
+            // Rellenar resumen
+            const lblOrderId = document.getElementById('lblOrderId');
+            const lblPlantilla = document.getElementById('lblPlantilla');
+            const lblPlan = document.getElementById('lblPlan');
+
+            if (lblOrderId) {
+                const displayId = orderId ? orderId.substring(0, 8).toUpperCase() : 'CARGANDO...';
+                lblOrderId.textContent = displayId;
+            }
+            if (lblPlantilla) {
+                lblPlantilla.textContent = decodeURIComponent(template);
+            }
+            if (lblPlan) {
+                lblPlan.textContent = decodeURIComponent(plan);
+            }
+
+            // Event listeners para pestañas
+            const btnTabEcuador = document.getElementById('btnTabEcuador');
+            const btnTabMundo = document.getElementById('btnTabMundo');
+            
+            if (btnTabEcuador) {
+                btnTabEcuador.addEventListener('click', () => {
+                    updateDebug('Click en tab Ecuador');
+                    setTab('ec');
+                });
+            }
+            if (btnTabMundo) {
+                btnTabMundo.addEventListener('click', () => {
+                    updateDebug('Click en tab Mundo');
+                    setTab('ww');
+                });
+            }
+
+            // Event listeners para botones de bancos
+            const btnPichincha = document.getElementById('btnPichincha');
+            const btnLoja = document.getElementById('btnLoja');
+            const btnProdubanco = document.getElementById('btnProdubanco');
+            
+            if (btnPichincha) {
+                btnPichincha.addEventListener('click', () => {
+                    updateDebug('Click en Banco Pichincha');
+                    showBankModal('pichincha');
+                });
+            }
+            if (btnLoja) {
+                btnLoja.addEventListener('click', () => {
+                    updateDebug('Click en Banco de Loja');
+                    showBankModal('loja');
+                });
+            }
+            if (btnProdubanco) {
+                btnProdubanco.addEventListener('click', () => {
+                    updateDebug('Click en Produbanco');
+                    showBankModal('produbanco');
+                });
+            }
+
+            // Event listeners para WhatsApp
+            const btnWhatsAppEc = document.getElementById('btnWhatsAppEc');
+            const btnWhatsAppMundo = document.getElementById('btnWhatsAppMundo');
+            
+            if (btnWhatsAppEc) {
+                btnWhatsAppEc.addEventListener('click', () => {
+                    updateDebug('Click en WhatsApp Ecuador');
+                    confirmPayment('Transferencia Ecuador / PayPhone');
+                });
+            }
+            if (btnWhatsAppMundo) {
+                btnWhatsAppMundo.addEventListener('click', () => {
+                    updateDebug('Click en WhatsApp Mundo');
+                    confirmPayment('PayPhone Internacional');
+                });
+            }
+
+            // Event listeners para modal
+            const bankModalClose = document.getElementById('bankModalClose');
+            const btnCloseModal = document.getElementById('btnCloseModal');
+            const bankModalOverlay = document.getElementById('bankModalOverlay');
+            
+            if (bankModalClose) {
+                bankModalClose.addEventListener('click', closeBankModal);
+            }
+            if (btnCloseModal) {
+                btnCloseModal.addEventListener('click', closeBankModal);
+            }
+            if (bankModalOverlay) {
+                bankModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === bankModalOverlay) {
+                        closeBankModal();
+                    }
+                });
+            }
+
+            // Inicializar pestaña por defecto
+            setTab('ec');
+            updateDebug('Pasarela inicializada completamente');
+        }
+
+        // Ejecutar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPasarela);
+        } else {
+            initPasarela();
+        }
+    </script>
+</body>
+</html>

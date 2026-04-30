@@ -75,6 +75,22 @@ function openCheckoutWizard(templateName) {
     if (lblSelectedTemplate) lblSelectedTemplate.innerText = templateName;
     dataForm.template = templateName;
 
+    // --- NUEVO: Cargar Cupón desde LocalStorage al abrir ---
+    const pendingCoupon = localStorage.getItem('cc_pending_coupon');
+    if (pendingCoupon) {
+        // Pequeño delay para asegurar que los elementos del DOM estén listos
+        setTimeout(() => {
+            const inpPromo = document.getElementById('inpPromoCode');
+            const btnApply = document.getElementById('btnApplyPromo');
+            if (inpPromo && btnApply) {
+                inpPromo.value = pendingCoupon;
+                btnApply.click();
+                // Limpiar para que no se use dos veces accidentalmente
+                localStorage.removeItem('cc_pending_coupon');
+            }
+        }, 300);
+    }
+
     // Dispatch analytics event
     document.dispatchEvent(new CustomEvent('corazoncodigo:checkout-opened', {
         detail: { templateId: activeTemplateInfo?.id, templateName }

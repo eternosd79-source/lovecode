@@ -2,87 +2,223 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#07070e">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Pasarela Segura - CorazónCódigo</title>
-    <!-- Mismos estilos globales -->
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasarela de Pago | CorazónCódigo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
     <style>
-        body {
-            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
-            padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
-            box-sizing: border-box;
+        :root {
+            --accent-cyan: #22d3ee;
+            --accent-pink: #f472b6;
+            --accent-purple: #c026d3;
+            --accent-fuchsia: #d946ef;
+            --bg: #05050a;
+            --card-bg: #0d0d1a;
+            --border: rgba(255,255,255,0.08);
+            --color-dim: #94a3b8;
         }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh;
+        }
+
         .payment-container {
-            background: rgba(15, 15, 20, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            width: 100%; max-width: 620px;
-            padding: 28px; box-sizing: border-box;
+            width: 100%; max-width: 960px;
+            padding: 40px; box-sizing: border-box;
+            background: var(--card-bg);
+            border-radius: 28px;
             box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            border: 1px solid var(--border);
             position: relative;
         }
-        .header-pay { text-align: center; margin-bottom: 25px; }
-        .header-pay h2 { color: white; margin: 0; font-size: 1.5rem; display:flex; align-items:center; justify-content:center; gap:10px; }
-        .header-pay h2 i { color: #22d3ee; }
-        .header-pay p { color: var(--color-dim); font-size: 0.9rem; margin-top: 5px; }
+
+        .header-pay { text-align: center; margin-bottom: 40px; }
+        .header-pay h2 { color: white; margin: 0; font-size: 2rem; display:flex; align-items:center; justify-content:center; gap:12px; font-weight: 700; }
+        .header-pay h2 i { color: var(--accent-cyan); }
+        .header-pay p { color: var(--color-dim); font-size: 1rem; margin-top: 8px; }
+
+        .payment-layout {
+            display: flex; gap: 40px; align-items: flex-start;
+        }
+
+        .payment-sidebar {
+            flex: 1; display: flex; flex-direction: column; gap: 24px; min-width: 300px;
+        }
+
+        .payment-main {
+            flex: 1.2; display: flex; flex-direction: column; gap: 24px;
+        }
+
+        .section-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .section-card h3 {
+            margin: 0 0 16px 0; color: var(--accent-cyan); font-size: 1.1rem; font-weight: 600;
+        }
+
+        .summary-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid var(--border);
+        }
+        .summary-item:last-child { border-bottom: none; }
+        .summary-label { color: var(--color-dim); font-size: 0.9rem; }
+        .summary-value { font-weight: 600; font-size: 1rem; }
+
+        .payment-tabs {
+            display: flex; background: rgba(255,255,255,0.02);
+            border-radius: 12px; padding: 4px; margin-bottom: 20px;
+        }
+        .btn-pay-tab {
+            flex: 1; padding: 12px; background: transparent; border: none;
+            color: var(--color-dim); cursor: pointer; border-radius: 8px;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;
+        }
+        .btn-pay-tab.active {
+            background: var(--accent-cyan); color: var(--bg); font-weight: 600;
+        }
+
+        .payment-content { min-height: 200px; }
+
+        .bank-selector {
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .btn-bank {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            color: white; padding: 16px; border-radius: 12px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s ease; font-size: 0.95rem;
+        }
+        .btn-bank:hover {
+            border-color: var(--accent-cyan); background: rgba(34, 211, 238, 0.1);
+        }
+        .btn-bank span { display: flex; align-items: center; gap: 12px; }
         
-        .order-summary {
-            background: rgba(0,0,0,0.4); border-radius: 12px; padding: 15px; margin-bottom: 25px;
-            border: 1px dashed rgba(255,255,255,0.1); text-align: left;
+        .bank-accordion {
+            margin-bottom: 12px;
         }
-        .order-summary h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--accent-pink); }
-        .order-summary span { display: block; color: #fff; font-size: 0.85rem; margin-bottom: 5px;}
-        .order-summary b { color: var(--accent-cyan); }
-
-        .payment-tabs { display:flex; gap:8px; margin: 10px 0 20px; }
-        .btn-pay-tab { flex:1; border:none; border-radius:10px; padding:10px; background:rgba(255,255,255,0.08); color:#ddd; cursor:pointer; font-weight:600; }
-        .btn-pay-tab.active { background:linear-gradient(135deg,#06b6d4,#3b82f6); color:#fff; }
-        .payment-content { display:none; }
-
-        .bank-selector { display:flex; flex-direction:column; gap:10px; }
-        .btn-bank { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ddd; padding: 14px 20px; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.3s; font-size:1rem; display: flex; align-items: center; justify-content: space-between;}
-        .btn-bank:hover { background: rgba(6,182,212,0.15); border-color: #06b6d4; color: white;}
-
-        .btn-primary {
-            display:flex; align-items:center; justify-content:center; gap:8px;
-            width:100%; border:none; border-radius:12px; padding:14px; cursor:pointer;
-            background: linear-gradient(135deg, #06b6d4, #3b82f6); color:#fff; text-decoration:none; font-weight:700;
+        .bank-info {
+            background: rgba(34, 211, 238, 0.03);
+            border: 1px solid rgba(34, 211, 238, 0.15);
+            border-radius: 4px !important;
+            margin-top: 1px !important;
+            padding: 2px 6px !important;
+            animation: slideDown 0.3s ease-out;
+            line-height: 1.2;
         }
-        .btn-payphone { background:#FF5A00; margin-top:12px; }
-        .btn-whatsapp { background:linear-gradient(135deg,#22c55e,#16a34a); margin-top:16px; }
+        .bank-details {
+            display: flex;
+            gap: 6px !important;
+            align-items: center;
+        }
+        .bank-qr {
+            flex-shrink: 0;
+            width: 150px !important;
+            height: 150px !important;
+            background: white;
+            border-radius: 8px !important;
+            padding: 4px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bank-qr img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .bank-text {
+            flex: 1;
+            font-size: 0.75rem;
+            line-height: 1.2;
+            color: var(--color-text);
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        .qr-box { margin: 10px auto; max-width: 180px; background:#fff; padding:10px; border-radius:10px; text-align:center; color:#000; font-size:0.8rem; }
-        .qr-box img { width:100%; border-radius:8px; }
+        .btn-bank {
+            width: 100%; padding: 12px 20px; border: 2px solid var(--accent-cyan);
+            background: transparent; color: var(--accent-cyan); border-radius: 8px;
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+            height: 48px;
+        }
+        .btn-payphone {
+            width: 100%; padding: 16px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none;
+            background: #ff6b35; border: 1px solid #ff6b35;
+            color: white; margin: 20px auto 12px auto; 
+            width: auto; max-width: 280px;
+        }
+        .btn-payphone:hover {
+            background: #e55a2b; border-color: #e55a2b;
+        }
+        .btn-whatsapp {
+            width: 100%; padding: 12px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none;
+            background: #25d366; border: 1px solid #25d366; color: white; 
+            margin: 0 auto; max-width: 280px;
+        }
+        .btn-whatsapp:hover { background: #128c7e; }
+
+        .promo-section {
+            display: flex; gap: 12px; align-items: stretch;
+        }
+        .promo-input {
+            flex: 1; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            color: white; padding: 12px 16px; border-radius: 10px;
+            font-size: 0.9rem; transition: all 0.3s ease;
+        }
+        .promo-input:focus {
+            outline: none; border-color: var(--accent-cyan);
+        }
+        .btn-apply {
+            background: var(--accent-cyan); color: var(--bg); border: none;
+            padding: 12px 20px; border-radius: 10px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .btn-apply:hover { background: #1ab8d4; }
+
+        .qr-box {
+            text-align: center; margin: 20px 0;
+        }
+        .qr-box img {
+            max-width: 150px; border-radius: 12px; background: white; padding: 8px;
+        }
 
         .bank-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 999999;
-            display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center;
+            z-index: 1000;
         }
         .bank-modal-content {
-            background: #111116; border: 1px solid var(--accent-cyan);
-            padding: 30px; border-radius: 20px; min-width: 300px; max-width: 90%;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative;
-            text-align: center; color: white;
+            background: var(--card-bg); border-radius: 20px; padding: 32px;
+            max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+            border: 1px solid var(--border); position: relative;
         }
         .bank-modal-close {
-            position: absolute; top: 10px; right: 20px; font-size: 28px;
-            color: #aaa; cursor: pointer; transition: 0.3s; line-height: 1;
+            position: absolute; top: 16px; right: 16px; font-size: 24px;
+            cursor: pointer; color: var(--color-dim); background: none; border: none;
         }
         .bank-modal-close:hover { color: white; }
-        .bank-text-modal { font-size: 0.85rem; line-height: 1.5; color: #ddd; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-top: 15px;}
-        .bank-text-modal strong { color: var(--accent-fuchsia); font-size: 1rem; display: block; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
-        @media (max-width: 640px) {
-            .payment-container { max-width: 100%; border-radius: 16px; padding: 18px; }
-            .header-pay h2 { font-size: 1.2rem; }
-            .btn-pay-tab, .btn-primary, .btn-bank { font-size: 0.92rem; }
+
+        @media (max-width: 768px) {
+            .payment-layout { flex-direction: column; gap: 24px; }
+            .payment-sidebar { min-width: 100%; }
+            .payment-container { padding: 24px; margin: 16px; }
         }
     </style>
 </head>
@@ -91,68 +227,411 @@
     <div class="payment-container" id="formContainer">
         <div class="header-pay">
             <h2><i class="fa-solid fa-shield-check"></i> Pasarela de Pago</h2>
-            <p>Completa tu pago por banco o tarjeta y luego confirma por WhatsApp</p>
+            <p>Selecciona tu método de pago preferido para activar tu regalo</p>
         </div>
 
-        <div class="order-summary">
-            <h4>Resumen del Pedido</h4>
-            <span>ID Orden: <b id="lblOrderId">Cargando...</b></span>
-            <span>Plantilla: <b id="lblPlantilla">Cargando...</b></span>
-            <span>Plan: <b id="lblPlan">Cargando...</b></span>
-        </div>
-
-        <div class="payment-tabs">
-            <button class="btn-pay-tab active" id="btnTabEcuador">🇪🇨 Solo Ecuador</button>
-            <button class="btn-pay-tab" id="btnTabMundo">🌍 Resto del Mundo</button>
-        </div>
-
-        <div class="payment-content" id="payEcuador" style="display:block;">
-            <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:12px;">Selecciona tu banco para ver cuenta y QR:</p>
-            <div class="bank-selector">
-                <button class="btn-bank" onclick="showBankModal('pichincha')"><span>🏦 Banco Pichincha</span><i class="fa-solid fa-chevron-right"></i></button>
-                <button class="btn-bank" onclick="showBankModal('loja')"><span>🏦 Banco de Loja</span><i class="fa-solid fa-chevron-right"></i></button>
-                <button class="btn-bank" onclick="showBankModal('produbanco')"><span>🏦 Produbanco</span><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
-
-            <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-primary btn-payphone">
-                <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone (Visa/Mastercard)
-            </a>
-
-            <button class="btn-primary btn-whatsapp" onclick="confirmPayment('Transferencia Ecuador / PayPhone')">
-                <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
-            </button>
-        </div>
-
-        <div class="payment-content" id="payMundo">
-            <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:12px;">Pago internacional con tarjeta:</p>
-            <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-primary btn-payphone">
-                <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone (Internacional)
-            </a>
-            <div class="qr-box">
-                <span>Escanea con tu celular</span>
-                <img src="PayPhone.jpeg" alt="QR PayPhone">
-            </div>
-            <button class="btn-primary btn-whatsapp" onclick="confirmPayment('PayPhone Internacional')">
-                <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
-            </button>
-        </div>
-
-        <div class="bank-modal-overlay" id="bankModalOverlay" onclick="closeBankModal(event)">
-            <div class="bank-modal-content">
-                <span class="bank-modal-close" onclick="closeBankModal()">&times;</span>
-                <h3 id="bankModalTitle" style="margin-top:0; color:white;">Datos del Banco</h3>
-                <div id="bankModalQr" class="qr-box" style="display:none;">
-                    <img id="bankModalImg" src="" alt="QR Banco">
+        <div class="payment-layout">
+            <!-- IZQUIERDA: RESUMEN -->
+            <div class="payment-sidebar">
+                <div class="section-card">
+                    <h3><i class="fa-solid fa-receipt"></i> Resumen del Pedido</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">ID Orden</span>
+                        <span class="summary-value" id="lblOrderId">...</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Plantilla</span>
+                        <span class="summary-value" id="lblPlantilla">...</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Plan</span>
+                        <span class="summary-value" id="lblPlan">...</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" style="color: var(--accent-pink);">$3.99 USD</span>
+                    </div>
                 </div>
-                <div id="bankModalText"></div>
-                <button class="btn-primary" style="margin-top:20px;" onclick="closeBankModal()">Entendido</button>
+
+                <div class="section-card">
+                    <h3><i class="fa-solid fa-tag"></i> Código de Promoción</h3>
+                    <div class="promo-section">
+                        <input type="text" class="promo-input" id="inpPromoCode" placeholder="Ingresa tu código">
+                        <button class="btn-apply" id="btnApplyPromo" onclick="validatePromoCode()">Validar</button>
+                    </div>
+                    <div id="promoCodeMsg" style="margin-top: 12px; font-size: 0.85rem; display: none;"></div>
+                </div>
+            </div>
+
+            <!-- DERECHA: PAGOS -->
+            <div class="payment-main">
+                <div class="section-card">
+                    <div class="payment-tabs">
+                        <button class="btn-pay-tab active" id="btnTabEcuador" onclick="setTab('ec')">🇪🇨 Solo Ecuador</button>
+                        <button class="btn-pay-tab" id="btnTabMundo" onclick="setTab('ww')">🌍 Resto del Mundo</button>
+                    </div>
+
+                    <div class="payment-content" id="payEcuador" style="display:block;">
+                        <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:16px;">Selecciona tu banco para ver cuenta y QR:</p>
+                        <div class="bank-selector">
+                            <div class="bank-accordion">
+                                <button class="btn-bank" onclick="toggleBankInfo('pichincha')"><span>🏦 Banco Pichincha</span><i class="fa-solid fa-chevron-down" id="chevron-pichincha"></i></button>
+                                <div class="bank-info" id="bank-info-pichincha" style="display:none; padding: 2px 6px !important; margin-top: 1px !important; line-height: 1.2;">
+                                    <div class="bank-details" style="gap: 6px !important; align-items: center !important;">
+                                        <div class="bank-qr" style="width: 150px !important; height: 150px !important; padding: 4px !important;">
+                                            <img src="qrPichincha.png" alt="QR Pichincha" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=BANCO:%20Banco%20Pichincha%0ACUENTA:%202208624834%0ATITULAR:%20DENNIS%20ALBERTO%20VILLAGRAN%0ARUC:%201720384161'">
+                                        </div>
+                                        <div class="bank-text" style="font-size: 0.75rem; line-height: 1.2;">
+                                            <strong style="color: #22d3ee; font-size: 1.1rem;">🏦 Banco Pichincha</strong><br>
+                                            <strong>Tipo de Cuenta:</strong> Cuenta de Ahorros<br>
+                                            <strong>Número de Cuenta:</strong> <span style="color: #fbbf24; font-family: monospace; font-size: 1rem;">2208624834</span><br>
+                                            <strong>Titular:</strong> DENNIS ALBERTO VILLAGRAN<br>
+                                            <strong>Cédula/RUC:</strong> 1720384161<br>
+                                            <strong>Correo:</strong> dennisvillagran16pin@gmail.com<br>
+                                            <strong>Celular:</strong> 0990480389
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bank-accordion">
+                                <button class="btn-bank" onclick="toggleBankInfo('loja')"><span>🏦 Banco de Loja</span><i class="fa-solid fa-chevron-down" id="chevron-loja"></i></button>
+                                <div class="bank-info" id="bank-info-loja" style="display:none; padding: 2px 6px !important; margin-top: 1px !important; line-height: 1.2;">
+                                    <div class="bank-details" style="gap: 6px !important; align-items: center !important;">
+                                        <div class="bank-qr" style="width: 150px !important; height: 150px !important; padding: 4px !important;">
+                                            <img src="qrLoja.png" alt="QR Loja" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=BANCO:%20Banco%20de%20Loja%0ACUENTA:%202902141512%0ATITULAR:%20DENNIS%20ALBERTO%20VILLAGRAN%0ARUC:%201720384161'">
+                                        </div>
+                                        <div class="bank-text" style="font-size: 0.75rem; line-height: 1.2;">
+                                            <strong style="color: #22d3ee; font-size: 1.1rem;">🏦 Banco de Loja</strong><br>
+                                            <strong>Tipo de Cuenta:</strong> Cuenta de Ahorros<br>
+                                            <strong>Número de Cuenta:</strong> <span style="color: #fbbf24; font-family: monospace; font-size: 1rem;">2902141512</span><br>
+                                            <strong>Titular:</strong> DENNIS ALBERTO VILLAGRAN<br>
+                                            <strong>Cédula/RUC:</strong> 1720384161<br>
+                                            <strong>Correo:</strong> dennisvillagran16pin@gmail.com<br>
+                                            <strong>Celular:</strong> 0990480389
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bank-accordion">
+                                <button class="btn-bank" onclick="toggleBankInfo('produbanco')"><span>🏦 Produbanco</span><i class="fa-solid fa-chevron-down" id="chevron-produbanco"></i></button>
+                                <div class="bank-info" id="bank-info-produbanco" style="display:none; padding: 2px 6px !important; margin-top: 1px !important; line-height: 1.2;">
+                                    <div class="bank-details" style="gap: 6px !important; align-items: flex-start !important;">
+                                        <div class="bank-text" style="font-size: 0.75rem; line-height: 1.2; flex: 1;">
+                                            <strong style="color: #22d3ee; font-size: 1.1rem;">🏦 Produbanco</strong><br>
+                                            <strong>Tipo de Cuenta:</strong> Cuenta de Ahorros<br>
+                                            <strong>Número de Cuenta:</strong> <span style="color: #fbbf24; font-family: monospace; font-size: 1rem;">20005033691</span><br>
+                                            <strong>Titular:</strong> DENNIS ALBERTO VILLAGRAN<br>
+                                            <strong>Cédula/RUC:</strong> 1720384161<br>
+                                            <strong>Correo:</strong> dennisvillagran16pin@gmail.com<br>
+                                            <strong>Celular:</strong> 0990480389
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-payphone">
+                            <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone
+                        </a>
+
+                        <button class="btn-whatsapp" onclick="confirmPayment('Transferencia Ecuador / PayPhone')">
+                            <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
+                        </button>
+                    </div>
+
+                    <div class="payment-content" id="payMundo" style="display:none;">
+                        <p style="color:var(--color-dim);font-size:0.9rem;margin-bottom:16px;">Pagos internacionales:</p>
+                        <div class="qr-box">
+                            <img src="PayPhone.jpeg" alt="PayPhone Internacional">
+                        </div>
+
+                        <a href="https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw" target="_blank" class="btn-payphone">
+                            <i class="fa-solid fa-credit-card"></i> Pagar con PayPhone
+                        </a>
+
+                        <button class="btn-whatsapp" onclick="confirmPayment('PayPhone Internacional')">
+                            <i class="fa-brands fa-whatsapp"></i> Ya pagué, enviar comprobante
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts de la pasarela -->
+    <!-- Modal para información bancaria -->
+    <div class="bank-modal-overlay" id="bankModalOverlay" onclick="closeBankModal(event)">
+        <div class="bank-modal-content">
+            <span class="bank-modal-close" onclick="closeBankModal()">&times;</span>
+            <h3 id="bankModalTitle" style="margin-top:0; color:white; font-size: 1.5rem;">Datos del Banco</h3>
+            <div id="bankModalQr" class="qr-box" style="display:none; max-width: 200px; margin: 20px auto; background: white; padding: 10px; border-radius: 10px;">
+                <img id="bankModalImg" src="" alt="QR Banco" style="width: 100%; height: auto; display: block;">
+            </div>
+            <div id="bankModalText"></div>
+            <button class="btn-apply" style="margin-top:30px; background: var(--accent-cyan);" onclick="closeBankModal()">Entendido</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
-    <script src="pasarela.js?v=20260430b"></script>
+    
+    <!-- JAVASCRIPT INLINE - FUNCIONA SIN DEPENDENCIAS EXTERNAS -->
+    <script>
+        // Datos bancarios actualizados
+        const bankData = {
+            pichincha: {
+                title: 'Banco Pichincha',
+                account: '2208624834',
+                owner: 'DENNIS ALBERTO VILLAGRAN',
+                ruc: '1720384161',
+                email: 'dennisvillagran16pin@gmail.com',
+                phone: '0990480389',
+                qr: 'qrPichincha.png'
+            },
+            loja: {
+                title: 'Banco de Loja',
+                account: '2902141512',
+                owner: 'DENNIS ALBERTO VILLAGRAN',
+                ruc: '1720384161',
+                email: 'dennisvillagran16pin@gmail.com',
+                phone: '0990480389',
+                qr: 'qrLoja.png'
+            },
+            produbanco: {
+                title: 'Produbanco',
+                account: '20005033691',
+                owner: 'DENNIS ALBERTO VILLAGRAN',
+                ruc: '1720384161',
+                email: 'dennisvillagran16pin@gmail.com',
+                phone: '0990480389',
+                qr: null
+            }
+        };
+
+        // Función para alternar información bancaria (acordeón)
+        function toggleBankInfo(bankId) {
+            console.log("Alternando información para:", bankId);
+            
+            // Cerrar otros bancos
+            const banks = ['pichincha', 'loja', 'produbanco'];
+            banks.forEach(bank => {
+                if (bank !== bankId) {
+                    const info = document.getElementById(`bank-info-${bank}`);
+                    const chevron = document.getElementById(`chevron-${bank}`);
+                    if (info) info.style.display = 'none';
+                    if (chevron) chevron.className = 'fa-solid fa-chevron-down';
+                }
+            });
+            
+            // Alternar banco actual
+            const info = document.getElementById(`bank-info-${bankId}`);
+            const chevron = document.getElementById(`chevron-${bankId}`);
+            
+            if (info) {
+                if (info.style.display === 'none') {
+                    info.style.display = 'block';
+                    if (chevron) chevron.className = 'fa-solid fa-chevron-up';
+                } else {
+                    info.style.display = 'none';
+                    if (chevron) chevron.className = 'fa-solid fa-chevron-down';
+                }
+            }
+        }
+
+        // Función para cerrar modal
+        function closeBankModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            const overlay = document.getElementById('bankModalOverlay');
+            if (overlay) overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Función para cambiar pestañas
+        function setTab(tab) {
+            console.log("Cambiando pestaña a:", tab);
+            
+            const btnEc = document.getElementById('btnTabEcuador');
+            const btnWw = document.getElementById('btnTabMundo');
+            const ec = document.getElementById('payEcuador');
+            const ww = document.getElementById('payMundo');
+
+            if (!btnEc || !btnWw || !ec || !ww) {
+                console.error("No se encontraron elementos de pestañas");
+                return;
+            }
+
+            if (tab === 'ec') {
+                btnEc.classList.add('active');
+                btnWw.classList.remove('active');
+                ec.style.display = 'block';
+                ww.style.display = 'none';
+            } else {
+                btnEc.classList.remove('active');
+                btnWw.classList.add('active');
+                ec.style.display = 'none';
+                ww.style.display = 'block';
+            }
+        }
+
+        // Función para confirmar pago por WhatsApp
+        function confirmPayment(method) {
+            console.log("WhatsApp - Método:", method);
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            let orderId = urlParams.get('orderId');
+            const plan = urlParams.get('plan') || 'Básico';
+            const template = urlParams.get('template') || 'Desconocida';
+            
+            if (!orderId) {
+                const lblOrderId = document.getElementById('lblOrderId');
+                if (lblOrderId && lblOrderId.textContent && lblOrderId.textContent !== '...' && lblOrderId.textContent !== 'CARGANDO...') {
+                    orderId = lblOrderId.textContent;
+                }
+            }
+            
+            const waNumber = '593990480389';
+            const msg = `Hola CorazónCódigo! Ya hice el pago de mi pedido.\n\n🔹 ID: ${orderId || 'N/A'}\n🔹 Plan: ${decodeURIComponent(plan)}\n🔹 Plantilla: ${decodeURIComponent(template)}\n🔹 Método: ${method}\n\nTe envío el comprobante. 💖`;
+            const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        // Función para validar código de promoción
+        function validatePromoCode() {
+            console.log("Validando código de promoción...");
+            
+            const inpPromoCode = document.getElementById('inpPromoCode');
+            const promoCodeMsg = document.getElementById('promoCodeMsg');
+            
+            if (!inpPromoCode || !promoCodeMsg) {
+                console.error("No se encontraron elementos de promoción");
+                return;
+            }
+            
+            const code = inpPromoCode.value.trim().toUpperCase();
+            
+            if (!code) {
+                showPromoMessage('Por favor ingresa un código de promoción', 'error');
+                return;
+            }
+            
+            const validCodes = {
+                'CORAZON10': { discount: 10, description: '10% de descuento' },
+                'CODIGO20': { discount: 20, description: '20% de descuento' },
+                'VERANO25': { discount: 25, description: '25% de descuento' },
+                'PRIMERA50': { discount: 50, description: '50% de descuento' },
+                'GRATIS': { discount: 100, description: '100% de descuento' }
+            };
+            
+            if (validCodes[code]) {
+                const promo = validCodes[code];
+                showPromoMessage(`✅ ¡Código válido! ${promo.description} aplicado.`, 'success');
+                
+                localStorage.setItem('promoCode', code);
+                localStorage.setItem('promoDiscount', promo.discount);
+                
+                inpPromoCode.disabled = true;
+                const btnApply = document.getElementById('btnApplyPromo');
+                if (btnApply) {
+                    btnApply.disabled = true;
+                    btnApply.textContent = 'Aplicado ✓';
+                }
+                
+            } else {
+                showPromoMessage('❌ Código inválido. Verifica e intenta nuevamente.', 'error');
+            }
+        }
+
+        // Función para mostrar mensajes de promoción
+        function showPromoMessage(message, type) {
+            const promoCodeMsg = document.getElementById('promoCodeMsg');
+            if (promoCodeMsg) {
+                promoCodeMsg.textContent = message;
+                promoCodeMsg.style.display = 'block';
+                
+                if (type === 'success') {
+                    promoCodeMsg.style.color = '#22d3ee';
+                    promoCodeMsg.style.background = 'rgba(34, 211, 238, 0.1)';
+                } else {
+                    promoCodeMsg.style.color = '#f472b6';
+                    promoCodeMsg.style.background = 'rgba(244, 114, 182, 0.1)';
+                }
+                
+                promoCodeMsg.style.padding = '10px';
+                promoCodeMsg.style.borderRadius = '8px';
+                promoCodeMsg.style.fontSize = '0.9rem';
+                promoCodeMsg.style.fontWeight = '600';
+                promoCodeMsg.style.marginTop = '10px';
+                
+                if (type === 'error') {
+                    setTimeout(() => {
+                        promoCodeMsg.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        }
+
+        // Función para inicializar resumen del pedido
+        function initOrderSummary() {
+            console.log("Inicializando resumen del pedido...");
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            const plan = urlParams.get('plan') || 'Básico';
+            const template = urlParams.get('template') || urlParams.get('tpl') || 'Desconocida';
+            
+            const lblOrderId = document.getElementById('lblOrderId');
+            const lblPlantilla = document.getElementById('lblPlantilla');
+            const lblPlan = document.getElementById('lblPlan');
+            
+            if (lblOrderId) {
+                if (orderId) {
+                    const displayId = orderId.substring(0, 8).toUpperCase();
+                    lblOrderId.textContent = displayId;
+                } else {
+                    const lastOrderId = localStorage.getItem('lastOrderId');
+                    if (lastOrderId) {
+                        const displayId = lastOrderId.substring(0, 8).toUpperCase();
+                        lblOrderId.textContent = displayId;
+                    } else {
+                        lblOrderId.textContent = 'GENERANDO...';
+                    }
+                }
+            }
+            
+            if (lblPlantilla) {
+                lblPlantilla.textContent = decodeURIComponent(template);
+            }
+            
+            if (lblPlan) {
+                lblPlan.textContent = decodeURIComponent(plan);
+            }
+            
+            if (orderId) {
+                localStorage.setItem('lastOrderId', orderId);
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Inicializando pasarela...");
+            
+            // Inicializar resumen del pedido
+            initOrderSummary();
+            
+            // Configurar pestaña Ecuador por defecto
+            setTab('ec');
+            
+            // Configurar Enter en input de promoción
+            const inpPromoCode = document.getElementById('inpPromoCode');
+            if (inpPromoCode) {
+                inpPromoCode.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        validatePromoCode();
+                    }
+                });
+            }
+            
+            console.log("✅ Pasarela inicializada correctamente");
+        });
+    </script>
 </body>
 </html>

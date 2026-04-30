@@ -79,7 +79,21 @@ if (btnTrackOrder) {
         if (!id) return alert("Por favor ingresa un ID válido.");
         if (!db)  return alert("Error de conexión con la base de datos. Intenta de nuevo.");
 
-        // Usamos la nueva función RPC para evitar errores 400 (UUID type error en PostgREST)
+        // 1. Intentar buscar en promo_codes primero
+        const { data: promoData, error: promoError } = await db
+            .from('promo_codes')
+            .select('*')
+            .eq('code', id)
+            .eq('is_used', false)
+            .maybeSingle();
+
+        if (promoData) {
+            // Es un código de regalo válido, redirigir al catálogo con el cupón
+            window.location.href = `index.html?coupon=${encodeURIComponent(id)}&tpl=${encodeURIComponent(promoData.template_id || '')}`;
+            return;
+        }
+
+        // 2. Si no es un código de regalo, buscar como orden normal
         const { data: orderData, error } = await db.rpc('search_order_by_id', { search_term: id });
         const order = orderData && orderData.length > 0 ? orderData[0] : null;
 

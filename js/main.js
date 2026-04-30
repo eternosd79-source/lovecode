@@ -61,9 +61,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── 8. Analytics — Eventos Personalizados ───────────
     initAnalyticsEvents();
 
-
-    // ─── 9. Verificar parámetro ?ref= para afiliados ─────
-    // (Ya se captura automáticamente en affiliates.js al cargar)
+    // ─── 9. Verificar cupones de regalo (?coupon=) ────────
+    const params = new URLSearchParams(window.location.search);
+    const coupon = params.get('coupon');
+    const tplId  = params.get('tpl');
+    if (coupon) {
+        // Guardar el cupón para usarlo en el checkout
+        localStorage.setItem('cc_pending_coupon', coupon);
+        // Si hay una plantilla específica, scrollear a ella o abrirla
+        if (tplId) {
+            const card = document.querySelector(`.product-card [data-id="${tplId}"]`)?.closest('.product-card');
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.style.boxShadow = '0 0 30px var(--accent-purple)';
+                setTimeout(() => {
+                    const buyBtn = card.querySelector('.btn-comprar');
+                    if (buyBtn) buyBtn.click();
+                }, 1000);
+            }
+        }
+    }
 
     // ─── 10. DELEGACIÓN GLOBAL — Botón "Copiar Link" (Gratis) ──
     document.addEventListener('click', function(e) {
