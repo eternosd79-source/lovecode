@@ -52,15 +52,38 @@
         const mensaje = data.custom_message || data.mensaje;
         const fecha = data.custom_date || data.fecha;
 
-        if (para) {
-            const ids = ['loveText', 'cl1', 'phraseTop', 'mainTitle', 'targetName', 'msgLove'];
-            ids.forEach(id => { const el = document.getElementById(id); if (el) el.innerText = para; });
-            document.querySelectorAll('.personalizar-nombre, .target-name, .title').forEach(el => {
-                if (el.innerText.length < 50) el.innerText = para;
+        // 1. Aplicar todos los campos de dynamic_texts (Prioridad Máxima - Mapeo Universal)
+        if (data.dynamic_texts) {
+            Object.keys(data.dynamic_texts).forEach(key => {
+                const val = data.dynamic_texts[key];
+                if (!val) return;
+
+                // Buscar por ID o Clase
+                const els = document.querySelectorAll(`#${key}, .${key}`);
+                els.forEach(el => {
+                    // Usamos innerHTML para permitir que el usuario meta <br> si lo desea (o por compatibilidad)
+                    // pero limpiando para evitar inyección si es necesario. Aquí confiamos en el input del admin.
+                    el.innerText = val;
+                });
             });
         }
 
-        if (mensaje) {
+        // 2. Aplicar campos estándar (Fallback si no están en dynamic_texts)
+        if (para && (!data.dynamic_texts || !data.dynamic_texts.para)) {
+            const ids = ['loveText', 'cl1', 'phraseTop', 'mainTitle', 'targetName', 'msgLove'];
+            ids.forEach(id => { const el = document.getElementById(id); if (el) el.innerText = para; });
+            document.querySelectorAll('.personalizar-nombre, .target-name').forEach(el => {
+                el.innerText = para;
+            });
+            // Solo sobreescribir .title si no se aplicó por dynamic_texts
+            if (!data.dynamic_texts || !data.dynamic_texts.title) {
+                document.querySelectorAll('.title').forEach(el => {
+                    if (el.innerText.length < 50) el.innerText = para;
+                });
+            }
+        }
+
+        if (mensaje && (!data.dynamic_texts || !data.dynamic_texts.message)) {
             const frases = mensaje.split('\n').filter(f => f.trim() !== "");
             if (typeof window.pairs !== 'undefined' && frases.length > 0) {
                 window.pairs = frases.map(f => ({ top: f, bot: "" }));
@@ -81,7 +104,7 @@
             });
         }
 
-        // Parámetros dinámicos txt_
+        // Parámetros dinámicos txt_ desde URL (prioridad máxima para pruebas rápidas)
         const params = Core.getParams();
         Object.keys(params).forEach(key => {
             if (key.startsWith('txt_')) {

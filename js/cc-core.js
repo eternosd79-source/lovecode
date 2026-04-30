@@ -26,8 +26,13 @@ window.CC_Core = (function() {
     }
 
     function _initSupabase() {
-        if (window.supabase) {
-            db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Intentar varias formas de encontrar el cliente de Supabase
+        const lib = window.supabase || window.supabasejs;
+        if (lib) {
+            db = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("CC_Core: Supabase initialized");
+        } else {
+            console.warn("CC_Core: Supabase library not found yet");
         }
     }
 
@@ -62,16 +67,24 @@ window.CC_Core = (function() {
         const params = getParams();
         const orderId = params.orderId || params.id;
 
-        if (orderId && db) {
-            try {
-                const { data, error } = await db.rpc('get_order_safe', { p_id: orderId });
-                if (error) throw error;
-                return data && data.length > 0 ? data[0] : params;
-            } catch (e) {
-                console.error("CC_Core: Error loading from DB", e);
-                return params;
+        if (orderId) {
+            // Re-intentar inicializar DB si falló antes
+            if (!db) _initSupabase();
+
+            if (db) {
+                try {
+                    const { data, error } = await db.rpc('get_order_safe', { p_id: orderId });
+                    if (error) throw error;
+                    if (data && data.length > 0) {
+                        console.log("CC_Core: Data loaded from DB", data[0]);
+                        return data[0];
+                    }
+                } catch (e) {
+                    console.error("CC_Core: Error loading from DB", e);
+                }
             }
         }
+        console.log("CC_Core: Using URL params as fallback", params);
         return params;
     }
 

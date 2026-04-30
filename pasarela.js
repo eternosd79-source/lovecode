@@ -338,25 +338,51 @@ async function initPasarela() {
 
     if (btnApplyPromo && inpPromoCode) {
         btnApplyPromo.onclick = async () => {
-            const code = inpPromoCode.value.trim().toUpperCase();
-            if (!code || !db) return;
+            // Limpiar el código
+            let code = inpPromoCode.value.trim().toUpperCase();
+            if (code.includes('\n')) code = code.split('\n').pop().trim();
+            
+            const client = window.db || db;
+            if (!code || !client) {
+                console.error("CC_Pasarela: No hay código o no hay conexión a DB");
+                return;
+            }
 
             btnApplyPromo.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             try {
-                const { data: promo } = await db.from('promo_codes').select('*').eq('code', code).eq('is_used', false).maybeSingle();
+                // Seleccionar solo columnas existentes para evitar error 400
+                const { data: promo, error: err } = await client
+                    .from('promo_codes')
+                    .select('code, is_used, template_id, plan_name')
+                    .eq('code', code)
+                    .maybeSingle();
+
+                if (err) throw err;
+
                 if (!promo) {
                     promoCodeMsg.style.display = 'block';
                     promoCodeMsg.style.color = '#ff5e7e';
-                    promoCodeMsg.innerText = '❌ Código inválido.';
+                    promoCodeMsg.innerText = '❌ El código no existe.';
+                } else if (promo.is_used) {
+                    promoCodeMsg.style.display = 'block';
+                    promoCodeMsg.style.color = '#facc15';
+                    promoCodeMsg.innerText = '⚠️ Este código ya fue utilizado.';
                 } else {
                     promoCodeMsg.style.display = 'block';
                     promoCodeMsg.style.color = '#10b981';
-                    promoCodeMsg.innerText = '✅ ¡Validado!';
-                    await db.from('orders').update({ status: 'paid', payment_method: `CUPÓN: ${code}` }).eq('id', orderId);
-                    await db.from('promo_codes').update({ is_used: true, used_by: orderId }).eq('code', code);
+                    promoCodeMsg.innerText = '✅ ¡Código válido! Activando...';
+                    
+                    // Actualizar la orden y el cupón
+                    await client.from('orders').update({ status: 'paid', payment_method: `CUPÓN: ${code}` }).eq('id', orderId);
+                    await client.from('promo_codes').update({ is_used: true, used_by: orderId }).eq('code', code);
+                    
                     setTimeout(() => window.location.href = `index.html?orderId=${orderId}#mis-pedidos`, 1500);
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("CC_Pasarela: Error validando:", e);
+                promoCodeMsg.innerText = '❌ Error de conexión con el servidor.';
+                promoCodeMsg.style.display = 'block';
+            }
             btnApplyPromo.innerHTML = 'Validar';
         };
     }
