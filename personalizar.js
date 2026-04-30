@@ -281,11 +281,27 @@
             }
 
             // 5. Aplicar Música (Inyectar Audio)
-            if (customData.musica) {
+            if (customData.musica && String(customData.musica).trim() !== '' && String(customData.musica) !== 'null') {
+                const MUSIC_BUCKET_BASE = 'https://qmnbcmioylgmcbzqrjiv.supabase.co/storage/v1/object/public/music_library/';
+                let resolvedMusicUrl = String(customData.musica).trim();
+                
+                // Si no es una URL absoluta, limpiar y resolver contra Supabase
+                if (resolvedMusicUrl && !/^https?:\/\//i.test(resolvedMusicUrl)) {
+                    // Limpiar prefijos de navegación como ../ o ./ y slashes iniciales
+                    const cleanName = resolvedMusicUrl
+                        .replace(/^(\.\.\/|\.\/)+/, '') // Quita ../ o ./ repetidos al inicio
+                        .replace(/^\/+/, '');           // Quita slashes iniciales
+                    
+                    resolvedMusicUrl = MUSIC_BUCKET_BASE + encodeURIComponent(cleanName).replace(/%2F/g, '/');
+                }
+
+                console.log("Cargando música personalizada:", resolvedMusicUrl);
+
                 let audio = new Audio();
                 managedAudio = audio;
-                audio.loop = false; // Manejaremos el bucle manualmente para respetar el recorte
+                audio.loop = false; 
                 audio.volume = 1.0;
+                audio.crossOrigin = "anonymous"; // Importante para evitar problemas de CORS al procesar el audio
 
                 const startS = parseFloat(mStart) || 0;
                 const durS = parseFloat(mDur) || 0;
@@ -296,7 +312,7 @@
                 };
 
                 // Carga optimizada y anti-fallos (Blob proxy bypasses un-seekable servers)
-                fetch(customData.musica)
+                fetch(resolvedMusicUrl)
                     .then(res => res.blob())
                     .then(blob => {
                         const objectUrl = URL.createObjectURL(blob);
@@ -305,7 +321,7 @@
                         audio.load();
                     })
                     .catch(() => {
-                        audio.src = customData.musica; // Fallback
+                        audio.src = resolvedMusicUrl; // Fallback
                         audio.load();
                     });
 
