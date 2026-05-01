@@ -28,9 +28,10 @@
     async function applyPersonalization() {
         if (!Core) return;
 
-        // Mostrar Loader y Pantalla de Inicio
+        // Cargar datos
         const data = await Core.loadData();
-        window.ccData = data; // Mantener compatibilidad con scripts de plantillas
+        window.ccData = data; 
+        window.loveCodeData = data; // Doble compatibilidad
 
         // --- Mapeo de Datos a UI ---
         _applyTexts(data);

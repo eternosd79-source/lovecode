@@ -149,7 +149,19 @@ if (window.loveCodeData && window.loveCodeData.fecha) {
 // --- Integración con CC_Core ---
 document.addEventListener('cc:started', (e) => {
     console.log("Experiencia iniciada con datos:", e.detail);
-    // Podríamos disparar alguna animación extra aquí
+    const data = e.detail;
+    
+    // Forzar aplicación de textos dinámicos específicos de esta plantilla
+    if (data.dynamic_texts) {
+        if (data.dynamic_texts.title) {
+            const titleEl = document.querySelector('.title');
+            if (titleEl) titleEl.innerText = data.dynamic_texts.title;
+        }
+        if (data.dynamic_texts.message) {
+            const msgEl = document.querySelector('.message');
+            if (msgEl) msgEl.innerText = data.dynamic_texts.message;
+        }
+    }
 });
 
 function actualizarCronometro() {
