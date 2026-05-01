@@ -73,31 +73,50 @@ window.CC_Core = (function() {
     async function loadData() {
         const params = getParams();
         const orderId = params.orderId || params.id;
+        const paraName = params.para;   // URL amigable: ?para=mati
 
-        // URL Amigable: Si no hay orderId pero sí hay un nombre en la URL
-        // podemos mostrarlo como preview rápido o guardarlo
-        if (params.name) {
-            console.log("CC_Core: Name detected in URL:", params.name);
-            document.title = `Regalo para ${decodeURIComponent(params.name)} | CorazónCódigo`;
+        // Actualizar título de la página con el nombre del destinatario
+        if (paraName) {
+            const decoded = decodeURIComponent(paraName);
+            const capitalized = decoded.charAt(0).toUpperCase() + decoded.slice(1);
+            document.title = `💌 Regalo para ${capitalized} | CorazónCódigo`;
         }
 
-        if (orderId) {
-            // Re-intentar inicializar DB si falló antes
-            if (!db) _initSupabase();
+        // Re-intentar inicializar DB si falló antes
+        if (!db) _initSupabase();
 
-            if (db) {
-                try {
-                    const { data, error } = await db.rpc('get_order_safe', { p_id: orderId });
-                    if (error) throw error;
-                    if (data && data.length > 0) {
-                        console.log("CC_Core: Data loaded from DB", data[0]);
-                        return data[0];
-                    }
-                } catch (e) {
-                    console.error("CC_Core: Error loading from DB", e);
+        // --- Caso 1: URL tiene orderId completo (link administrativo/legacy) ---
+        if (orderId && db) {
+            try {
+                const { data, error } = await db.rpc('get_order_safe', { p_id: orderId });
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    console.log("CC_Core: Data loaded by orderId", data[0]);
+                    return data[0];
                 }
+            } catch (e) {
+                console.error("CC_Core: Error loading by orderId", e);
             }
         }
+
+        // --- Caso 2: URL amigable ?para=nombre (link compartido con el destinatario) ---
+        if (paraName && db) {
+            try {
+                const targetName = decodeURIComponent(paraName).replace(/-/g, ' ');
+                // Llamar funcion RPC segura (SECURITY DEFINER, no expone toda la tabla)
+                const { data, error } = await db.rpc('get_order_by_target_name', {
+                    p_name: targetName
+                });
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    console.log("CC_Core: Data loaded by target_name", data[0]);
+                    return data[0];
+                }
+            } catch (e) {
+                console.error("CC_Core: Error loading by target_name", e);
+            }
+        }
+
         console.log("CC_Core: Using URL params as fallback", params);
         return params;
     }

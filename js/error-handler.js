@@ -17,30 +17,49 @@
         const APP = window.APP;
 
         // ─────────────────────────────────────────────────────
-        // 1. ERRORES GLOBALES NO MANEJADOS
+        // 1. PERSISTENCIA EN BD DE ERRORES CRÍTICOS
+        // ─────────────────────────────────────────────────────
+        async function persistErrorToDb(errorType, message, context = {}) {
+            try {
+                if (window.db) {
+                    const pageUrl = window.location.href;
+                    if (message && String(message).includes('frontend_errors')) return; // Prevenir loops
+                    await window.db.from('frontend_errors').insert([{
+                        error_type: errorType,
+                        message: String(message).substring(0, 500),
+                        context: context,
+                        page_url: pageUrl
+                    }]);
+                }
+            } catch (e) {
+                console.error("Failed to persist error:", e);
+            }
+        }
+
+        // ─────────────────────────────────────────────────────
+        // 2. ERRORES GLOBALES NO MANEJADOS
         // ─────────────────────────────────────────────────────
         window.addEventListener('error', (event) => {
-            APP.Logger.error('Uncaught Error', {
-                message: event.message,
+            const ctx = {
                 filename: event.filename,
                 lineno: event.lineno,
                 colno: event.colno,
                 stack: event.error?.stack
-            });
+            };
+            APP.Logger.error('Uncaught Error', { message: event.message, ...ctx });
+            persistErrorToDb('uncaught_error', event.message, ctx);
         });
 
         // ─────────────────────────────────────────────────────
-        // 2. PROMESAS RECHAZADAS SIN MANEJAR
+        // 3. PROMESAS RECHAZADAS SIN MANEJAR
         // ─────────────────────────────────────────────────────
         window.addEventListener('unhandledrejection', (event) => {
             const reason = event.reason;
             const message = typeof reason === 'string' ? reason : reason?.message || 'Unknown rejection';
+            const ctx = { reason: String(reason), stack: reason?.stack };
             
-            APP.Logger.error('Unhandled Promise Rejection', {
-                message,
-                reason,
-                stack: reason?.stack
-            });
+            APP.Logger.error('Unhandled Promise Rejection', { message, ...ctx });
+            persistErrorToDb('unhandled_rejection', message, ctx);
         });
 
         // ─────────────────────────────────────────────────────

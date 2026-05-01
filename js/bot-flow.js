@@ -82,6 +82,7 @@ if (btnSwitchAdvanced) {
 if (btnTriggerFile && botFotoFile) {
     btnTriggerFile.addEventListener('click', (e) => {
         e.preventDefault();
+        if (navigator.vibrate) navigator.vibrate(30);
         botFotoFile.click();
     });
     
@@ -100,6 +101,7 @@ if (btnTriggerFile && botFotoFile) {
 // SUBIDA REAL A SUPABASE STORAGE Y CREACIÓN DE ORDEN
 if (btnBotComprar) {
     btnBotComprar.addEventListener('click', async () => {
+        if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
         if (!currentBotTemplate) {
             if (window.showToast) window.showToast("Error", "No se detectó la plantilla elegida."); else alert("No se detectó la plantilla elegida.");
             return;
@@ -113,6 +115,18 @@ if (btnBotComprar) {
         if (!destino || !mensaje) {
             if (window.showToast) window.showToast("Datos incompletos", "Por favor, ingresa el destinatario y una dedicatoria."); else alert("Por favor, ingresa el destinatario y una dedicatoria.");
             return;
+        }
+
+        if (file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                if (window.showToast) window.showToast("Archivo no válido", "Solo se permiten imágenes (JPG, PNG, WEBP, GIF)."); else alert("Solo se permiten imágenes.");
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                if (window.showToast) window.showToast("Imagen muy pesada", "El tamaño máximo de la foto es de 5MB."); else alert("El tamaño máximo es 5MB.");
+                return;
+            }
         }
 
         // Mostrar Loading

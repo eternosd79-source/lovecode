@@ -3,7 +3,7 @@
 // Estrategia de caching: Network-First para dinámico, Cache-First para estático
 // ============================================================
 
-const CACHE_NAME = 'cc-v3.0.0';
+const CACHE_NAME = 'cc-v3.0.1';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -70,8 +70,8 @@ self.addEventListener('fetch', event => {
         return event.respondWith(
             fetch(request)
                 .then(response => {
-                    // Cachear respuestas exitosas
-                    if (response.ok) {
+                    // Cachear respuestas exitosas (Solo métodos GET)
+                    if (response.ok && request.method === 'GET') {
                         const responseClone = response.clone();
                         const cache = caches.open(CACHE_NAME);
                         cache.then(c => c.put(request, responseClone));
@@ -140,7 +140,8 @@ self.addEventListener('fetch', event => {
     return event.respondWith(
         fetch(request)
             .then(response => {
-                if (response.ok) {
+                // Solo cachear peticiones GET
+                if (response.ok && request.method === 'GET') {
                     const responseClone = response.clone();
                     const cache = caches.open(CACHE_NAME);
                     cache.then(c => c.put(request, responseClone));

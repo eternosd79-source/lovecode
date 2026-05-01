@@ -580,7 +580,7 @@ function renderCatalog(filter = 'all') {
             <div class="card-image ${isPremium ? 'premium-bg' : ''}" style="background-color: ${item.color};">
                 ${isPremium ? '<div class="crown-badge"><i class="fa-solid fa-crown"></i></div>' : ''}
                 <i class="fa-solid ${item.icon} screen-icon"></i>
-                <img src="${item.id}/thumb.png" alt="${item.name}" class="card-thumb" onerror="this.style.opacity='0'">
+                <img src="${item.id}/thumb.png" alt="${item.name}" class="card-thumb" loading="lazy" onerror="this.style.opacity='0'">
                 <span class="preview-badge" style="z-index:2">${item.badge}</span>
             </div>
             <div class="card-body">

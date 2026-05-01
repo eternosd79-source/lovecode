@@ -12,7 +12,7 @@
         
         return new Promise((resolve) => {
             const script = document.createElement('script');
-            script.src = '../js/cc-core.js';
+            script.src = '../js/cc-core.js?v=2';
             script.onload = () => resolve(window.CC_Core);
             script.onerror = () => {
                 console.error("CC_Core could not be loaded. Falling back to legacy mode.");

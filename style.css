@@ -392,12 +392,7 @@ body {
     font-size: 0.72rem;
     margin: 0;
 }
-        justify-content: flex-start;
-        flex-wrap: nowrap !important;
-        padding-left: 5%;
-        padding-right: 5%;
-    }
-}
+
 .filter-btn {
     background: transparent;
     border: 1px solid rgba(255,255,255,0.1);
@@ -2103,4 +2098,47 @@ body {
     z-index: 1;
     pointer-events: none;
 }
+/* ===============================
+   CATEGORY FILTERS (ELEGANTES)
+   =============================== */
+.category-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
 
+.filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+    outline: none;
+}

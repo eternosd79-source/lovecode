@@ -26,14 +26,14 @@ RETURNS INTEGER AS $$
 BEGIN
     IF plan_text ILIKE '%$0%' OR plan_text ILIKE '%Gratis%' OR plan_text ILIKE '%Demo%' THEN
         RETURN 24;           -- 24 horas
-    ELSIF plan_text ILIKE '%$3%' OR plan_text ILIKE '%Básico%' OR plan_text ILIKE '%Basico%' THEN
-        RETURN 336;          -- 14 días × 24h
-    ELSIF plan_text ILIKE '%$4.50%' OR plan_text ILIKE '%Hub%' OR plan_text ILIKE '%Membresía%' THEN
-        RETURN 1800;         -- 75 días × 24h
-    ELSIF plan_text ILIKE '%$5%' OR plan_text ILIKE '%Personalizado%' OR plan_text ILIKE '%Fotografías%' THEN
-        RETURN 1800;         -- 75 días × 24h
-    ELSIF plan_text ILIKE '%$7%' OR plan_text ILIKE '%Ultra%' OR plan_text ILIKE '%Premium%' THEN
+    ELSIF plan_text ILIKE '%$4.50%' OR plan_text ILIKE '%Ultra%' OR plan_text ILIKE '%Premium%' THEN
         RETURN 4320;         -- 180 días × 24h
+    ELSIF plan_text ILIKE '%$3%' OR plan_text ILIKE '%Personalizado%' OR plan_text ILIKE '%Fotograf%' THEN
+        RETURN 1800;         -- 75 días × 24h
+    ELSIF plan_text ILIKE '%$2.50%' OR plan_text ILIKE '%Hub%' OR plan_text ILIKE '%Suscripc%' THEN
+        RETURN 1800;         -- 75 días × 24h
+    ELSIF plan_text ILIKE '%$1.50%' OR plan_text ILIKE '%Básico%' OR plan_text ILIKE '%Basico%' THEN
+        RETURN 336;          -- 14 días × 24h
     ELSE
         RETURN 336;          -- Default: 2 semanas
     END IF;
@@ -191,9 +191,10 @@ WHERE table_name = 'orders'
 
 -- Prueba de duraciones:
 SELECT get_plan_duration_hours('Gratis ($0, Solo demo 24h)')                    AS demo_horas,   -- → 24
-       get_plan_duration_hours('Básico ($3, 2 semanas)')                        AS basico_horas, -- → 336
-       get_plan_duration_hours('Membresía Hub ($4.50, Comunidad+Fotos)')        AS hub_horas,    -- → 1800
-       get_plan_duration_hours('Ultra Premium ($7, 6 mes., Fotos/Música/Código)') AS ultra_horas; -- → 4320
+       get_plan_duration_hours('Básico ($1.50, 2 semanas)')                     AS basico_horas, -- → 336
+       get_plan_duration_hours('Membresía Hub ($2.50, Comunidad+Fotos)')        AS hub_horas,    -- → 1800
+       get_plan_duration_hours('Personalizado ($3.00, Fotografías)')            AS photo_horas,  -- → 1800
+       get_plan_duration_hours('Ultra Premium ($4.50, 6 mes., Fotos/Música/Código)') AS ultra_horas; -- → 4320
 
 -- ============================================================
 -- ⏰ PASO SEPARADO — CRON JOB (leer instrucciones abajo)

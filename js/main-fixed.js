@@ -109,4 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => splash.style.display = 'none', 500);
         }, 800);
     }
+    // 11. Exit Intent (Retener abandono en Desktop)
+    let exitIntentShown = false;
+    document.addEventListener('mouseleave', (e) => {
+        if (e.clientY < 0 && !exitIntentShown) {
+            exitIntentShown = true;
+            if (typeof window.openBotWizard === 'function') {
+                if (window.showToast) {
+                    window.showToast("🎁 ¡Espera un segundo!", "Tenemos plantillas desde $1.50 o usa la prueba gratis de 24h.");
+                }
+            }
+        }
+    });
+
 });

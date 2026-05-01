@@ -87,38 +87,6 @@
     }
 
     // ─────────────────────────────────────────────────────
-    // 4. PRELOAD RECURSOS CRÍTICOS
-    // ─────────────────────────────────────────────────────
-    function addResourceHints() {
-        const head = document.head;
-        
-        // Preload de font crítica
-        const fontPreload = document.createElement('link');
-        fontPreload.rel = 'preload';
-        fontPreload.as = 'font';
-        fontPreload.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap';
-        fontPreload.type = 'font/woff2';
-        fontPreload.crossOrigin = '';
-        head.appendChild(fontPreload);
-
-        // DNS Prefetch para CDNs
-        const dnsPrefetch = [
-            'https://cdnjs.cloudflare.com',
-            'https://cdn.jsdelivr.net',
-            'https://qmnbcmioylgmcbzqrjiv.supabase.co'
-        ];
-
-        dnsPrefetch.forEach(url => {
-            const link = document.createElement('link');
-            link.rel = 'dns-prefetch';
-            link.href = url;
-            head.appendChild(link);
-        });
-
-        APP?.Logger?.debug('Resource hints added');
-    }
-
-    // ─────────────────────────────────────────────────────
     // 5. MONITOREO DE WEB VITALS (Google Analytics)
     // ─────────────────────────────────────────────────────
     function trackWebVitals() {
@@ -160,7 +128,11 @@
         });
 
         try {
-            fidObserver.observe({ entryTypes: ['first-input', 'interaction'] });
+            const supported = PerformanceObserver.supportedEntryTypes || [];
+            const types = ['first-input', 'interaction'].filter(t => supported.includes(t));
+            if (types.length > 0) {
+                fidObserver.observe({ entryTypes: types });
+            }
         } catch (e) {
             // FID/INP no soportado
         }
@@ -191,7 +163,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         optimizeSplash();
         initLazyLoading();
-        addResourceHints();
         registerServiceWorker();
         trackWebVitals();
 

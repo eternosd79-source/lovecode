@@ -485,11 +485,12 @@ if (btnTabMundo) {
 // -------------------------------------------------------
 function getPlanHours(planName) {
     if (!planName) return 336;
-    if (planName.includes('$0') || /demo|gratis/i.test(planName)) return 24;
-    if (planName.includes('$1.50') || /básico|basico/i.test(planName))  return 336;
-    if (planName.includes('$2.50') || /hub|membresía/i.test(planName)) return 1800;
-    if (planName.includes('$3') || /fotografías|personalizado/i.test(planName)) return 1800;
-    if (planName.includes('$4.50') || /ultra/i.test(planName)) return 4320;
+    const p = planName.toLowerCase();
+    if (p.includes('$0') || /demo|gratis/i.test(p)) return 24;
+    if (p.includes('$4.50') || /ultra|premium/i.test(p)) return 4320;
+    if (p.includes('$3') || /fotograf|personalizado/i.test(p)) return 1800;
+    if (p.includes('$2.50') || /hub|suscripc/i.test(p)) return 1800;
+    if (p.includes('$1.50') || /b.?sico/i.test(p))  return 336;
     return 336;
 }
 

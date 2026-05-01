@@ -92,10 +92,13 @@ ALTER TABLE referrals              ENABLE ROW LEVEL SECURITY;
 ALTER TABLE newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 
 -- templates: cualquiera puede leer (para cargar el catálogo), solo admin edita
+DROP POLICY IF EXISTS "templates_select_public" ON templates;
 CREATE POLICY "templates_select_public" ON templates FOR SELECT TO anon USING (true);
 
 -- orders: cualquiera puede insertar (comprar), pero solo leen mediante RPC para evitar extracción masiva
+DROP POLICY IF EXISTS "orders_insert_public" ON orders;
 CREATE POLICY "orders_insert_public" ON orders FOR INSERT TO anon WITH CHECK (true);
+DROP POLICY IF EXISTS "orders_select_admin" ON orders;
 CREATE POLICY "orders_select_admin" ON orders FOR SELECT TO authenticated USING (true);
 
 -- Función segura para obtener una orden por ID sin exponer toda la tabla
@@ -150,42 +153,42 @@ GRANT EXECUTE ON FUNCTION search_order_by_id(TEXT) TO authenticated;
 GRANT EXECUTE ON FUNCTION get_order_safe(TEXT) TO anon;
 GRANT EXECUTE ON FUNCTION get_order_safe(TEXT) TO authenticated;
 -- affiliates: solo admin puede leer/modificar
-CREATE POLICY "affiliates_select_admin"
-ON affiliates FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "affiliates_select_admin" ON affiliates;
+CREATE POLICY "affiliates_select_admin" ON affiliates FOR SELECT TO authenticated USING (true);
 
-CREATE POLICY "affiliates_insert_public"
-ON affiliates FOR INSERT TO anon WITH CHECK (true);
+DROP POLICY IF EXISTS "affiliates_insert_public" ON affiliates;
+CREATE POLICY "affiliates_insert_public" ON affiliates FOR INSERT TO anon WITH CHECK (true);
 
-CREATE POLICY "affiliates_update_admin"
-ON affiliates FOR UPDATE TO authenticated USING (true);
+DROP POLICY IF EXISTS "affiliates_update_admin" ON affiliates;
+CREATE POLICY "affiliates_update_admin" ON affiliates FOR UPDATE TO authenticated USING (true);
 
 -- referrals: solo admin puede leer/modificar
-CREATE POLICY "referrals_select_admin"
-ON referrals FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "referrals_select_admin" ON referrals;
+CREATE POLICY "referrals_select_admin" ON referrals FOR SELECT TO authenticated USING (true);
 
-CREATE POLICY "referrals_insert_public"
-ON referrals FOR INSERT TO anon WITH CHECK (true);
+DROP POLICY IF EXISTS "referrals_insert_public" ON referrals;
+CREATE POLICY "referrals_insert_public" ON referrals FOR INSERT TO anon WITH CHECK (true);
 
-CREATE POLICY "referrals_update_admin"
-ON referrals FOR UPDATE TO authenticated USING (true);
+DROP POLICY IF EXISTS "referrals_update_admin" ON referrals;
+CREATE POLICY "referrals_update_admin" ON referrals FOR UPDATE TO authenticated USING (true);
 
 -- ⚠️ Para que el anon pueda ver su propio dash de afiliado:
 -- Se necesita la función renderAffiliateDashboard que hace query
 -- desde el cliente. Por eso también habilitamos SELECT anon aquí:
-CREATE POLICY "affiliates_select_by_order"
-ON affiliates FOR SELECT TO anon
+DROP POLICY IF EXISTS "affiliates_select_by_order" ON affiliates;
+CREATE POLICY "affiliates_select_by_order" ON affiliates FOR SELECT TO anon
 USING (true);  -- En producción avanzada: filtrar por JWT o por token en header
 
-CREATE POLICY "referrals_select_by_affiliate"
-ON referrals FOR SELECT TO anon
+DROP POLICY IF EXISTS "referrals_select_by_affiliate" ON referrals;
+CREATE POLICY "referrals_select_by_affiliate" ON referrals FOR SELECT TO anon
 USING (true);
 
 -- newsletter: cualquiera puede suscribirse, solo admin lee
-CREATE POLICY "newsletter_insert_public"
-ON newsletter_subscribers FOR INSERT TO anon WITH CHECK (true);
+DROP POLICY IF EXISTS "newsletter_insert_public" ON newsletter_subscribers;
+CREATE POLICY "newsletter_insert_public" ON newsletter_subscribers FOR INSERT TO anon WITH CHECK (true);
 
-CREATE POLICY "newsletter_select_admin"
-ON newsletter_subscribers FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "newsletter_select_admin" ON newsletter_subscribers;
+CREATE POLICY "newsletter_select_admin" ON newsletter_subscribers FOR SELECT TO authenticated USING (true);
 
 -- ============================================================
 -- ÍNDICES para performance
@@ -235,8 +238,10 @@ CREATE TABLE IF NOT EXISTS free_tier_ips (
 
 ALTER TABLE free_tier_ips ENABLE ROW LEVEL SECURITY;
 -- Permitir inserción anónima para registrar la IP
+DROP POLICY IF EXISTS "free_tier_ips_insert" ON free_tier_ips;
 CREATE POLICY "free_tier_ips_insert" ON free_tier_ips FOR INSERT TO anon WITH CHECK (true);
 -- Permitir lectura anónima para que puedan verificar si su IP ya existe
+DROP POLICY IF EXISTS "free_tier_ips_select" ON free_tier_ips;
 CREATE POLICY "free_tier_ips_select" ON free_tier_ips FOR SELECT TO anon USING (true);
 
 -- ============================================================
@@ -254,16 +259,20 @@ CREATE TABLE IF NOT EXISTS promo_codes (
 
 ALTER TABLE promo_codes ENABLE ROW LEVEL SECURITY;
 -- Cualquiera puede leer códigos para verificar si existen y no han sido usados
+DROP POLICY IF EXISTS "promo_codes_select" ON promo_codes;
 CREATE POLICY "promo_codes_select" ON promo_codes FOR SELECT TO anon USING (true);
+DROP POLICY IF EXISTS "promo_codes_select_auth" ON promo_codes;
 CREATE POLICY "promo_codes_select_auth" ON promo_codes FOR SELECT TO authenticated USING (true);
 -- Cualquiera puede usar un código (marcarlo como usado) al crear una orden
-CREATE POLICY "promo_codes_update_anon"
-ON promo_codes
+DROP POLICY IF EXISTS "promo_codes_update_anon" ON promo_codes;
+CREATE POLICY "promo_codes_update_anon" ON promo_codes
 FOR UPDATE TO anon
 USING (is_used = false)
 WITH CHECK (is_used = true);
 -- Solo admin puede insertar
+DROP POLICY IF EXISTS "promo_codes_insert" ON promo_codes;
 CREATE POLICY "promo_codes_insert" ON promo_codes FOR INSERT TO authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "promo_codes_update" ON promo_codes;
 CREATE POLICY "promo_codes_update" ON promo_codes FOR UPDATE TO authenticated USING (true);
 
 
@@ -276,15 +285,20 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('user_uploads', 'user_uploads', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Política para permitir que usuarios anónimos (visitantes web) suban archivos.
-CREATE POLICY "Permitir subida publica a user_uploads" 
-ON storage.objects FOR INSERT 
+-- Política para permitir que usuarios anónimos (visitantes web) suban archivos (Imágenes).
+DROP POLICY IF EXISTS "Permitir subida publica a user_uploads" ON storage.objects;
+CREATE POLICY "Permitir subida publica a user_uploads" ON storage.objects FOR INSERT 
 TO public 
-WITH CHECK ( bucket_id = 'user_uploads' );
+WITH CHECK (
+    bucket_id = 'user_uploads'
+    AND (
+        lower(storage.extension(name)) IN ('jpg', 'jpeg', 'png', 'webp', 'gif')
+    )
+);
 
 -- Política para que cualquiera pueda leer/ver esas imágenes (para cargarlas en el frontend).
-CREATE POLICY "Permitir lectura publica a user_uploads" 
-ON storage.objects FOR SELECT 
+DROP POLICY IF EXISTS "Permitir lectura publica a user_uploads" ON storage.objects;
+CREATE POLICY "Permitir lectura publica a user_uploads" ON storage.objects FOR SELECT 
 TO public 
 USING ( bucket_id = 'user_uploads' );
 
@@ -300,8 +314,10 @@ CREATE TABLE IF NOT EXISTS order_events (
 );
 
 ALTER TABLE order_events ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "order_events_insert_public" ON order_events;
 CREATE POLICY "order_events_insert_public" ON order_events FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "order_events_select_admin"  ON order_events FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "order_events_select_admin" ON order_events;
+CREATE POLICY "order_events_select_admin" ON order_events FOR SELECT TO authenticated USING (true);
 
 CREATE INDEX IF NOT EXISTS idx_order_events_order_id ON order_events(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_events_created_at ON order_events(created_at DESC);
@@ -319,8 +335,10 @@ CREATE TABLE IF NOT EXISTS frontend_errors (
 );
 
 ALTER TABLE frontend_errors ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "frontend_errors_insert_public" ON frontend_errors;
 CREATE POLICY "frontend_errors_insert_public" ON frontend_errors FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "frontend_errors_select_admin"  ON frontend_errors FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "frontend_errors_select_admin" ON frontend_errors;
+CREATE POLICY "frontend_errors_select_admin" ON frontend_errors FOR SELECT TO authenticated USING (true);
 
 CREATE INDEX IF NOT EXISTS idx_frontend_errors_created_at ON frontend_errors(created_at DESC);
 
@@ -377,7 +395,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 3. Trigger para asociar la función a la tabla orders
-DROP TRIGGER IF IF EXISTS trg_set_expires_at ON orders;
+DROP TRIGGER IF EXISTS trg_set_expires_at ON orders;
 CREATE TRIGGER trg_set_expires_at
 BEFORE UPDATE ON orders
 FOR EACH ROW
@@ -387,8 +405,13 @@ EXECUTE FUNCTION set_expires_at_on_paid();
 -- Requiere la extensión pg_cron instalada en Supabase (Extensions -> pg_cron)
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
--- Eliminar job anterior si existe para evitar duplicados
-SELECT cron.unschedule('expire_old_orders');
+-- Eliminar job anterior si existe para evitar duplicados (manejando el error si no existe)
+DO $$
+BEGIN
+  PERFORM cron.unschedule('expire_old_orders');
+EXCEPTION WHEN OTHERS THEN
+  -- Ignorar error si el trabajo no existía
+END $$;
 
 -- Crear trabajo programado para poner status = 'expired' si ya pasó expires_at
 SELECT cron.schedule(

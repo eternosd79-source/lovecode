@@ -7,6 +7,7 @@
 const btnTrackOrder    = document.getElementById('btnTrackOrder');
 const inpOrderId       = document.getElementById('inpOrderId');
 const orderStatusResult = document.getElementById('orderStatusResult');
+const CONFIG = window.getConfig ? window.getConfig() : { whatsappNumber: '593990480389' };
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -163,11 +164,12 @@ function buildExpirationBanner(order) {
 
     const planHours = (function(p) {
         if (!p) return 336;
-        if (p.includes('$0') || /demo|gratis/i.test(p))            return 24;
-        if (p.includes('$1.50') || /b.?sico/i.test(p))               return 336;
-        if (p.includes('$2.50') || /hub|suscripci/i.test(p))      return 1800;
-        if (p.includes('$3') || /fotograf|personalizado/i.test(p)) return 1800;
-        if (p.includes('$4.50') || /ultra/i.test(p))                  return 4320;
+        const pLower = p.toLowerCase();
+        if (pLower.includes('$0') || /demo|gratis/i.test(pLower)) return 24;
+        if (pLower.includes('$4.50') || /ultra|premium/i.test(pLower)) return 4320;
+        if (pLower.includes('$3') || /fotograf|personalizado/i.test(pLower)) return 1800;
+        if (pLower.includes('$2.50') || /hub|suscripc/i.test(pLower)) return 1800;
+        if (pLower.includes('$1.50') || /b.?sico/i.test(pLower)) return 336;
         return 336;
     })(order.plan_name);
 
@@ -224,7 +226,20 @@ function renderOrderStatus(order) {
 
     if (fullLink) {
         const separator = fullLink.includes('?') ? '&' : '?';
-        fullLink += `${separator}orderId=${order.id}`;
+        // Usar URL amigable: ?para=nombre (sin el UUID largo)
+        const rawName = (order.target_name || '').trim();
+        // Normalizar: minusculas, sin acentos, sin espacios
+        const friendlyName = rawName
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
+            .replace(/\s+/g, '-')                             // espacios -> guion
+            .replace(/[^a-z0-9-]/g, '');                      // solo alfanumérico
+        if (friendlyName) {
+            fullLink += `${separator}para=${encodeURIComponent(friendlyName)}`;
+        } else {
+            // Fallback al orderId si no hay nombre
+            fullLink += `${separator}orderId=${order.id}`;
+        }
     }
     const safeFullLink = sanitizeUrl(fullLink) || '#';
 
