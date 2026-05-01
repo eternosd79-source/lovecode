@@ -107,8 +107,9 @@ const catalogData = [
         hasDate: true,
         textRef: "Cada latido es por ti...",
         editableTexts: [
-            { id: "mainTitle", label: "Título", default: "Cada latido es por ti..." },
-            { id: "date-display", label: "Texto Fecha", default: "Desde que te conocí..." }
+            { id: "loveText",  label: "Texto central grande", default: "Te Amo" },
+            { id: "phraseTop", label: "Frase superior", default: "Cada latido es por ti..." },
+            { id: "phraseBot", label: "Frase inferior", default: "Siempre y para siempre." }
         ]
     },
     {
@@ -123,7 +124,12 @@ const catalogData = [
         desc: "Oso disparando corazones.",
         textRef: "Te apunto y te disparo todo mi amor...",
         editableTexts: [
-            { id: "shoot-text", label: "Frase del Oso", default: "Te apunto y te disparo todo mi amor..." }
+            { id: "intro-title", label: "Titulo de inicio", default: "Para ti, mi amor" },
+            { id: "intro-sub",   label: "Subtitulo intro", default: "Hay cosas que solo un osito sabe decir con el corazon" },
+            { id: "msgText",     label: "Mensaje del osito", default: "Te apunto y te disparo todo mi amor..." },
+            { id: "tapHint",     label: "Texto 'Toca para continuar'", default: "Toca para continuar" },
+            { id: "final-title", label: "Titulo final", default: "Asi te quiero a ti, siempre y para siempre" },
+            { id: "final-sub",   label: "Subtitulo final", default: "Gracias por ser la razon de la sonrisa de este osito enamorado." }
         ]
     },
     {
@@ -138,7 +144,10 @@ const catalogData = [
         desc: "Dos universos se fusionan.",
         textRef: "Tú y yo juntos formamos un universo...",
         editableTexts: [
-            { id: "union-text", label: "Frase de Unión", default: "Tú y yo juntos formamos un universo..." }
+            { id: "intro-question",   label: "Pregunta de inicio", default: "\u00bfSabes lo que quiero contigo?" },
+            { id: "intro-click-text", label: "Texto de clic", default: "Da clic aqui para descubrirlo" },
+            { id: "lblInstruction",   label: "Instruccion al unir", default: "Haz click para unir los corazones" },
+            { id: "union-text",       label: "Frase de union (al completar)", default: "Tu y yo juntos formamos un universo..." }
         ]
     },
     {
@@ -154,11 +163,12 @@ const catalogData = [
         hasDate: true,
         textRef: "Paso a paso, página a página... 5 páginas editables.",
         editableTexts: [
-            { id: "page1-txt", label: "Página 1", default: "Todo comenzó un día..." },
-            { id: "page2-txt", label: "Página 2", default: "Nuestra primera cita fue mágica." },
-            { id: "page3-txt", label: "Página 3", default: "Hemos superado cada reto juntos." },
-            { id: "page4-txt", label: "Página 4", default: "Y hoy te amo más que ayer." },
-            { id: "page5-txt", label: "Página 5", default: "¿Escribimos el siguiente capítulo?" }
+            { id: "cover-title",  label: "Titulo de Portada", default: "Nuestra Historia" },
+            { id: "intro-hint",   label: "Texto invitacion", default: "Hay algo que quiero contarte... Abre el libro y descubrelo" },
+            { id: "proposal-q",   label: "Pregunta Principal", default: "\u00bfQuieres ser mi novia?" },
+            { id: "proposal-sub", label: "Subtitulo propuesta", default: "Esta es la pregunta mas importante que he querido hacerte..." },
+            { id: "celeb-title",  label: "Titulo celebracion", default: "\u00a1Comenzamos un nuevo capitulo!" },
+            { id: "celeb-msg",    label: "Mensaje celebracion", default: "Que bueno que dijiste que si...", type: "textarea" }
         ]
     },
     {
@@ -173,9 +183,10 @@ const catalogData = [
         desc: "Un sobre elegante abriéndose.",
         textRef: "Para ti... (Carta completa de contenido)",
         editableTexts: [
-            { id: "letter-title", label: "Título de la Carta", default: "Para el amor de mi vida" },
-            { id: "letter-body", label: "Cuerpo de la Carta", default: "Escribe aquí tu carta completa...", type: "textarea" },
-            { id: "letter-footer", label: "Firma", default: "Tu por siempre..." }
+            { id: "letter-title",  label: "Saludo (Para Ti,)", default: "Para Ti," },
+            { id: "letter-body",   label: "Cuerpo de la Carta", default: "Queria detenerte un instante para escribirte y decirte lo profundamente agradecido que estoy de que el universo haya conspirado para que nuestros caminos se cruzaran.\n\nEres la persona mas maravillosa que he conocido. Cada dia a tu lado se siente como un regalo del que jamas quisiera despertar.\n\nTu risa ilumina todo lo que toca.", type: "textarea" },
+            { id: "letter-footer", label: "Firma Final", default: "Tu Romantico Eterno" },
+            { id: "clickHint",     label: "Texto del sello (intro)", default: "Presiona el sello para abrir" }
         ]
     },
     {
@@ -209,9 +220,9 @@ const catalogData = [
         votes: "34",
         desc: "Terminal de comandos con corazón ASCII.",
         editableTexts: [
-            { id: "terminal-user", label: "Usuario Terminal", default: "root@love" },
-            { id: "command-input", label: "Comando a Ejecutar", default: "./run_feelings.sh" },
-            { id: "output-text", label: "Respuesta del Sistema", default: "Acceso concedido... Procesando amor...", type: "textarea" }
+            { id: "d_t1", label: "Titulo Error Fatal", default: "Fatal Error: Heart Memory Overflow" },
+            { id: "d_t2", label: "Subtitulo compilado", default: "Se ha compilado un futuro infinito contigo." },
+            { id: "d_t3", label: "Declaracion final", default: "T E  A M O" }
         ]
     },
     {
@@ -225,8 +236,7 @@ const catalogData = [
         votes: "76",
         desc: "Pide un deseo a la estrella.",
         editableTexts: [
-            { id: "wish-title", label: "Título del Deseo", default: "Pedí un deseo..." },
-            { id: "wish-result", label: "Resultado del Deseo", default: "...y apareciste tú." }
+            { id: "msgLove", label: "Mensaje del cometa", default: "Te Amo" }
         ]
     },
     {
@@ -240,7 +250,8 @@ const catalogData = [
         votes: "142",
         desc: "Miles de partículas formando un corazón.",
         editableTexts: [
-            { id: "overlay-text", label: "Texto Central", default: "Te amo" }
+            { id: "texto-clic",   label: "Texto de invitacion inicial", default: "Haz clic aqui" },
+            { id: "overlay-text", label: "Texto central del corazon", default: "Mi corazon es tuyo" }
         ]
     },
     {
@@ -254,9 +265,10 @@ const catalogData = [
         votes: "205",
         desc: "Corazón 3D con mensajes orbitando.",
         editableTexts: [
-            { id: "orbit-msg1", label: "Mensaje 1 (Órbita)", default: "Eres mi vida" },
-            { id: "orbit-msg2", label: "Mensaje 2 (Órbita)", default: "Te extraño" },
-            { id: "orbit-msg3", label: "Mensaje 3 (Órbita)", default: "Siempre juntos" }
+            { id: "int1", label: "Intro linea 1", default: "En la inmensidad del universo..." },
+            { id: "int2", label: "Intro linea 2", default: "Hay una fuerza capaz de crear luz pura." },
+            { id: "cl1",  label: "Mensaje 1 sobre el corazon", default: "Te Amo" },
+            { id: "cl2",  label: "Mensaje 2 sobre el corazon", default: "Para Siempre" }
         ]
     },
     {
@@ -270,8 +282,13 @@ const catalogData = [
         votes: "55",
         desc: "Gema que brilla con tu toque.",
         editableTexts: [
-            { id: "gem-title", label: "Título de la Gema", default: "Nuestra gema preciosa" },
-            { id: "gem-desc", label: "Descripción", default: "Tan brillante y eterna como nuestro amor.", type: "textarea" }
+            { id: "i_t1",          label: "Intro linea 1", default: "Todo este tiempo..." },
+            { id: "i_t2",          label: "Intro linea 2", default: "He querido decirte algo." },
+            { id: "main-question", label: "Pregunta principal", default: "\u00bfQuieres ser mi novia?" },
+            { id: "subtitle",      label: "Subtitulo propuesta", default: "Eres mi sol, mi luna y todas mis estrellas" },
+            { id: "c_t1",          label: "Titulo climax", default: "Era el destino." },
+            { id: "c_t2",          label: "Subtitulo climax", default: "Prometo hacerte inmensamente feliz..." },
+            { id: "c_t3",          label: "Frase cierre", default: "Para siempre." }
         ]
     },
     {
@@ -285,8 +302,12 @@ const catalogData = [
         votes: "29",
         desc: "Ayuda a Cupido a dar en el blanco.",
         editableTexts: [
-            { id: "game-intro", label: "Intro del Juego", default: "¡Apunta al corazón!" },
-            { id: "win-msg", label: "Mensaje Ganador", default: "¡Me diste justo en el corazón!" }
+            { id: "introTitle", label: "Titulo intro", default: "Un hilo rojo..." },
+            { id: "introSub",   label: "Subtitulo intro", default: "...nos conecta sin importar el tiempo y la distancia." },
+            { id: "ct1",        label: "Climax frase 1", default: "Me flechaste desde el primer dia que te vi..." },
+            { id: "ct2",        label: "Climax frase 2", default: "Y cada latido desde entonces..." },
+            { id: "ct3",        label: "Climax frase 3 grande", default: "...ha sido unicamente tuyo." },
+            { id: "ct4",        label: "Declaracion final", default: "T E   A M O" }
         ]
     },
     {
@@ -300,8 +321,7 @@ const catalogData = [
         votes: "93",
         desc: "Navegando entre estrellas y fotos.",
         editableTexts: [
-            { id: "space-title", label: "Título Espacial", default: "Viajando por el universo" },
-            { id: "space-sub", label: "Subtítulo", default: "Contigo el infinito es pequeño." }
+            { id: "texto-latido", label: "Texto de inicio (invitacion)", default: "Toca para iniciar el viaje" }
         ]
     },
     {
@@ -315,8 +335,13 @@ const catalogData = [
         votes: "110",
         desc: "Conecta las estrellas para ver el mensaje.",
         editableTexts: [
-            { id: "star-hint", label: "Pista de Inicio", default: "Conecta los puntos..." },
-            { id: "star-final", label: "Mensaje Final", default: "Tú eres mi constelación favorita." }
+            { id: "intro-title", label: "Titulo de Inicio", default: "Camino de Estrellas" },
+            { id: "intro-sub",   label: "Subtitulo Intro", default: "Sigue el camino que te tengo preparado... cada estrella guarda un secreto", type: "textarea" },
+            { id: "msgText",     label: "Mensajes de las estrellas (uno por linea)", default: "Porque me haces reir\nPorque eres mi calma\nPorque te pienso siempre\nPorque eres unica\nPorque te amo", type: "textarea" },
+            { id: "final-q",     label: "Pregunta Final", default: "\u00bfQuieres ser mi novia?" },
+            { id: "final-sub",   label: "Subtitulo pregunta final", default: "Has llegado al final del camino... y hay solo una respuesta correcta" },
+            { id: "celeb-title", label: "Titulo Celebracion", default: "Juntos somos imparables!" },
+            { id: "celeb-msg",   label: "Mensaje Celebracion", default: "Gracias por seguir mi camino de estrellas y por ser tu mi estrella favorita.", type: "textarea" }
         ]
     },
     {
@@ -330,7 +355,7 @@ const catalogData = [
         votes: "89",
         desc: "Flores que crecen al pasar el tiempo.",
         editableTexts: [
-            { id: "flower-msg", label: "Mensaje de las Flores", default: "Estas flores nunca se marchitarán." }
+            { id: "main-title", label: "Titulo central de la galaxia floral", default: "Esto es para ti" }
         ]
     },
     {
@@ -344,8 +369,9 @@ const catalogData = [
         votes: "18",
         desc: "Piezas que se unen para formar vuestro amor.",
         editableTexts: [
-            { id: "puzzle-title", label: "Título del Puzzle", default: "Pieza por pieza" },
-            { id: "puzzle-final", label: "Mensaje Final", default: "Tú eres la pieza que me faltaba." }
+            { id: "iPhrase1", label: "Frase intro 1", default: "Cada latido de mi corazon..." },
+            { id: "iPhrase2", label: "Frase intro 2", default: "...tiene tu nombre escrito." },
+            { id: "iPhrase3", label: "Frase intro 3", default: "Deja que te lo demuestre." }
         ]
     },
     {
@@ -359,7 +385,7 @@ const catalogData = [
         votes: "44",
         desc: "Sistema solar con tus fotos.",
         editableTexts: [
-            { id: "sun-title", label: "Título del Sol", default: "Eres el centro de mi mundo" }
+            { id: "main-title", label: "Titulo de la galaxia", default: "Eres mi galaxia" }
         ]
     },
     {
@@ -373,7 +399,13 @@ const catalogData = [
         votes: "77",
         desc: "Gatitos mirando la luna.",
         editableTexts: [
-            { id: "cat-phrase", label: "Frase de Gatitos", default: "Miau... te quiero mucho" }
+            { id: "phrase1",           label: "Intro frase 1", default: "Hay personas que llegan a tu vida..." },
+            { id: "phrase2",           label: "Intro frase 2", default: "...y la cambian para siempre." },
+            { id: "phrase3",           label: "Intro frase 3", default: "Tu eres esa persona para mi." },
+            { id: "sub-romantic-text", label: "Texto romantico central", default: "Podria recorrer mil galaxias buscandote y aun asi elegiria perderme en la misma." },
+            { id: "mainText",          label: "Pregunta principal", default: "\u00bfTe gustaria compartir tus siete vidas conmigo?" },
+            { id: "victory-title",     label: "Titulo victoria", default: "Seria el mayor honor de todas mis vidas." },
+            { id: "victory-sub",       label: "Mensaje victoria", default: "Y en cada una de ellas, te elegiria a ti." }
         ]
     },
     {
@@ -387,8 +419,11 @@ const catalogData = [
         votes: "25",
         desc: "Interfaz de hacking romántica.",
         editableTexts: [
-            { id: "hack-title", label: "Título Hack", default: "HACKING HEART..." },
-            { id: "hack-progress", label: "Progreso", default: "Descifrando sentimientos..." }
+            { id: "introText1",    label: "Intro linea 1", default: "He estado pensando mucho..." },
+            { id: "introText2",    label: "Intro linea 2", default: "y hay algo que mi corazon ya no puede ocultar." },
+            { id: "question",      label: "Pregunta principal", default: "\u00bfQuieres ser mi novia?" },
+            { id: "success-title", label: "Titulo exito", default: "El universo de la luz acaba de sonreir al escuchar tu respuesta." },
+            { id: "success-sub",   label: "Subtitulo exito", default: "El mejor Si de mi vida." }
         ]
     },
     {
@@ -402,8 +437,8 @@ const catalogData = [
         votes: "49",
         desc: "Luciérnagas en un bosque mágico.",
         editableTexts: [
-            { id: "garden-title", label: "Título del Jardín", default: "Nuestro jardín secreto" },
-            { id: "garden-msg", label: "Mensaje", default: "Donde cada luz es un recuerdo contigo.", type: "textarea" }
+            { id: "pre-title",    label: "Pre-titulo", default: "Tengo algo para ti..." },
+            { id: "garden-title", label: "Titulo del jardin", default: "Flores para ti, mi amor" }
         ]
     },
     {
@@ -418,8 +453,11 @@ const catalogData = [
         desc: "Tu pulso se acelera por ella.",
         hasDate: true,
         editableTexts: [
-            { id: "ekg-title", label: "Título EKG", default: "Mi corazón late por ti" },
-            { id: "bpm-text", label: "Texto BPM", default: "Ritmo Cardíaco Acelerado" }
+            { id: "intro-title", label: "Titulo intro", default: "Hay algo que quiero mostrarte" },
+            { id: "intro-sub",   label: "Subtitulo intro", default: "Lo que le pasa a este corazon cuando tu estas cerca..." },
+            { id: "storyText",   label: "Historia / diagnostico (pasos separados por |)", default: "Ritmo normal...|Espera... algo cambio|Tu nombre aparecio en pantalla|El corazon no puede controlarse|Diagnostico: Amor sin cura", type: "textarea" },
+            { id: "final-title", label: "Titulo final", default: "Este corazon late por ti." },
+            { id: "final-sub",   label: "Subtitulo final", default: "Sin importar que digan los numeros, el unico resultado que importa eres tu." }
         ]
     },
     {
@@ -433,7 +471,13 @@ const catalogData = [
         votes: "24",
         desc: "Tu nombre en luces de neón.",
         editableTexts: [
-            { id: "neon-text", label: "Texto del Neón", default: "TE AMO DANI" }
+            { id: "intro-label",  label: "Label superior intro", default: "Para ti" },
+            { id: "intro-title",  label: "Titulo intro", default: "Con todo mi corazon" },
+            { id: "intro-sub",    label: "Subtitulo intro", default: "Hay tres palabras que resumen todo lo que siento por ti..." },
+            { id: "heartCaption", label: "Leyenda del corazon neon", default: "Brillando solo para ti" },
+            { id: "neon-text",    label: "Texto del neon (el gran letrero)", default: "TE AMO" },
+            { id: "footer-neon",  label: "Pie de pagina neon", default: "Para siempre" },
+            { id: "final-verse",  label: "Verso final", default: "Y si algun dia el mundo se apaga, yo seguire brillando para ti." }
         ]
     },
     {
@@ -447,8 +491,13 @@ const catalogData = [
         votes: "82",
         desc: "Pluma escribiendo en pergamino.",
         editableTexts: [
-            { id: "poem-title", label: "Título del Poema", default: "Versos para ti" },
-            { id: "poem-body", label: "Cuerpo del Poema", default: "Escribe aquí tus versos más románticos...", type: "textarea" }
+            { id: "title-main", label: "Titulo principal", default: "Un Poema Para Ti" },
+            { id: "subtitle",   label: "Subtitulo", default: "Escrito con el corazon, palabra por palabra." },
+            { id: "poemText",   label: "Versos del poema (paginas separadas por |)", default: "Eres la luz que busco cada manana...|Tu sonrisa es la razon de mis dias...|No existe universo donde no te elija...|Eres mi hogar, mi calma, mi todo.", type: "textarea" },
+            { id: "q-pre",     label: "Pre-pregunta", default: "Y por todo eso..." },
+            { id: "q-main",    label: "Pregunta principal", default: "\u00bfQuieres ser mi novia?" },
+            { id: "c-title",   label: "Titulo celebracion", default: "El mejor poema es a tu lado!" },
+            { id: "c-sub",     label: "Mensaje celebracion", default: "Gracias por convertirte en la musa de mi vida. Te adoro." }
         ]
     },
     {
@@ -462,11 +511,13 @@ const catalogData = [
         votes: "12",
         desc: "Gira para ver qué haremos hoy.",
         editableTexts: [
-            { id: "roulette-title", label: "Título Ruleta", default: "¿Qué haremos hoy?" },
-            { id: "option1", label: "Opción 1", default: "Cena romántica" },
-            { id: "option2", label: "Opción 2", default: "Ir al cine" },
-            { id: "option3", label: "Opción 3", default: "Un beso largo" },
-            { id: "option4", label: "Opción 4", default: "Viaje sorpresa" }
+            { id: "intro-title",  label: "Titulo intro", default: "Lo que siento por ti..." },
+            { id: "intro-sub",    label: "Subtitulo intro", default: "Llevo tiempo guardando estas palabras. Descubre mi corazon en cada mensaje..." },
+            { id: "game-title",   label: "Titulo del juego", default: "Toca cada mensaje" },
+            { id: "q-pre",        label: "Pre-pregunta", default: "Y por todo eso..." },
+            { id: "q-main",       label: "Pregunta principal", default: "\u00bfQuieres ser mi novia?" },
+            { id: "celeb-title",  label: "Titulo celebracion", default: "Lo sabia!" },
+            { id: "celeb-msg",    label: "Mensaje celebracion", default: "Eres la persona mas especial de mi vida. Esta es solo el comienzo de nuestra historia.", type: "textarea" }
         ]
     },
     {
@@ -480,7 +531,12 @@ const catalogData = [
         votes: "37",
         desc: "Mirando las estrellas desde la ventana.",
         editableTexts: [
-            { id: "window-msg", label: "Frase de la Ventana", default: "Mirando el mismo cielo, pensando en ti." }
+            { id: "intro-title",    label: "Titulo intro", default: "Prepare algo especial para ti..." },
+            { id: "intro-subtitle", label: "Subtitulo intro", default: "Porque cada dia merece recordarse" },
+            { id: "btn-text",       label: "Texto del boton abrir", default: "Abrir" },
+            { id: "top-title",      label: "Titulo superior ventana", default: "I love you" },
+            { id: "card-title",     label: "Dedicatoria de la ventana", default: "Para ti" },
+            { id: "bottom-title",   label: "Titulo inferior ventana", default: "I love you" }
         ]
     },
     {
@@ -494,7 +550,10 @@ const catalogData = [
         votes: "67",
         desc: "Energía pura en forma de corazón.",
         editableTexts: [
-            { id: "fire-title", label: "Título de Fuego", default: "Mi amor arde por ti" }
+            { id: "intro-question",   label: "Pregunta de inicio", default: "\u00bfQuieres saber lo que siento por ti?" },
+            { id: "intro-click-text", label: "Texto de clic", default: "Haz clic aqui para descubrirlo" },
+            { id: "center-text",      label: "Texto frente del corazon", default: "Te Amo" },
+            { id: "special-msg",      label: "Mensaje reverso del corazon", default: "Eres especial para mi" }
         ]
     }
 ];

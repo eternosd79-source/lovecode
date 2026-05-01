@@ -316,6 +316,8 @@
     // SUPABASE AUTH — Login real (credenciales en Supabase Auth, 
     // NO en código fuente)
     // ============================================================
+    const supabaseUrl = window.CC_ENV?.SUPABASE_URL || 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
+    const supabaseKey = window.CC_ENV?.SUPABASE_KEY || 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc';
     let adminSupabase = null;
 
     function initAdminSupabase() {

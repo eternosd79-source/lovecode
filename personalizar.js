@@ -182,4 +182,26 @@
         applyPersonalization();
     }
 
+    // --- Soporte para Editor en Vivo (postMessage) ---
+    window.addEventListener("message", (e) => {
+        if (e.data && e.data.type === 'UPDATE_PHOTO_PREVIEW') {
+            const payload = e.data.payload;
+            let flImgNode = document.querySelector('.cc-floating-image');
+            if (flImgNode) {
+                if (payload.flX !== undefined) flImgNode.style.left = payload.flX + '%';
+                if (payload.flY !== undefined) flImgNode.style.top = payload.flY + '%';
+                if (payload.flS !== undefined) {
+                    flImgNode.style.width = payload.flS + 'vmin';
+                    flImgNode.style.height = payload.flS + 'vmin';
+                }
+                
+                // Si cambiamos el tiempo, forzamos mostrar para que el usuario pueda ver dónde está
+                if (payload.flT !== undefined) {
+                    flImgNode.style.opacity = '1';
+                    document.dispatchEvent(new CustomEvent('cc:previewScrub', { detail: payload.flT }));
+                }
+            }
+        }
+    });
+
 })();

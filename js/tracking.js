@@ -94,8 +94,23 @@ if (btnTrackOrder) {
         }
 
         // 2. Si no es un código de regalo, buscar como orden normal
-        const { data: orderData, error } = await db.rpc('search_order_by_id', { search_term: id });
-        const order = orderData && orderData.length > 0 ? orderData[0] : null;
+        let { data: orderData, error } = await db.rpc('search_order_by_id', { search_term: id });
+        let order = orderData && orderData.length > 0 ? orderData[0] : null;
+
+        // Fallback extra si no encontró nada con el RPC (puede pasar por diferencias de ID corto)
+        if (!order) {
+            const normalized = id.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            if (normalized.length >= 6) {
+                const fallback = await db
+                    .from('orders')
+                    .select('*')
+                    .ilike('id', `${normalized}%`)
+                    .limit(1);
+                if (fallback && fallback.data && fallback.data.length > 0) {
+                    order = fallback.data[0];
+                }
+            }
+        }
 
         if (orderStatusResult) {
             orderStatusResult.style.display = 'block';

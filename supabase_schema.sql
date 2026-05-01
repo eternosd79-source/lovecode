@@ -346,3 +346,59 @@ $$;
 
 GRANT EXECUTE ON FUNCTION redeem_promo_code(TEXT, UUID) TO anon;
 GRANT EXECUTE ON FUNCTION redeem_promo_code(TEXT, UUID) TO authenticated;
+
+-- ============================================================
+-- CICLO DE VIDA DE ÓRDENES AUTOMÁTICO (CRON JOBS & TRIGGERS)
+-- ============================================================
+
+-- 1. Agregar columna expires_at
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP WITH TIME ZONE;
+
+-- 2. Función que calcula el expires_at dependiendo del plan cuando cambia a 'paid'
+CREATE OR REPLACE FUNCTION set_expires_at_on_paid()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Solo actuar si el estado cambia a 'paid' y expires_at está vacío
+    IF NEW.status = 'paid' AND (OLD.status IS DISTINCT FROM 'paid' OR NEW.expires_at IS NULL) THEN
+        IF NEW.expires_at IS NULL THEN
+            IF NEW.plan_name ILIKE '%Gratis%' OR NEW.plan_name ILIKE '%Demo%' OR NEW.plan_name ILIKE '%$0%' THEN
+                NEW.expires_at = NOW() + INTERVAL '24 hours';
+            ELSIF NEW.plan_name ILIKE '%Básico%' OR NEW.plan_name ILIKE '%$1.50%' THEN
+                NEW.expires_at = NOW() + INTERVAL '14 days';
+            ELSIF NEW.plan_name ILIKE '%Ultra%' OR NEW.plan_name ILIKE '%$4.50%' THEN
+                NEW.expires_at = NOW() + INTERVAL '6 months';
+            ELSE
+                NEW.expires_at = NOW() + INTERVAL '75 days'; -- Plan Personalizado
+            END IF;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 3. Trigger para asociar la función a la tabla orders
+DROP TRIGGER IF IF EXISTS trg_set_expires_at ON orders;
+CREATE TRIGGER trg_set_expires_at
+BEFORE UPDATE ON orders
+FOR EACH ROW
+EXECUTE FUNCTION set_expires_at_on_paid();
+
+-- 4. Expirador Automático (Ejecutar diariamente a medianoche)
+-- Requiere la extensión pg_cron instalada en Supabase (Extensions -> pg_cron)
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+-- Eliminar job anterior si existe para evitar duplicados
+SELECT cron.unschedule('expire_old_orders');
+
+-- Crear trabajo programado para poner status = 'expired' si ya pasó expires_at
+SELECT cron.schedule(
+    'expire_old_orders',
+    '0 0 * * *', -- Cada medianoche
+    $$
+        UPDATE orders 
+        SET status = 'expired' 
+        WHERE status = 'paid' 
+          AND expires_at IS NOT NULL 
+          AND expires_at < NOW();
+    $$
+);

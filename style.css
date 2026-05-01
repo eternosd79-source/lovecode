@@ -1966,3 +1966,141 @@ body {
 
 /* Mobile Fixes */
 .category-filters { position: relative; z-index: 20; }
+
+/* Bank Modal Styles */
+.bank-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 5px;}
+.btn-bank { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ddd; padding: 14px 20px; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.3s; font-family: var(--font-ui); font-size:1.05rem; display: flex; align-items: center; justify-content: space-between;}
+.btn-bank:hover { background: rgba(6,182,212,0.15); border-color: #06b6d4; color: white;}
+
+.bank-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 999999;
+    display: none; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px);
+}
+.bank-modal-content {
+    background: #111116; border: 1px solid var(--accent-cyan);
+    padding: 30px; border-radius: 20px; min-width: 300px; max-width: 90%;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative;
+    text-align: center; color: white;
+}
+.bank-modal-close {
+    position: absolute; top: 10px; right: 20px; font-size: 28px;
+    color: #aaa; cursor: pointer; transition: 0.3s; line-height: 1;
+}
+.bank-modal-close:hover { color: white; }
+.bank-text-modal { font-size: 0.8rem; line-height: 1.4; color: #ddd; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-top: 15px;}
+.bank-text-modal strong { color: var(--accent-fuchsia); font-size: 1rem; display: block; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+
+/* ===============================
+   FOOTER PROFESIONAL
+   =============================== */
+.site-footer {
+    background: #050508;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 60px 24px 30px;
+}
+.footer-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 50px;
+}
+.footer-brand p {
+    color: var(--color-dim);
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin: 14px 0 22px;
+    max-width: 300px;
+}
+.footer-col h5 {
+    color: var(--accent-cyan);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+.footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.footer-links li a {
+    color: var(--color-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+.footer-links li a:hover { color: white; }
+.footer-links li a i { font-size: 0.7rem; color: var(--accent-cyan); }
+
+/* Redes sociales en el footer */
+.footer-socials {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.footer-social-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-dim);
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.footer-social-btn:hover { background: rgba(192,38,211,0.2); border-color: var(--accent-fuchsia); color: white; transform: translateY(-2px); }
+.footer-social-btn.wa { background: rgba(37,211,102,0.12); border-color: rgba(37,211,102,0.3); color: #25D366; }
+.footer-social-btn.wa:hover { background: rgba(37,211,102,0.25); border-color: #25D366; color: white; }
+.footer-social-btn.tiktok:hover { background: rgba(105,201,208,0.2); border-color: #69c9d0; color: white; }
+
+/* Footer bottom */
+.footer-bottom {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 20px;
+}
+.footer-legal { color: var(--color-dim); font-size: 0.8rem; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.footer-legal a { color: var(--color-dim); text-decoration: none; transition: color 0.2s; }
+.footer-legal a:hover { color: white; }
+
+@media (max-width: 680px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 35px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+}
+
+/* ===============================
+   CATALOG CARD THUMBNAIL CANVAS
+   =============================== */
+.card-thumb-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.card-thumb-canvas.loaded { opacity: 1; }
+.card-image { position: relative; overflow: hidden; }
+.screen-icon {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    opacity: 0.25;
+    z-index: 1;
+    pointer-events: none;
+}
+

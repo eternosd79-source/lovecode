@@ -28,8 +28,8 @@
     <meta name="twitter:description" content="31 experiencias web inmersivas desde $1.50 USD">
 
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="fa/all.min.css">
+    <link rel="stylesheet" href="style.css?v=4">
 
 </head>
 <body>
@@ -688,31 +688,6 @@
 
                         <div class="step4-right">
                             <div class="payment-content active" id="payEcuador">
-                                <style>
-                                    .bank-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 5px;}
-                                    .btn-bank { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ddd; padding: 14px 20px; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.3s; font-family: var(--font-ui); font-size:1.05rem; display: flex; align-items: center; justify-content: space-between;}
-                                    .btn-bank:hover { background: rgba(6,182,212,0.15); border-color: #06b6d4; color: white;}
-                                    
-                                    .bank-modal-overlay {
-                                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                                        background: rgba(0,0,0,0.85); z-index: 999999;
-                                        display: none; justify-content: center; align-items: center;
-                                        backdrop-filter: blur(5px);
-                                    }
-                                    .bank-modal-content {
-                                        background: #111116; border: 1px solid var(--accent-cyan);
-                                        padding: 30px; border-radius: 20px; min-width: 300px; max-width: 90%;
-                                        box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative;
-                                        text-align: center; color: white;
-                                    }
-                                    .bank-modal-close {
-                                        position: absolute; top: 10px; right: 20px; font-size: 28px;
-                                        color: #aaa; cursor: pointer; transition: 0.3s; line-height: 1;
-                                    }
-                                    .bank-modal-close:hover { color: white; }
-                                    .bank-text-modal { font-size: 0.8rem; line-height: 1.4; color: #ddd; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-top: 15px;}
-                                    .bank-text-modal strong { color: var(--accent-fuchsia); font-size: 1rem; display: block; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
-                                </style>
                                 <p class="step-desc" style="margin-bottom:15px;text-align:center;">Toca tu banco preferido para ver los <b>datos de cuenta</b> o el <b>Código QR</b>:</p>
                                 
                                 <div class="bank-selector">
@@ -974,6 +949,21 @@
     </a>
 
     <!-- ============ SCRIPTS ============ -->
+    <!-- 🔒 Configuración de Entorno (PRIMERO - antes de todo) -->
+    <script src="js/env-config.js?v=1"></script>
+    
+    <!-- 🛡️ Sanitizador XSS (SEGUNDO - antes de procesar datos) -->
+    <script src="js/sanitizer.js?v=1"></script>
+    
+    <!-- 📦 Namespace Modular (TERCERO - antes de otros módulos) -->
+    <script src="js/app-namespace.js?v=1"></script>
+    
+    <!-- 🚨 Error Handler & Observability (CUARTO) -->
+    <script src="js/error-handler.js?v=1"></script>
+    
+    <!-- ⚡ Performance Optimizations (QUINTO) -->
+    <script src="js/performance.js?v=1"></script>
+    
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- QR Code -->
@@ -995,7 +985,7 @@
     <script src="js/three-preview.js?v=7"></script>
     <script src="js/ui.js?v=7"></script>
     <script src="js/observability.js?v=1"></script>
-    <script src="js/main.js?v=7"></script>
+    <script src="js/main-fixed.js?v=7"></script>
 
     <!-- ✨ EFECTO PARTÍCULAS ROMÁNTICAS (Corazones / Estrellas Flotantes) -->
     <canvas id="heartCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.3;"></canvas>

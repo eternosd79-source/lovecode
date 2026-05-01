@@ -1023,13 +1023,24 @@ function applyPhotoPosition() {
     const vLabel = pPhotoTop  < 35 ? 'Arriba'    : pPhotoTop  > 65 ? 'Abajo'   : 'Centro';
     document.getElementById('pPosLabel').textContent =
         `${vLabel}-${hLabel} · ${pPhotoSize}%`;
+    
+    // Live update via postMessage
+    const iframe = document.getElementById('previewFrame');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'UPDATE_PHOTO_PREVIEW', payload: { flX: pPhotoLeft, flY: pPhotoTop } }, '*');
+    }
 }
 
 function applyPhotoSize() {
     pPhotoSize = parseInt(document.getElementById('inpFlS').value || 35);
     document.getElementById('pSizeLabel').textContent = pPhotoSize + '%';
     applyPhotoPosition();
-    livePreview();
+    
+    // Live update via postMessage
+    const iframe = document.getElementById('previewFrame');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'UPDATE_PHOTO_PREVIEW', payload: { flS: pPhotoSize } }, '*');
+    }
 }
 
 function applyPhotoTime() {
@@ -1037,7 +1048,12 @@ function applyPhotoTime() {
     const d = parseInt(document.getElementById('inpFlD')?.value || 20);
     document.getElementById('pTimeLabel').textContent = t === 0 ? 'Al inicio' : t + 's';
     document.getElementById('pDurLabel').textContent  = d + 's';
-    livePreview();
+    
+    // Live update via postMessage (no need to reload iframe completely for just scrubbing time)
+    const iframe = document.getElementById('previewFrame');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'UPDATE_PHOTO_PREVIEW', payload: { flT: t, flD: d } }, '*');
+    }
 }
 
 function initPhotoDrag() {
@@ -1060,7 +1076,7 @@ function initPhotoDrag() {
         pDragStartX = cx; pDragStartY = cy;
         applyPhotoPosition();
     }
-    function endDrag() { if (pDragging) { pDragging = false; livePreview(); } }
+    function endDrag() { if (pDragging) { pDragging = false; /* livePreview(); removed for true WYSIWYG */ } }
 
     wrap.addEventListener('mousedown',  e => { if (e.target !== handle) { e.preventDefault(); startDrag(e.clientX, e.clientY); } });
     document.addEventListener('mousemove', e => doMove(e.clientX, e.clientY));
@@ -1085,7 +1101,7 @@ function initPhotoDrag() {
         document.getElementById('pSizeLabel').textContent = Math.round(pPhotoSize) + '%';
         applyPhotoPosition();
     }
-    function endResize() { if (pResizing) { pResizing = false; livePreview(); } }
+    function endResize() { if (pResizing) { pResizing = false; /* livePreview(); removed for true WYSIWYG */ } }
 
     handle.addEventListener('mousedown',  e => { e.stopPropagation(); e.preventDefault(); startResize(e.clientX); });
     document.addEventListener('mousemove', e => doResize(e.clientX));
@@ -1353,22 +1369,21 @@ async function generarPedido() {
     if (tpl?.editableTexts) {
         tpl.editableTexts.forEach(f => {
             const el = document.getElementById(`dyn_${f.id}`);
-            if (el?.value?.trim()) {
-                dynTxts[f.id] = el.value.trim();
-            } else {
-                // Fallback: Si no hay valor en el input, capturar el valor por defecto si existe
-                const defEl = document.getElementById(`dyn_${f.id}`);
-                if (defEl) dynTxts[f.id] = defEl.placeholder || defEl.value || "";
+            if (el) {
+                const val = el.value.trim();
+                // Si hay valor, lo usamos. Si no, usamos el placeholder (que tiene el default)
+                dynTxts[f.id] = val || el.placeholder || "";
             }
         });
     }
 
     // Capturar explícitamente campos comunes si no se capturaron en el bucle
-    const titleInput = document.querySelector('[id*="title"], [id*="Title"]');
-    if (titleInput && !dynTxts.title) dynTxts.title = titleInput.value.trim();
+    // Esto asegura que 'title' y 'message' se guarden con estos nombres clave si existen en el DOM
+    const titleInput = document.getElementById('dyn_title');
+    if (titleInput && !dynTxts.title) dynTxts.title = titleInput.value.trim() || titleInput.placeholder;
     
-    const messageInput = document.querySelector('[id*="message"], [id*="mensaje"]');
-    if (messageInput && !dynTxts.message) dynTxts.message = messageInput.value.trim();
+    const messageInput = document.getElementById('dyn_message') || document.getElementById('dyn_mensaje');
+    if (messageInput && !dynTxts.message) dynTxts.message = messageInput.value.trim() || messageInput.placeholder;
 
     if (fotoUrl) {
         dynTxts.flImg = fotoUrl;
@@ -1387,7 +1402,7 @@ async function generarPedido() {
         template_id:    null,
         template_name:  tpl?.name || 'N/A',
         custom_date:    fecha,
-        custom_message: Object.values(dynTxts).join(' '), // concat all for safety
+        custom_message: dynTxts.message || dynTxts.title || para,
         photo_urls:     fotoUrl ? [fotoUrl] : [],
         music_url:      selectedSong || '',
         music_start:    parseInt(document.getElementById('inpMStart')?.value) || 0,
@@ -1396,27 +1411,48 @@ async function generarPedido() {
         status:         'pending',
     };
 
+    console.log("CC_Personalizar: Guardando pedido en Supabase...", orderData);
+
     let displayId = `LC-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
     let fullId    = displayId;
 
     try {
         if (db) {
+            // Intentar obtener ID real de la plantilla si existe en la tabla templates
             try {
-                const {data:t} = await db.from('templates').select('id').eq('slug', tpl?.id).maybeSingle();
-                if (t) orderData.template_id = t.id;
-            } catch(e){}
-
-            const {data:ins, error} = await db.from('orders').insert([orderData]).select();
-            if (!error && ins?.[0]) {
-                fullId    = ins[0].id;
-                displayId = fullId.substring(0,8).toUpperCase();
-                localStorage.setItem('lastOrderId', fullId);
+                const { data: t, error: tErr } = await db.from('templates').select('id').eq('slug', tpl?.id).maybeSingle();
+                if (t) {
+                    orderData.template_id = t.id;
+                } else {
+                    console.warn("CC_Personalizar: Template slug no encontrado en tabla templates:", tpl?.id);
+                }
+            } catch (e) {
+                console.warn("CC_Personalizar: Error consultando template_id:", e);
             }
-        }
-    } catch(e) { console.warn('[Supabase] contingencia:', e); }
 
-    // Redirigir a pasarela directamente en lugar de mostrar el Result Card
-    const targetUrl = `pasarela.html?orderId=${encodeURIComponent(fullId)}&plan=${encodeURIComponent(plan.label)}&price=${plan.price}&tpl=${encodeURIComponent(tpl?.name||'')}&name=${encodeURIComponent(para)}`;
+            const { data: ins, error } = await db.from('orders').insert([orderData]).select();
+            if (error) {
+                console.error("CC_Personalizar: Error al insertar orden:", error);
+                throw error;
+            }
+
+            if (ins && ins[0]) {
+                fullId    = ins[0].id;
+                displayId = fullId.substring(0, 8).toUpperCase();
+                localStorage.setItem('lastOrderId', fullId);
+                console.log("CC_Personalizar: Pedido guardado exitosamente con ID:", fullId);
+            }
+        } else {
+            console.error("CC_Personalizar: No hay conexión con la base de datos Supabase");
+        }
+    } catch (e) {
+        console.warn('[Supabase] Error crítico de persistencia, usando ID local:', e);
+        alert("Hubo un problema al guardar tu personalización en la nube. Intentaremos continuar de forma local, pero el link podría no funcionar después.");
+    }
+
+    // Redirigir a pasarela con toda la información necesaria
+    const targetUrl = `pasarela.html?orderId=${encodeURIComponent(fullId)}&plan=${encodeURIComponent(plan.label)}&price=${plan.price}&tpl=${encodeURIComponent(tpl?.name || '')}&name=${encodeURIComponent(para)}`;
+    console.log("CC_Personalizar: Redirigiendo a pasarela:", targetUrl);
     window.location.href = targetUrl;
 }
 </script>

@@ -101,7 +101,7 @@ if (btnTriggerFile && botFotoFile) {
 if (btnBotComprar) {
     btnBotComprar.addEventListener('click', async () => {
         if (!currentBotTemplate) {
-            alert("No se detectó la plantilla elegida.");
+            if (window.showToast) window.showToast("Error", "No se detectó la plantilla elegida."); else alert("No se detectó la plantilla elegida.");
             return;
         }
 
@@ -111,7 +111,7 @@ if (btnBotComprar) {
         const file = botFotoFile.files[0];
         
         if (!destino || !mensaje) {
-            alert("Por favor, ingresa el destinatario y una dedicatoria.");
+            if (window.showToast) window.showToast("Datos incompletos", "Por favor, ingresa el destinatario y una dedicatoria."); else alert("Por favor, ingresa el destinatario y una dedicatoria.");
             return;
         }
 
@@ -141,7 +141,7 @@ if (btnBotComprar) {
                 
             } catch (err) {
                 console.error("Error al subir imagen:", err);
-                alert("Hubo un problema procesando tu imagen. Omitiendo o intenta de nuevo.");
+                if (window.showToast) window.showToast("Atención", "Hubo un problema procesando tu imagen. Omitiendo o intenta de nuevo."); else alert("Hubo un problema procesando tu imagen. Omitiendo o intenta de nuevo.");
             }
         }
 
@@ -218,7 +218,7 @@ if (btnBotComprar) {
 
         } catch (finalError) {
             console.error("Error final", finalError);
-            alert("No pudimos registrar tu orden: " + finalError.message);
+            if (window.showToast) window.showToast("Error", "No pudimos registrar tu orden: " + finalError.message); else alert("No pudimos registrar tu orden: " + finalError.message);
         } finally {
             // Restore Modal UI
             btnBotComprar.disabled = false;

@@ -195,7 +195,13 @@ if (btnPreviewCustom) {
         if (activeTemplateInfo.editableTexts) {
             activeTemplateInfo.editableTexts.forEach(field => {
                 const el = document.getElementById(`dyn_${field.id}`);
-                if (el) { const val = el.value.trim(); if (val) params.append(`txt_${field.id}`, val); }
+                if (el) {
+                    const val = el.value.trim();
+                    if (val) params.append(`txt_${field.id}`, val);
+                }
+                if (field.selector) {
+                    params.append(`selector_${field.id}`, field.selector);
+                }
             });
         }
         if (dateVal) params.append('fecha', dateVal);
@@ -551,6 +557,9 @@ if (btnFinishOrder) {
                     activeTemplateInfo.editableTexts.forEach(field => {
                         const el = document.getElementById(`dyn_${field.id}`);
                         if (el) dynamicTexts[field.id] = el.value.trim();
+                        if (field.selector) {
+                            dynamicTexts[`__selector__${field.id}`] = field.selector;
+                        }
                     });
                 }
                 if (dataForm.flImg) {

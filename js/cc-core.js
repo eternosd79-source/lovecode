@@ -8,8 +8,12 @@ window.CC_Core = (function() {
     'use strict';
 
     const VERSION = '1.0.0';
-    const SUPABASE_URL = 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc';
+    
+    // Credenciales desde env-config.js
+    const supabaseConfig = window.getSupabaseConfig?.() || {
+        url: 'https://qmnbcmioylgmcbzqrjiv.supabase.co',
+        key: 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc'
+    };
 
     let db = null;
     let audioInstance = null;
@@ -28,9 +32,12 @@ window.CC_Core = (function() {
     function _initSupabase() {
         // Intentar varias formas de encontrar el cliente de Supabase
         const lib = window.supabase || window.supabasejs;
-        if (lib) {
-            db = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log("CC_Core: Supabase initialized");
+        if (lib && supabaseConfig.url && supabaseConfig.key) {
+            db = lib.createClient(supabaseConfig.url, supabaseConfig.key);
+            console.log("CC_Core: Supabase initialized from env-config");
+        } else if (window.db) {
+            db = window.db;
+            console.log("CC_Core: Using global window.db");
         } else {
             console.warn("CC_Core: Supabase library not found yet");
         }

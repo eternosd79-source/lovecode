@@ -23,31 +23,37 @@ window.SITE_BASE_URL = getBaseAppUrl();
 
 // ============================================================
 // CORAZÓNCÓDIGO — CONFIG GLOBAL, SUPABASE & BIBLIOTECA DE MÚSICA
+// Credenciales desde env-config.js (window.CC_ENV)
 // ============================================================
 
-const supabaseUrl = 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
-const supabaseKey = 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc';
-let db = null;
-
-const CONFIG = {
-    whatsappNumber: "593990480389",
-    payphoneLink: "https://ppls.me/OZ55yh1MoKs8Re5Ely0FVw",
-    supportMsg: "Hola CorazónCódigo! Tengo una pregunta antes de comprar.",
-    paymentMsg: (id, name, plan) =>
-        `Hola CorazónCódigo! He realizado el pago de mi pedido:\n\nID: [${id}]\nCliente: [${name}]\nPlan: [${plan}]\n\nAdjunto el comprobante de transferencia. 💖`
-};
-
-try {
-    const lib = (typeof supabase !== 'undefined' && supabase.createClient)
-        ? supabase
-        : (typeof supabasejs !== 'undefined' ? supabasejs : null);
-    if (lib) {
-        db = lib.createClient(supabaseUrl, supabaseKey);
-        window.db = db; // Exportar explícitamente a window
-        console.log("Supabase conectado correctamente.");
+// Esperar a que env-config.js esté listo (con timeout de seguridad)
+let attempts = 0;
+const waitForEnvConfig = setInterval(() => {
+    if (window.CC_ENV && window.CC_ENV.SUPABASE_URL && window.CC_ENV.SUPABASE_KEY) {
+        clearInterval(waitForEnvConfig);
+        initSupabase();
+    } else if (attempts++ > 50) {
+        clearInterval(waitForEnvConfig);
+        console.error("⚠️ ENV_CONFIG no cargó correctamente. Usando fallback.");
+        initSupabase();
     }
-} catch (e) {
-    console.error("Error inicializando Supabase:", e);
+}, 100);
+
+function initSupabase() {
+    const supabaseUrl = window.CC_ENV?.SUPABASE_URL || 'https://qmnbcmioylgmcbzqrjiv.supabase.co';
+    const supabaseKey = window.CC_ENV?.SUPABASE_KEY || 'sb_publishable_AZWTMqB-hCTA_Oiiu0juAQ_LRyE9gcc';
+    
+    try {
+        const lib = (typeof supabase !== 'undefined' && supabase.createClient)
+            ? supabase
+            : (typeof supabasejs !== 'undefined' ? supabasejs : null);
+        if (lib) {
+            window.db = lib.createClient(supabaseUrl, supabaseKey);
+            console.log("✓ Supabase conectado correctamente.");
+        }
+    } catch (e) {
+        console.error("Error inicializando Supabase:", e);
+    }
 }
 
 // ============================================================
