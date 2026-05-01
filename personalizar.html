@@ -1348,12 +1348,28 @@ async function generarPedido() {
     // Recolectar textos dinámicos
     const dynTxts = { para };
     if (fecha) dynTxts.fecha = fecha;
+    
+    // CAPTURA MEJORADA: Capturar título y mensaje si están presentes en el catálogo
     if (tpl?.editableTexts) {
         tpl.editableTexts.forEach(f => {
             const el = document.getElementById(`dyn_${f.id}`);
-            if (el?.value?.trim()) dynTxts[f.id] = el.value.trim();
+            if (el?.value?.trim()) {
+                dynTxts[f.id] = el.value.trim();
+            } else {
+                // Fallback: Si no hay valor en el input, capturar el valor por defecto si existe
+                const defEl = document.getElementById(`dyn_${f.id}`);
+                if (defEl) dynTxts[f.id] = defEl.placeholder || defEl.value || "";
+            }
         });
     }
+
+    // Capturar explícitamente campos comunes si no se capturaron en el bucle
+    const titleInput = document.querySelector('[id*="title"], [id*="Title"]');
+    if (titleInput && !dynTxts.title) dynTxts.title = titleInput.value.trim();
+    
+    const messageInput = document.querySelector('[id*="message"], [id*="mensaje"]');
+    if (messageInput && !dynTxts.message) dynTxts.message = messageInput.value.trim();
+
     if (fotoUrl) {
         dynTxts.flImg = fotoUrl;
         dynTxts.flS   = document.getElementById('inpFlS')?.value || '35';
@@ -1400,7 +1416,8 @@ async function generarPedido() {
     } catch(e) { console.warn('[Supabase] contingencia:', e); }
 
     // Redirigir a pasarela directamente en lugar de mostrar el Result Card
-    window.location.href = `pasarela.html?orderId=${encodeURIComponent(fullId)}&plan=${encodeURIComponent(plan.label)}&price=${plan.price}&tpl=${encodeURIComponent(tpl?.name||'')}`;
+    const targetUrl = `pasarela.html?orderId=${encodeURIComponent(fullId)}&plan=${encodeURIComponent(plan.label)}&price=${plan.price}&tpl=${encodeURIComponent(tpl?.name||'')}&name=${encodeURIComponent(para)}`;
+    window.location.href = targetUrl;
 }
 </script>
 </body>

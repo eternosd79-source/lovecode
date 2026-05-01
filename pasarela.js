@@ -376,7 +376,9 @@ async function initPasarela() {
                     await client.from('orders').update({ status: 'paid', payment_method: `CUPÓN: ${code}` }).eq('id', orderId);
                     await client.from('promo_codes').update({ is_used: true, used_by: orderId }).eq('code', code);
                     
-                    setTimeout(() => window.location.href = `index.html?orderId=${orderId}#mis-pedidos`, 1500);
+                    // Obtener el nombre para la URL amigable
+                    const nameParam = urlParams.get('name') || 'regalo';
+                    setTimeout(() => window.location.href = `index.html?orderId=${orderId}&name=${encodeURIComponent(nameParam)}#mis-pedidos`, 1500);
                 }
             } catch (e) { 
                 console.error("CC_Pasarela: Error validando:", e);

@@ -67,6 +67,13 @@ window.CC_Core = (function() {
         const params = getParams();
         const orderId = params.orderId || params.id;
 
+        // URL Amigable: Si no hay orderId pero sí hay un nombre en la URL
+        // podemos mostrarlo como preview rápido o guardarlo
+        if (params.name) {
+            console.log("CC_Core: Name detected in URL:", params.name);
+            document.title = `Regalo para ${decodeURIComponent(params.name)} | CorazónCódigo`;
+        }
+
         if (orderId) {
             // Re-intentar inicializar DB si falló antes
             if (!db) _initSupabase();
