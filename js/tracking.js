@@ -80,18 +80,29 @@ if (btnTrackOrder) {
         if (!id) return alert("Por favor ingresa un ID válido.");
         if (!db)  return alert("Error de conexión con la base de datos. Intenta de nuevo.");
 
-        // 1. Intentar buscar en promo_codes primero
-        const { data: promoData, error: promoError } = await db
+        // 1. Buscar en promo_codes (válido o ya usado)
+        const { data: promoData } = await db
             .from('promo_codes')
             .select('*')
-            .eq('code', id)
-            .eq('is_used', false)
+            .eq('code', id.toUpperCase())
             .maybeSingle();
 
         if (promoData) {
-            // Es un código de regalo válido, redirigir al catálogo con el cupón
-            window.location.href = `index.html?coupon=${encodeURIComponent(id)}&tpl=${encodeURIComponent(promoData.template_id || '')}`;
-            return;
+            if (!promoData.is_used) {
+                // Código válido sin usar → redirigir al catálogo para comprar
+                window.location.href = `index.html?coupon=${encodeURIComponent(id)}&tpl=${encodeURIComponent(promoData.template_id || '')}`;
+                return;
+            } else if (promoData.used_by) {
+                // Código ya canjeado → buscar y mostrar la orden asociada
+                let { data: orderData } = await db.rpc('get_order_safe', { p_id: promoData.used_by });
+                const order = orderData && orderData.length > 0 ? orderData[0] : null;
+                if (order && orderStatusResult) {
+                    orderStatusResult.style.display = 'block';
+                    orderStatusResult.scrollIntoView({ behavior: 'smooth' });
+                    renderOrderStatus(order);
+                    return;
+                }
+            }
         }
 
         // 2. Si no es un código de regalo, buscar como orden normal
