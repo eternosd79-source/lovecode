@@ -198,6 +198,21 @@
             </table>
         </div>
 
+        <!-- Modal de Confirmación de Eliminación -->
+        <div class="bank-modal-overlay" id="deleteModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(5px);">
+            <div style="background:var(--card-bg); border-radius:20px; padding:32px; max-width:400px; width:90%; border:1px solid rgba(239,68,68,0.3); text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+                <div style="width:60px; height:60px; border-radius:50%; background:rgba(239,68,68,0.1); color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 20px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 style="margin-top:0; color:white; font-size: 1.3rem;">Eliminar Pedido</h3>
+                <p style="color:var(--color-dim); font-size:0.9rem; margin-bottom:24px; line-height:1.5;">¿Estás seguro de eliminar definitivamente este pedido? Esta acción <strong>no se puede deshacer</strong>.</p>
+                <div style="display:flex; gap:12px; justify-content:center;">
+                    <button onclick="closeDeleteModal()" style="flex:1; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:white; cursor:pointer; font-weight:600; transition:background 0.2s;">Cancelar</button>
+                    <button id="btnConfirmDelete" onclick="confirmDeleteOrder()" style="flex:1; padding:12px; border-radius:10px; border:none; background:#ef4444; color:white; cursor:pointer; font-weight:600; transition:background 0.2s; box-shadow:0 4px 15px rgba(239,68,68,0.4);">Sí, Eliminar</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ── Generador de Promoción ── -->
         <div style="margin-top:50px;background:rgba(0,0,0,0.25);padding:28px;border-radius:16px;border:1px solid rgba(255,255,255,0.05);">
             <h2 class="neon-cyan"><i class="fa-solid fa-bullhorn"></i> Generador de Promoción</h2>
@@ -655,18 +670,50 @@
         else loadOrders();
     }
 
-    async function deleteOrder(id) {
-        if (!confirm('🛑 ¿Estás seguro de ELIMINAR definitivamente este pedido? No se puede recuperar.')) return;
+    let orderToDelete = null;
+
+    function deleteOrder(id) {
+        orderToDelete = id;
+        document.getElementById('deleteModalOverlay').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+        orderToDelete = null;
+        document.getElementById('deleteModalOverlay').style.display = 'none';
+    }
+
+    async function confirmDeleteOrder() {
+        if (!orderToDelete) return;
+        const id = orderToDelete;
+        const btn = document.getElementById('btnConfirmDelete');
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Borrando...';
+
         const client = adminSupabase || window.db;
-        if (!client) return;
+        if (!client) {
+            closeDeleteModal();
+            return;
+        }
 
-        const { error } = await client
-            .from('orders')
-            .delete()
-            .eq('id', id);
+        try {
+            // 1. Liberar posible código promo asociado (para evitar error de llave foránea)
+            await client.from('promo_codes').update({ used_by: null, is_used: false }).eq('used_by', id);
 
-        if (error) alert('Error al borrar: ' + error.message);
-        else loadOrders();
+            // 2. Eliminar la orden
+            const { error } = await client.from('orders').delete().eq('id', id);
+
+            if (error) throw error;
+            
+            closeDeleteModal();
+            loadOrders();
+        } catch (error) {
+            alert('Error al borrar: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Sí, Eliminar';
+            closeDeleteModal();
+        }
     }
 
     // ============================================================
