@@ -494,49 +494,107 @@
             window.open(waUrl, '_blank');
         }
 
-        // Función para validar código de promoción
-        function validatePromoCode() {
+        // Función para validar código de promoción (consulta Supabase)
+        async function validatePromoCode() {
             console.log("Validando código de promoción...");
             
             const inpPromoCode = document.getElementById('inpPromoCode');
-            const promoCodeMsg = document.getElementById('promoCodeMsg');
+            const btnApply    = document.getElementById('btnApplyPromo');
             
-            if (!inpPromoCode || !promoCodeMsg) {
-                console.error("No se encontraron elementos de promoción");
-                return;
-            }
+            if (!inpPromoCode) return;
             
             const code = inpPromoCode.value.trim().toUpperCase();
-            
             if (!code) {
                 showPromoMessage('Por favor ingresa un código de promoción', 'error');
                 return;
             }
-            
-            const validCodes = {
-                'CORAZON10': { discount: 10, description: '10% de descuento' },
-                'CODIGO20': { discount: 20, description: '20% de descuento' },
-                'VERANO25': { discount: 25, description: '25% de descuento' },
-                'PRIMERA50': { discount: 50, description: '50% de descuento' },
-                'GRATIS': { discount: 100, description: '100% de descuento' }
-            };
-            
-            if (validCodes[code]) {
-                const promo = validCodes[code];
-                showPromoMessage(`✅ ¡Código válido! ${promo.description} aplicado.`, 'success');
-                
-                localStorage.setItem('promoCode', code);
-                localStorage.setItem('promoDiscount', promo.discount);
-                
-                inpPromoCode.disabled = true;
-                const btnApply = document.getElementById('btnApplyPromo');
-                if (btnApply) {
-                    btnApply.disabled = true;
-                    btnApply.textContent = 'Aplicado ✓';
+
+            // Mostrar cargando
+            btnApply.disabled = true;
+            btnApply.textContent = '...';
+
+            // Intentar usar cliente Supabase global (cargado por config.js)
+            const client = window.db || window.supabaseClient;
+            if (!client) {
+                showPromoMessage('❌ Error de conexión. Recarga la página.', 'error');
+                btnApply.disabled = false;
+                btnApply.textContent = 'Validar';
+                return;
+            }
+
+            try {
+                // Buscar el código en la base de datos
+                const { data, error } = await client
+                    .from('promo_codes')
+                    .select('*')
+                    .eq('code', code)
+                    .eq('is_used', false)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (!data) {
+                    showPromoMessage('❌ Código inválido o ya fue utilizado.', 'error');
+                    btnApply.disabled = false;
+                    btnApply.textContent = 'Validar';
+                    return;
                 }
-                
-            } else {
-                showPromoMessage('❌ Código inválido. Verifica e intenta nuevamente.', 'error');
+
+                // ✅ Código válido — marcar la orden como pagada
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderId = urlParams.get('orderId') || localStorage.getItem('lastOrderId');
+
+                if (orderId) {
+                    // Canjear el código usando la función RPC segura
+                    const { data: redeemed, error: redeemErr } = await client.rpc('redeem_promo_code', {
+                        p_code: code,
+                        p_order_id: orderId
+                    });
+
+                    if (redeemErr || !redeemed) {
+                        showPromoMessage('❌ No se pudo aplicar el código. Intenta de nuevo.', 'error');
+                        btnApply.disabled = false;
+                        btnApply.textContent = 'Validar';
+                        return;
+                    }
+
+                    // Marcar la orden como pagada
+                    await client.from('orders').update({ status: 'paid' }).eq('id', orderId);
+                }
+
+                // Éxito visual
+                showPromoMessage('✅ ¡Código aplicado! Tu pedido está activado sin costo.', 'success');
+                inpPromoCode.disabled = true;
+                btnApply.disabled = true;
+                btnApply.textContent = '✓ Aplicado';
+
+                // Ocultar métodos de pago (ya no necesitan pagar)
+                const payEcuador    = document.getElementById('payEcuador');
+                const payMundo      = document.getElementById('payMundo');
+                const paymentTabs   = document.querySelector('.payment-tabs');
+                if (payEcuador)  payEcuador.style.display  = 'none';
+                if (payMundo)    payMundo.style.display    = 'none';
+                if (paymentTabs) paymentTabs.style.display = 'none';
+
+                // Mostrar botón de ir al rastreador
+                const main = document.querySelector('.payment-main .section-card');
+                if (main) {
+                    main.innerHTML = `
+                        <div style="text-align:center; padding: 20px;">
+                            <div style="font-size: 3rem; margin-bottom: 16px;">🎁</div>
+                            <h3 style="color: #22d3ee; margin: 0 0 8px;">¡Regalo Activado!</h3>
+                            <p style="color: #94a3b8;">Tu pedido está listo. Revísalo en el rastreador.</p>
+                            <a href="index.html#mis-pedidos" style="display:inline-block; margin-top: 20px; padding: 14px 28px; background: linear-gradient(135deg,#ff2d75,#c026d3); color:white; border-radius: 12px; text-decoration:none; font-weight:700;">
+                                🔍 Ver mi pedido
+                            </a>
+                        </div>`;
+                }
+
+            } catch (e) {
+                console.error('Error validando código:', e);
+                showPromoMessage('❌ Error al validar. Intenta de nuevo.', 'error');
+                btnApply.disabled = false;
+                btnApply.textContent = 'Validar';
             }
         }
 
